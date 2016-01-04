@@ -4,6 +4,8 @@
 #include <time.h>
 #include <vector>
 
+#include "CGUICompass.hpp"
+
 
 using namespace irr;
 
@@ -163,6 +165,13 @@ int main()
   float water_position = water_initial_position;
   plan_water->setPosition(ic::vector3df(-1000,-502, 100));
 
+  // Horizontal level image
+  CGUICompass compass = CGUICompass(ic::rect<s32>(260,200,  380,280), gui, nullptr);
+  iv::ITexture *level2D_texture = driver->getTexture("data/2d/level.png");
+  compass.setCompassTexture(level2D_texture);
+  compass.setCompassHeading(0);;
+
+
   while(device->run())
   {
     //Movements of the plane
@@ -171,9 +180,11 @@ int main()
     // Back color
     driver->beginScene(true,true,iv::SColor(100,150,200,255));
 
+
     // Draw the scene
     smgr->drawAll();
     gui->drawAll();
+    compass.draw();
     driver->endScene();
   }
 
