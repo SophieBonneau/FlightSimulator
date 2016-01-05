@@ -124,20 +124,17 @@ int main()
     city_node = smgr->addOctreeSceneNode(city_mesh,nullptr,-1,1024);
     city_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     city_node->setScale(ic::vector3df(10,10,10));
-    //city_node->setPosition(ic::vector3df(-1000,-500, 100));
-
 
     //Plane
     device->getFileSystem()->addFileArchive("data/plane.zip");
     is::IAnimatedMesh *plane_mesh = smgr->getMesh("Cessna172.obj");
     is::IAnimatedMeshSceneNode *plane_node = smgr->addAnimatedMeshSceneNode(plane_mesh);
     plane_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-
+    plane_node->setScale(ic::vector3df(0.1,0.1,0.1));
 
     //Step
     float step = 2.0f;
     receiver.setStep(step);
-
 
     //Water
     is::IMesh *mesh_water = smgr->addHillPlaneMesh( "myHill",
@@ -149,16 +146,12 @@ int main()
     plan_water->setMaterialTexture(0, driver->getTexture("data/water.jpg"));
     plan_water->setMaterialFlag(iv::EMF_LIGHTING, false);
     plan_water->setMaterialType(video::EMT_REFLECTION_2_LAYER);
-    //plan_water->setPosition(ic::vector3df(-1000,-502, 100));
     plan_water->setPosition(ic::vector3df(0,-2, 0));
 
 
 
     while(device->run())
     {
-        //Camera position
-        smgr->addCameraSceneNode(plane_node, ic::vector3df(-34, 18, 0), plane_node->getPosition()+ic::vector3df(0, 10, 0));
-
         // Horizontal level
         /*CGUICompass* compass = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width/2 - 40,
                                                              device->getVideoDriver()->getScreenSize().Height/2 - 30,
@@ -170,6 +163,10 @@ int main()
 
         //Movements of the plane
         receiver.MovePlane(plane_node);
+
+        //Camera position
+        smgr->addCameraSceneNode(plane_node, ic::vector3df(-34, 18, 0), plane_node->getPosition() + ic::vector3df(0, 0, 0));
+
         // Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
         // Draw the scene
