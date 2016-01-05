@@ -28,23 +28,35 @@ struct MyEventReceiver : IEventReceiver
     {
         ic::vector3df position = node->getPosition();
         ic::vector3df rotation = node->getRotation();
-        if(keyIsDown[KEY_KEY_S] == true)
-        {
-            position.Z += -step * sin(rotation.Y * M_PI / 180.0);
-            position.X += -step * cos(rotation.Y * M_PI / 180.0);
-        }
         if(keyIsDown[KEY_KEY_Z] == true)
         {
-            position.Z += step * sin(rotation.Y * M_PI / 180.0);
-            position.X += step * cos(rotation.Y * M_PI / 180.0);
+            std::cout<<"Rot X : "<<rotation.X<<std::endl;
+            std::cout<<"Rot Y : "<<rotation.Y<<std::endl;
+            std::cout<<"Rot Z : "<<rotation.Z<<std::endl;
+
+            std::cout<<"Pos X 1 : "<<position.X<<std::endl;
+            std::cout<<"Pos Y 1 : "<<position.Y<<std::endl;
+            std::cout<<"Pos Z 1 : "<<position.Z<<std::endl;
+
+            position.Z += cos(rotation.Y * M_PI / 180.0);
+            position.X += sin(rotation.Y * M_PI / 180.0);
+
+            std::cout<<"Pos X 2 : "<<position.X<<std::endl;
+            std::cout<<"Pos Y 2 : "<<position.Y<<std::endl;
+            std::cout<<"Pos Z 2 : "<<position.Z<<std::endl;
         }
-        if(keyIsDown[KEY_KEY_Q] == true)
+        if(keyIsDown[KEY_KEY_S] == true)
         {
-            rotation.Y += step;
+            position.Z -= cos(rotation.Y * M_PI / 180.0);
+            position.X -= sin(rotation.Y * M_PI / 180.0);
         }
         if(keyIsDown[KEY_KEY_D] == true)
         {
-            rotation.Y -= 5;
+            rotation.Y += step;
+        }
+        if(keyIsDown[KEY_KEY_Q] == true)
+        {
+            rotation.Y -= step;
         }
         node->setPosition(position);
         node->setRotation(rotation);
@@ -119,15 +131,14 @@ int main()
     ig::IGUIEnvironment *gui = device->getGUIEnvironment();
 
     //City
-    is::IMesh *city_mesh = smgr->getMesh("data/city_cercles.obj");
+    is::IMesh *city_mesh = smgr->getMesh("data/city/city_cercles.obj");
     is::ISceneNode *city_node;
     city_node = smgr->addOctreeSceneNode(city_mesh,nullptr,-1,1024);
     city_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     city_node->setScale(ic::vector3df(10,10,10));
 
     //Plane
-    device->getFileSystem()->addFileArchive("data/plane.zip");
-    is::IAnimatedMesh *plane_mesh = smgr->getMesh("Cessna172.obj");
+    is::IAnimatedMesh *plane_mesh = smgr->getMesh("data/plane/Cessna172.obj");
     is::IAnimatedMeshSceneNode *plane_node = smgr->addAnimatedMeshSceneNode(plane_mesh);
     plane_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     plane_node->setScale(ic::vector3df(0.1,0.1,0.1));
@@ -143,7 +154,7 @@ int main()
            core::dimension2d<f32>(0,0),
            core::dimension2d<f32>(5,5));
     scene::ISceneNode* plan_water = smgr->addWaterSurfaceSceneNode(mesh_water, 0.2f, 500.0f, 10.0f);
-    plan_water->setMaterialTexture(0, driver->getTexture("data/water.jpg"));
+    plan_water->setMaterialTexture(0, driver->getTexture("data/water/water.jpg"));
     plan_water->setMaterialFlag(iv::EMF_LIGHTING, false);
     plan_water->setMaterialType(video::EMT_REFLECTION_2_LAYER);
     plan_water->setPosition(ic::vector3df(0,-2, 0));
@@ -165,7 +176,7 @@ int main()
         receiver.MovePlane(plane_node);
 
         //Camera position
-        smgr->addCameraSceneNode(plane_node, ic::vector3df(-34, 18, 0), plane_node->getPosition() + ic::vector3df(0, 0, 0));
+        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 18, -34), plane_node->getPosition() + ic::vector3df(0, 0, 0));
 
         // Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
