@@ -97,17 +97,6 @@ struct MyEventReceiver : IEventReceiver
                 keyIsDown[KEY_KEY_D] = false;
             }
 
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_J)
-            {
-                rotation++;
-                plane_node->setRotation(ic::vector3df(rotation, 0.0, 0.0));
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_K)
-            {
-                rotation--;
-                plane_node->setRotation(ic::vector3df(rotation, 0.0, 0.0));
-            }
-
         }
         return false;
     }
@@ -163,9 +152,6 @@ int main()
     //plan_water->setPosition(ic::vector3df(-1000,-502, 100));
     plan_water->setPosition(ic::vector3df(0,-2, 0));
 
-    // 2D elements
-    gui->addStaticText(L"Hey hey",
-        irr::core::rect<irr::s32>(100,20,400,60), true, true, 0, -1, true);
 
 
     while(device->run())
@@ -174,13 +160,13 @@ int main()
         smgr->addCameraSceneNode(plane_node, ic::vector3df(-34, 18, 0), plane_node->getPosition()+ic::vector3df(0, 10, 0));
 
         // Horizontal level
-        CGUICompass* compass = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width/2 - 40,
+        /*CGUICompass* compass = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width/2 - 40,
                                                              device->getVideoDriver()->getScreenSize().Height/2 - 30,
                                                              device->getVideoDriver()->getScreenSize().Width/2 + 40,
                                                              device->getVideoDriver()->getScreenSize().Height/2 + 30), gui, nullptr);
         iv::ITexture *texture_level = driver->getTexture("data/2d/level.png");
         compass->setCompassTexture(texture_level);
-        compass->setCompassHeading(0);
+        compass->setCompassHeading(0);*/
 
         //Movements of the plane
         receiver.MovePlane(plane_node);
@@ -189,7 +175,7 @@ int main()
         // Draw the scene
         smgr->drawAll();
         gui->drawAll();
-        compass->draw();
+        //compass->draw();
         driver->endScene();
     }
     device->drop();
