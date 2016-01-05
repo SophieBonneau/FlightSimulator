@@ -3,11 +3,17 @@
 #include <time.h>
 #include <vector>
 
+#include "CGUICompass.hpp"
+
 using namespace irr;
 namespace ic = irr::core;
 namespace is = irr::scene;
 namespace iv = irr::video;
 namespace ig = irr::gui;
+
+
+is::IAnimatedMeshSceneNode *plane_node;
+float rotation = 0.0;
 
 
 struct MyEventReceiver : IEventReceiver
@@ -92,6 +98,17 @@ struct MyEventReceiver : IEventReceiver
                 keyIsDown[KEY_KEY_D] = false;
             }
 
+            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_J)
+            {
+                rotation++;
+                plane_node->setRotation(ic::vector3df(rotation, 0.0, 0.0));
+            }
+            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_K)
+            {
+                rotation--;
+                plane_node->setRotation(ic::vector3df(rotation, 0.0, 0.0));
+            }
+
         }
         return false;
     }
@@ -123,7 +140,7 @@ int main()
     //Plane
     device->getFileSystem()->addFileArchive("data/plane.zip");
     is::IAnimatedMesh *plane_mesh = smgr->getMesh("Cessna172.obj");
-    is::IAnimatedMeshSceneNode *plane_node = smgr->addAnimatedMeshSceneNode(plane_mesh);
+    plane_node = smgr->addAnimatedMeshSceneNode(plane_mesh);
     plane_node->setMaterialFlag(iv::EMF_LIGHTING,false);
 
     //Step
@@ -146,8 +163,16 @@ int main()
     while(device->run())
     {
         //Camera position
-        //smgr->addCameraSceneNodeFPS();
         smgr->addCameraSceneNode(plane_node, ic::vector3df(-34, 18, 0), plane_node->getPosition()+ic::vector3df(0, 10, 0));
+
+        // Horizontal level
+        CGUICompass* compass = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width/2 - 40,
+                                                             device->getVideoDriver()->getScreenSize().Height/2 - 30,
+                                                             device->getVideoDriver()->getScreenSize().Width/2 + 40,
+                                                             device->getVideoDriver()->getScreenSize().Height/2 + 30), gui, nullptr);
+        iv::ITexture *texture_level = driver->getTexture("data/2d/level.png");
+        compass->setCompassTexture(texture_level);
+        compass->setCompassHeading(0);
 
         //Movements of the plane
         receiver.MovePlane(plane_node);
@@ -156,6 +181,7 @@ int main()
         // Draw the scene
         smgr->drawAll();
         gui->drawAll();
+        compass->draw();
         driver->endScene();
     }
     device->drop();
