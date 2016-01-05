@@ -120,6 +120,7 @@ int main()
 {
     // Le gestionnaire d'événements
     MyEventReceiver receiver;
+
     // Création de la fenêtre et du système de rendu.
     IrrlichtDevice *device = createDevice(iv::EDT_OPENGL,
                                           ic::dimension2d<u32>(640, 480),
@@ -160,6 +161,12 @@ int main()
     float water_initial_position = -6.0f;
     float water_position = water_initial_position;
     plan_water->setPosition(ic::vector3df(-1000,-502, 100));
+
+    // 2D elements
+    gui->addStaticText(L"Hey hey",
+        irr::core::rect<irr::s32>(100,20,400,60), true, true, 0, -1, true);
+
+
     while(device->run())
     {
         //Camera position
