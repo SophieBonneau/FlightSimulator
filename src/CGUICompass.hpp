@@ -52,6 +52,7 @@ class CGUICompass : public ig::IGUIElement
         Matrix.setRotationDegrees(ic::vector3df(0, 0, deg));
     }
 
+
     //! render the compass
     virtual void draw()
     {
