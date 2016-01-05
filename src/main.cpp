@@ -17,6 +17,19 @@ float rotation = 0.0;
 
 struct MyEventReceiver : IEventReceiver
 {
+    is::IAnimatedMeshSceneNode *node;
+    bool keyIsDown[KEY_KEY_CODES_COUNT];
+
+    float speedStep;
+    float rotStep;
+    float altitudeStep;
+
+    float planeSpeed    = 0;
+    float planeAltitude = 0;
+
+    /************************************************************************************/
+    /******************************** Constructor ***************************************/
+    /************************************************************************************/
     MyEventReceiver()
     {
         for(unsigned int i = 0; i<KEY_KEY_CODES_COUNT; ++i)
@@ -24,47 +37,102 @@ struct MyEventReceiver : IEventReceiver
             keyIsDown[i] = false;
         }
     }
-    void MovePlane(is::IAnimatedMeshSceneNode *node)
+
+    /************************************************************************************/
+    /******************************** Getters & setters *********************************/
+    /************************************************************************************/
+    /* float getSpeed: getter for the speed value
+     * return:  planeSpeed: the speed value
+    */
+    float getAltitude(){    return planeAltitude;  }
+
+    /* float getAltitude: getter for the altitude value
+     * return:  planeAltitude: the altitude value
+    */
+    float getSpeed(){    return planeSpeed;  }
+
+    /* void setSteps: function used to initialize the increase and decrease step of different parameters
+     * params:  const float speedStep:      the step used to increase and decrese the plane speed
+     *          const float rotStep:        the step used to turn the plane to the left or to the right
+     *          const float altitudeStep:   the step used to increase and decrese the plane altitude
+    */
+    void setSteps(const float speedStep, const float rotStep, const float altitudeStep)
     {
+        this->speedStep     = speedStep;
+        this->rotStep       = rotStep;
+        this->altitudeStep  = altitudeStep;
+    }
+
+    /************************************************************************************/
+    /******************************** Functions *****************************************/
+    /************************************************************************************/
+    void movePlane(is::IAnimatedMeshSceneNode *node)
+    {
+        //Increase or decrease the plane speed
         ic::vector3df position = node->getPosition();
         ic::vector3df rotation = node->getRotation();
         if(keyIsDown[KEY_KEY_Z] == true)
         {
-            std::cout<<"Rot X : "<<rotation.X<<std::endl;
-            std::cout<<"Rot Y : "<<rotation.Y<<std::endl;
-            std::cout<<"Rot Z : "<<rotation.Z<<std::endl;
-
-            std::cout<<"Pos X 1 : "<<position.X<<std::endl;
-            std::cout<<"Pos Y 1 : "<<position.Y<<std::endl;
-            std::cout<<"Pos Z 1 : "<<position.Z<<std::endl;
-
-            position.Z += cos(rotation.Y * M_PI / 180.0);
-            position.X += sin(rotation.Y * M_PI / 180.0);
-
-            std::cout<<"Pos X 2 : "<<position.X<<std::endl;
-            std::cout<<"Pos Y 2 : "<<position.Y<<std::endl;
-            std::cout<<"Pos Z 2 : "<<position.Z<<std::endl;
+            if(planeSpeed < 5)
+                planeSpeed += speedStep;
+            else
+                std::cout<<"Your plane is already at the highest speed !"<<std::endl;
         }
         if(keyIsDown[KEY_KEY_S] == true)
         {
-            position.Z -= cos(rotation.Y * M_PI / 180.0);
-            position.X -= sin(rotation.Y * M_PI / 180.0);
+            std::cout<<"TD : decrease the plane speed"<<std::endl;
+            if(planeSpeed > 0)
+                planeSpeed -= speedStep;
+            else
+                std::cout<<"Your plane has already stop !"<<std::endl;
         }
+
+        //Open the side panels of the plane to turn to the right or the left
         if(keyIsDown[KEY_KEY_D] == true)
         {
-            rotation.Y += step;
+            std::cout<<"TD : Turn the plane to the right"<<std::endl;
+            rotation.Y += rotStep;
         }
         if(keyIsDown[KEY_KEY_Q] == true)
         {
-            rotation.Y -= step;
+            std::cout<<"TD : Turn the plane to the left"<<std::endl;
+            rotation.Y -= rotStep;
+        }
+
+        //Get the plane up or down
+        if(keyIsDown[KEY_KEY_A] == true)
+        {
+            if(planeAltitude < 200)
+                planeAltitude += altitudeStep;
+            else
+                std::cout<<"Your plane is already at the highest altitude !"<<std::endl;
+        }
+        if(keyIsDown[KEY_KEY_E] == true)
+        {
+            if(planeAltitude > 0)
+                planeAltitude -= altitudeStep;
+            else
+                std::cout<<"Your plane is already on the floor !"<<std::endl;
+        }
+
+        //Rear or unrear the plane
+        if(keyIsDown[KEY_KEY_P] == true)
+        {
+            std::cout<<"TD : rear the plane"<<std::endl;
+        }
+        else
+        {
+            //std::cout<<"TD : unrear the plane"<<std::endl;
         }
         node->setPosition(position);
         node->setRotation(rotation);
+
+
     }
-    void setStep(const float step)
-    {
-        this->step = step;
-    }
+
+    /************************************************************************************/
+    /******************************** Events ********************************************/
+    /************************************************************************************/
     bool OnEvent(const SEvent &event)
     {
         // Si l'événement est de type clavier (KEY_INPUT)
@@ -108,17 +176,36 @@ struct MyEventReceiver : IEventReceiver
             {
                 keyIsDown[KEY_KEY_D] = false;
             }
-
+            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_A && !keyIsDown[KEY_KEY_A]) // Go up
+            {
+                keyIsDown[KEY_KEY_A] = true;
+            }
+            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_A) // Stop going up
+            {
+                keyIsDown[KEY_KEY_A] = false;
+            }
+            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_E && !keyIsDown[KEY_KEY_E]) // Go down
+            {
+                keyIsDown[KEY_KEY_E] = true;
+            }
+            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_E) // Stop going down
+            {
+                keyIsDown[KEY_KEY_E] = false;
+            }
+            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P && !keyIsDown[KEY_KEY_P]) // Go rearing plane
+            {
+                keyIsDown[KEY_KEY_P] = true;
+            }
+            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P) // Stop going rearing
+            {
+                keyIsDown[KEY_KEY_P] = false;
+            }
         }
         return false;
     }
-    is::IAnimatedMeshSceneNode *node;
-    float step;
-    bool keyIsDown[KEY_KEY_CODES_COUNT];
 };
 int main()
 {
-
     // Le gestionnaire d'événements
     MyEventReceiver receiver;
 
@@ -130,24 +217,20 @@ int main()
     is::ISceneManager *smgr = device->getSceneManager();
     ig::IGUIEnvironment *gui = device->getGUIEnvironment();
 
-    //City
+    //Init the object landscape
     is::IMesh *city_mesh = smgr->getMesh("data/city/city_cercles.obj");
     is::ISceneNode *city_node;
     city_node = smgr->addOctreeSceneNode(city_mesh,nullptr,-1,1024);
     city_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     city_node->setScale(ic::vector3df(10,10,10));
 
-    //Plane
+    //Init the object plane
     is::IAnimatedMesh *plane_mesh = smgr->getMesh("data/plane/Cessna172.obj");
     is::IAnimatedMeshSceneNode *plane_node = smgr->addAnimatedMeshSceneNode(plane_mesh);
     plane_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     plane_node->setScale(ic::vector3df(0.1,0.1,0.1));
 
-    //Step
-    float step = 2.0f;
-    receiver.setStep(step);
-
-    //Water
+    //Init the object water
     is::IMesh *mesh_water = smgr->addHillPlaneMesh( "myHill",
            core::dimension2d<f32>(4.6,4.6),
            core::dimension2d<u32>(200,200), 0, 0,
@@ -159,7 +242,18 @@ int main()
     plan_water->setMaterialType(video::EMT_REFLECTION_2_LAYER);
     plan_water->setPosition(ic::vector3df(0,-2, 0));
 
+    //Init steps
+    float speedStep     = 0.01f;
+    float rotStep       = 0.5f;
+    float altitudeStep  = 0.5f;
+    receiver.setSteps(speedStep, rotStep, altitudeStep);
 
+    float planeSpeed    = 0;
+    float planeAltitude = 0;
+
+    //Init the plane state
+    //****************************** To change to false: true only for tests ***********************************************//
+    bool inFlight = true;
 
     while(device->run())
     {
@@ -172,15 +266,38 @@ int main()
         compass->setCompassTexture(texture_level);
         compass->setCompassHeading(0);*/
 
-        //Movements of the plane
-        receiver.MovePlane(plane_node);
+        //If the plane is flying then
+        //  inFlight = true
+        //Else, ie. plane on the ground, in take-off position and in landing position
+        //  inFlight = false
+        if(inFlight)
+        {
+            //Movements of the plane
+            planeSpeed      = receiver.getSpeed();
+            planeAltitude   = receiver.getAltitude();
+
+            ic::vector3df position = plane_node->getPosition();
+            ic::vector3df rotation = plane_node->getRotation();
+
+            position.X += planeSpeed * sin(rotation.Y * M_PI / 180.0);
+            position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
+            position.Y = planeAltitude;
+
+            plane_node->setPosition(position);
+
+            receiver.movePlane(plane_node);
+        }
+        else
+        {
+            std::cout<<"TD : plane on the ground, in take-off position and in landing position"<<std::endl;
+        }
 
         //Camera position
-        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 18, -34), plane_node->getPosition() + ic::vector3df(0, 0, 0));
+        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 18, -34), plane_node->getPosition());
 
-        // Back color
+        //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
-        // Draw the scene
+        //Draw the scene
         smgr->drawAll();
         gui->drawAll();
         //compass->draw();
