@@ -219,6 +219,19 @@ int main()
     ig::IGUIImage *vs_10    = gui->addImage(ic::rect<s32>(140+offset + 3*(offset+width),153-height, 140+offset+width + 3*(offset+width),153)); vs_10->setScaleImage(true);
     ig::IGUIImage *vs_1     = gui->addImage(ic::rect<s32>(140+offset + 4*(offset+width),153-height, 140+offset+width + 4*(offset+width),153)); vs_1->setScaleImage(true);
 
+    // Collision management
+    scene::ITriangleSelector *selector_city;
+    selector_city = smgr->createOctreeTriangleSelector(city_mesh, city_node);
+    city_node->setTriangleSelector(selector_city);
+    scene::ISceneNodeAnimator *anim_collision_plane_city;
+    anim_collision_plane_city = smgr->createCollisionResponseAnimator(selector_city,
+                                                 plane_node,
+                                                 ic::vector3df(1.5, 1.5, 1.5), // radiuses
+                                                 ic::vector3df(0, 0, 0),  // gravity
+                                                 ic::vector3df(0, 0, 0));  // center offset
+    plane_node->addAnimator(anim_collision_plane_city);
+
+
     while(device->run())
     {
         //Camera position
