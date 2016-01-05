@@ -128,13 +128,12 @@ int main()
   ig::IGUIEnvironment *gui  = device->getGUIEnvironment();
 
   //City
-  device->getFileSystem()->addFileArchive("data/city.zip");
-  is::IAnimatedMesh *city_mesh = smgr->getMesh("city.obj");
+  is::IMesh *city_mesh = smgr->getMesh("data/city_cercles.obj");
   is::ISceneNode *city_node;
-  city_node = smgr->addOctreeSceneNode(city_mesh->getMesh(0),nullptr,-1,1024);
+  city_node = smgr->addOctreeSceneNode(city_mesh,nullptr,-1,1024);
   city_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-  city_node->setScale(ic::vector3df(100,100,100));
-  city_node->setPosition(ic::vector3df(-1000,-500, 100));
+  city_node->setScale(ic::vector3df(10,10,10));
+  //city_node->setPosition(ic::vector3df(-1000,-500, 100));
 
   //Plane
   device->getFileSystem()->addFileArchive("data/plane.zip");
@@ -150,18 +149,17 @@ int main()
   smgr->addCameraSceneNodeFPS();
 
   //Water
-  is::IAnimatedMesh *mesh_water = smgr->addHillPlaneMesh( "myHill",
-         core::dimension2d<f32>(20,20),
+  is::IMesh *mesh_water = smgr->addHillPlaneMesh( "myHill",
+         core::dimension2d<f32>(4.6,4.6),
          core::dimension2d<u32>(200,200), 0, 0,
          core::dimension2d<f32>(0,0),
-         core::dimension2d<f32>(20,20));
-  scene::ISceneNode* plan_water = smgr->addWaterSurfaceSceneNode(mesh_water->getMesh(0), 1.0f, 500.0f, 30.0f);
+         core::dimension2d<f32>(5,5));
+  scene::ISceneNode* plan_water = smgr->addWaterSurfaceSceneNode(mesh_water, 0.2f, 500.0f, 10.0f);
   plan_water->setMaterialTexture(0, driver->getTexture("data/water.jpg"));
   plan_water->setMaterialFlag(iv::EMF_LIGHTING, false);
   plan_water->setMaterialType(video::EMT_REFLECTION_2_LAYER);
-  float water_initial_position = -6.0f;
-  float water_position = water_initial_position;
-  plan_water->setPosition(ic::vector3df(-1000,-502, 100));
+  //plan_water->setPosition(ic::vector3df(-1000,-502, 100));
+  plan_water->setPosition(ic::vector3df(0,-2, 0));
 
   while(device->run())
   {
