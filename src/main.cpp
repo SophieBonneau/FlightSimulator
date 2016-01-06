@@ -18,6 +18,7 @@ float rotation = 0.0;
 struct MyEventReceiver : IEventReceiver
 {
     is::IAnimatedMeshSceneNode *node;
+    is::ISceneNode *parentNode;
     bool keyIsDown[KEY_KEY_CODES_COUNT];
 
     float speedStep;
@@ -70,7 +71,6 @@ struct MyEventReceiver : IEventReceiver
     {
         //Increase or decrease the plane speed
         ic::vector3df childRotation = node->getRotation();
-
         ic::vector3df parentRotation = parentNode->getRotation();
 
         if(keyIsDown[KEY_KEY_Z] == true)
@@ -97,6 +97,16 @@ struct MyEventReceiver : IEventReceiver
             parentNode->setRotation(parentRotation);
             node->setRotation(childRotation);
         }
+        if(keyIsDown[KEY_KEY_D] == false)
+        {
+            //parentRotation.Y += rotStep;
+            if(childRotation.Z < 0) {
+                childRotation.Z += 0.1;
+            }
+            parentNode->setRotation(parentRotation);
+            node->setRotation(childRotation);
+
+        }
         if(keyIsDown[KEY_KEY_Q] == true)
         {
             std::cout<<"TD : Turn the plane to the left"<<std::endl;
@@ -104,6 +114,16 @@ struct MyEventReceiver : IEventReceiver
             childRotation.Z  += 0.1;
             parentNode->setRotation(parentRotation);
             node->setRotation(childRotation);
+        }
+        if(keyIsDown[KEY_KEY_Q] == false)
+        {
+            //parentRotation.Y += rotStep;
+            if(childRotation.Z > 0) {
+                childRotation.Z -= 0.1;
+            }
+            parentNode->setRotation(parentRotation);
+            node->setRotation(childRotation);
+
         }
 
         //Get the plane up or down
@@ -155,7 +175,7 @@ struct MyEventReceiver : IEventReceiver
             {
                 keyIsDown[KEY_KEY_Z] = true;
             }
-            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Z) // Stop Avance
+            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Z && keyIsDown[KEY_KEY_Z]) // Stop Avance
             {
                 keyIsDown[KEY_KEY_Z] = false;
             }
@@ -302,13 +322,6 @@ int main()
         {
             std::cout<<"TD : plane on the ground, in take-off position and in landing position"<<std::endl;
         }
-
-        /*std::cout<<"Rot X : "<<rotation.X<<std::endl;
-        std::cout<<"Rot Y : "<<rotation.Y<<std::endl;
-        std::cout<<"Rot Z : "<<rotation.Z<<std::endl;
-        std::cout<<"Pos X : "<<position.X<<std::endl;
-        std::cout<<"Pos Y : "<<position.Y<<std::endl;
-        std::cout<<"Pos Z : "<<position.Z<<std::endl;*/
 
         //Camera position
         smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 18, -34), parentNode->getPosition());
