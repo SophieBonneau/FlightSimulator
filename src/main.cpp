@@ -70,7 +70,6 @@ struct MyEventReceiver : IEventReceiver
     {
         //Increase or decrease the plane speed
         ic::vector3df childRotation = node->getRotation();
-
         ic::vector3df parentRotation = parentNode->getRotation();
 
         if(keyIsDown[KEY_KEY_Z] == true)
@@ -109,17 +108,58 @@ struct MyEventReceiver : IEventReceiver
         //Get the plane up or down
         if(keyIsDown[KEY_KEY_A] == true)
         {
-            if(planeAltitude < 200)
+            if(planeAltitude < 60)
+            {
                 planeAltitude += altitudeStep;
+                if(childRotation.X > -45)
+                {
+                    childRotation.X -= 0.1;
+                    node->setRotation(childRotation);
+                    std::cout<<"badass values"<<childRotation.X<<std::endl;
+                }
+            }
             else
-                std::cout<<"Your plane is already at the highest altitude !"<<std::endl;
+            {
+                if(childRotation.X < 0)
+                {
+                    childRotation.X += 0.1;
+                    node->setRotation(childRotation);
+                    std::cout<<"Your plane is already at the highest altitude !"<<std::endl;
+                }
+            }
+        }
+        else if(childRotation.X < 0)
+        {
+            childRotation.X += 0.1;
+            node->setRotation(childRotation);
+            std::cout<<"Your plane is already at the highest altitude !"<<std::endl;
         }
         if(keyIsDown[KEY_KEY_E] == true)
         {
             if(planeAltitude > 0)
+            {
                 planeAltitude -= altitudeStep;
+                if(childRotation.X < 45)
+                {
+                    childRotation.X += 0.1;
+                    node->setRotation(childRotation);
+                }
+            }
             else
-                std::cout<<"Your plane is already on the floor !"<<std::endl;
+            {
+                if(childRotation.X > 0)
+                {
+                    childRotation.X -= 0.1;
+                    node->setRotation(childRotation);
+                    std::cout<<"Your plane is already on the floor !"<<std::endl;
+                }
+            }
+        }
+        else if(childRotation.X > 0)
+        {
+            childRotation.X -= 0.1;
+            node->setRotation(childRotation);
+            std::cout<<"Your plane is already on the floor !"<<std::endl;
         }
 
         //Rear or unrear the plane
@@ -302,13 +342,6 @@ int main()
         {
             std::cout<<"TD : plane on the ground, in take-off position and in landing position"<<std::endl;
         }
-
-        /*std::cout<<"Rot X : "<<rotation.X<<std::endl;
-        std::cout<<"Rot Y : "<<rotation.Y<<std::endl;
-        std::cout<<"Rot Z : "<<rotation.Z<<std::endl;
-        std::cout<<"Pos X : "<<position.X<<std::endl;
-        std::cout<<"Pos Y : "<<position.Y<<std::endl;
-        std::cout<<"Pos Z : "<<position.Z<<std::endl;*/
 
         //Camera position
         smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 18, -34), parentNode->getPosition());
