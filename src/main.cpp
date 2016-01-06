@@ -106,12 +106,25 @@ struct MyEventReceiver : IEventReceiver
     bool keyIsDown[KEY_KEY_CODES_COUNT];
 };
 
+void setGaugeOffset(int& gauge_offset, int percetage)
+{
+    if(percentage < 0 || percentage > 100)
+    {
+        std::cout<<"Error, the percentage must be between 0 and 100."<<std::endl;
+    }
+    else
+    {
+
+    }
+}
+
 int main()
 {
     // display values
     int wind_speed = 20;
     int altitude = 1000;
     int vertical_speed = -20;
+    int gauge_offset = 0;
 
     // Le gestionnaire d'événements
     MyEventReceiver receiver;
@@ -157,7 +170,7 @@ int main()
 
     //2D elements
     // Compass
-   iv::ITexture *texture_compass = driver->getTexture("data/2d/compass.png");
+    iv::ITexture *texture_compass = driver->getTexture("data/2d/compass.png");
     ig::IGUIImage *image_compass = gui->addImage(ic::rect<s32>(10, 10, 80, 80));
     image_compass->setImage(texture_compass);
     image_compass->setScaleImage(true);
@@ -240,6 +253,9 @@ int main()
     ig::IGUIImage *image_vertical_speed_u = gui->addImage(ic::rect<s32>(140+offset+3*width + 4*(offset+width),153-12, 140+offset+3*width + 4*(offset+width)+29,153));
     image_vertical_speed_u->setImage(texture_vertical_speed_u);
     image_vertical_speed_u->setScaleImage(true);
+    // Gauge textures
+    iv::ITexture *texture_gauge_empty = driver->getTexture("data/2d/gauge-empty.png");
+    iv::ITexture *texture_gauge_full = driver->getTexture("data/2d/gauge-full.png");
 
     // Collision management
     scene::ITriangleSelector *selector_city;
@@ -267,6 +283,21 @@ int main()
                                                              device->getVideoDriver()->getScreenSize().Height/2 + 30), gui, nullptr);
         compass_level->setCompassTexture(texture_level);
         compass_level->setCompassHeading(0);
+        // Gauge empty
+        int gauge_width = 30;
+        int gauge_height = 200;
+        CGUICompass* compass_gauge_empty = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width -10 - gauge_width,
+                                                                         10,
+                                                                         device->getVideoDriver()->getScreenSize().Width -10,
+                                                                         10 + gauge_height), gui, nullptr);
+        compass_gauge_empty->setCompassTexture(texture_gauge_empty);
+        //Gauge full
+        CGUICompass* compass_gauge_full = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width -10 - gauge_width + 4,
+                                                                         20 +2+gauge_offset,
+                                                                         device->getVideoDriver()->getScreenSize().Width -10 -4,
+                                                                         10 + gauge_height -2), gui, nullptr);
+        compass_gauge_full->setCompassTexture(texture_gauge_full);
+
         // Arrows
         CGUICompass* compass_arrows = new CGUICompass(ic::rect<s32>(10, 10, 80, 80), gui, nullptr);
         compass_arrows->setCompassTexture(texture_arrows);
@@ -312,6 +343,8 @@ int main()
         compass_level->draw();
         compass_arrows->draw();
         compass_plane->draw();
+        compass_gauge_empty->draw();
+        compass_gauge_full->draw();
         driver->endScene();
     }
     device->drop();
