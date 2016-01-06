@@ -66,14 +66,16 @@ struct MyEventReceiver : IEventReceiver
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
-    void movePlane(is::IAnimatedMeshSceneNode *node)
+    void movePlane(is::IAnimatedMeshSceneNode *node, is::ISceneNode *parentNode)
     {
         //Increase or decrease the plane speed
-        ic::vector3df position = node->getPosition();
-        ic::vector3df rotation = node->getRotation();
+        ic::vector3df childRotation = node->getRotation();
+
+        ic::vector3df parentRotation = parentNode->getRotation();
+
         if(keyIsDown[KEY_KEY_Z] == true)
         {
-            if(planeSpeed < 5)
+            if(planeSpeed < 0.5)
                 planeSpeed += speedStep;
             else
                 std::cout<<"Your plane is already at the highest speed !"<<std::endl;
@@ -90,13 +92,18 @@ struct MyEventReceiver : IEventReceiver
         //Open the side panels of the plane to turn to the right or the left
         if(keyIsDown[KEY_KEY_D] == true)
         {
-            std::cout<<"TD : Turn the plane to the right"<<std::endl;
-            rotation.Y += rotStep;
+            parentRotation.Y += rotStep;
+            childRotation.Z -= 0.1;
+            parentNode->setRotation(parentRotation);
+            node->setRotation(childRotation);
         }
         if(keyIsDown[KEY_KEY_Q] == true)
         {
             std::cout<<"TD : Turn the plane to the left"<<std::endl;
-            rotation.Y -= rotStep;
+            parentRotation.Y -= rotStep;
+            childRotation.Z  += 0.1;
+            parentNode->setRotation(parentRotation);
+            node->setRotation(childRotation);
         }
 
         //Get the plane up or down
@@ -124,8 +131,8 @@ struct MyEventReceiver : IEventReceiver
         {
             //std::cout<<"TD : unrear the plane"<<std::endl;
         }
-        node->setPosition(position);
-        node->setRotation(rotation);
+        /*node->setPosition(position);
+        node->setRotation(rotation);*/
 
 
     }
@@ -226,9 +233,13 @@ int main()
 
     //Init the object plane
     is::IAnimatedMesh *plane_mesh = smgr->getMesh("data/plane/Cessna172.obj");
-    is::IAnimatedMeshSceneNode *plane_node = smgr->addAnimatedMeshSceneNode(plane_mesh);
+    //is::IAnimatedMesh *planeParentMesh;
+    is::ISceneNode *parentNode = smgr->addEmptySceneNode();
+    is::IAnimatedMeshSceneNode *plane_node= smgr->addAnimatedMeshSceneNode(plane_mesh);
+    std::cout<<"Not depressed yet"<<std::endl;
+    plane_node->setParent(parentNode);
     plane_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    plane_node->setScale(ic::vector3df(0.1,0.1,0.1));
+    plane_node->setScale(ic::vector3df(0.05,0.05,0.05));
 
     //Init the object water
     is::IMesh *mesh_water = smgr->addHillPlaneMesh( "myHill",
@@ -244,8 +255,8 @@ int main()
 
     //Init steps
     float speedStep     = 0.01f;
-    float rotStep       = 0.5f;
-    float altitudeStep  = 0.5f;
+    float rotStep       = 0.3f;
+    float altitudeStep  = 0.1f;
     receiver.setSteps(speedStep, rotStep, altitudeStep);
 
     float planeSpeed    = 0;
@@ -270,30 +281,37 @@ int main()
         //  inFlight = true
         //Else, ie. plane on the ground, in take-off position and in landing position
         //  inFlight = false
+        ic::vector3df position = parentNode->getPosition();
+        ic::vector3df rotation = parentNode->getRotation();
+
         if(inFlight)
         {
             //Movements of the plane
             planeSpeed      = receiver.getSpeed();
             planeAltitude   = receiver.getAltitude();
 
-            ic::vector3df position = plane_node->getPosition();
-            ic::vector3df rotation = plane_node->getRotation();
-
             position.X += planeSpeed * sin(rotation.Y * M_PI / 180.0);
             position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
-            position.Y = planeAltitude;
+            position.Y  = planeAltitude;
 
-            plane_node->setPosition(position);
+            parentNode->setPosition(position);
 
-            receiver.movePlane(plane_node);
+            receiver.movePlane(plane_node, parentNode);
         }
         else
         {
             std::cout<<"TD : plane on the ground, in take-off position and in landing position"<<std::endl;
         }
 
+        /*std::cout<<"Rot X : "<<rotation.X<<std::endl;
+        std::cout<<"Rot Y : "<<rotation.Y<<std::endl;
+        std::cout<<"Rot Z : "<<rotation.Z<<std::endl;
+        std::cout<<"Pos X : "<<position.X<<std::endl;
+        std::cout<<"Pos Y : "<<position.Y<<std::endl;
+        std::cout<<"Pos Z : "<<position.Z<<std::endl;*/
+
         //Camera position
-        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 18, -34), plane_node->getPosition());
+        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 18, -34), parentNode->getPosition());
 
         //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
