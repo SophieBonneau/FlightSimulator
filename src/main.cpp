@@ -21,6 +21,7 @@ struct MyEventReceiver : IEventReceiver
             keyIsDown[i] = false;
         }
     }
+
     void MovePlane(is::IAnimatedMeshSceneNode *node)
     {
         ic::vector3df position = node->getPosition();
@@ -46,10 +47,12 @@ struct MyEventReceiver : IEventReceiver
         node->setPosition(position);
         node->setRotation(rotation);
     }
+
     void setStep(const float step)
     {
         this->step = step;
     }
+
     bool OnEvent(const SEvent &event)
     {
         // Si l'événement est de type clavier (KEY_INPUT)
@@ -93,16 +96,16 @@ struct MyEventReceiver : IEventReceiver
             {
                 keyIsDown[KEY_KEY_D] = false;
             }
-
-
-
         }
+
         return false;
     }
+
     is::IAnimatedMeshSceneNode *node;
     float step;
     bool keyIsDown[KEY_KEY_CODES_COUNT];
 };
+
 int main()
 {
     // display values
@@ -184,7 +187,6 @@ int main()
     {
         compass_plane->setCompassHeading(90);
     }
-
     //Numbers
     iv::ITexture *numbers[10];
     numbers[0] = driver->getTexture("data/2d/numbers/0.png");
@@ -200,6 +202,7 @@ int main()
     // Places for the wind speed
     int width = 10;
     int height = 11;
+    int height_u = 9;
     int offset = 1;
     ig::IGUIImage *ws_10000 = gui->addImage(ic::rect<s32>(120+offset,112-height, 120+offset+width,112)); ws_10000->setScaleImage(true);
     ig::IGUIImage *ws_1000  = gui->addImage(ic::rect<s32>(120+offset + offset+width,112-height, 120+offset+width + offset+width,112)); ws_1000->setScaleImage(true);
@@ -213,11 +216,30 @@ int main()
     ig::IGUIImage *a_10    = gui->addImage(ic::rect<s32>(90+offset + 3*(offset+width),133-height, 90+offset+width + 3*(offset+width),133)); a_10->setScaleImage(true);
     ig::IGUIImage *a_1     = gui->addImage(ic::rect<s32>(90+offset + 4*(offset+width),133-height, 90+offset+width + 4*(offset+width),133)); a_1->setScaleImage(true);
     // Places for vertical speed
-    ig::IGUIImage *vs_10000 = gui->addImage(ic::rect<s32>(140+offset,153-height, 140+offset+width,153)); vs_10000->setScaleImage(true);
-    ig::IGUIImage *vs_1000  = gui->addImage(ic::rect<s32>(140+offset + offset+width,153-height, 140+offset+width + offset+width,153)); vs_1000->setScaleImage(true);
-    ig::IGUIImage *vs_100   = gui->addImage(ic::rect<s32>(140+offset + 2*(offset+width),153-height, 140+offset+width + 2*(offset+width),153)); vs_100->setScaleImage(true);
-    ig::IGUIImage *vs_10    = gui->addImage(ic::rect<s32>(140+offset + 3*(offset+width),153-height, 140+offset+width + 3*(offset+width),153)); vs_10->setScaleImage(true);
-    ig::IGUIImage *vs_1     = gui->addImage(ic::rect<s32>(140+offset + 4*(offset+width),153-height, 140+offset+width + 4*(offset+width),153)); vs_1->setScaleImage(true);
+    ig::IGUIImage *sign = gui->addImage(ic::rect<s32>(140+offset,153-height, 140+offset+width,153)); sign->setScaleImage(true);
+    iv::ITexture *texture_plus = driver->getTexture("data/2d/+.png");
+    iv::ITexture *texture_minus = driver->getTexture("data/2d/-.png");
+    sign->setImage(texture_plus);
+    ig::IGUIImage *vs_10000 = gui->addImage(ic::rect<s32>(140+offset+width,153-height, 140+offset+2*width,153)); sign->setScaleImage(true);vs_10000->setScaleImage(true);
+    ig::IGUIImage *vs_1000  = gui->addImage(ic::rect<s32>(140+offset+width + offset+width,153-height, 140+offset+2*width + offset+width,153)); vs_1000->setScaleImage(true);
+    ig::IGUIImage *vs_100   = gui->addImage(ic::rect<s32>(140+offset+width + 2*(offset+width),153-height, 140+offset+2*width + 2*(offset+width),153)); vs_100->setScaleImage(true);
+    ig::IGUIImage *vs_10    = gui->addImage(ic::rect<s32>(140+offset+width + 3*(offset+width),153-height, 140+offset+2*width + 3*(offset+width),153)); vs_10->setScaleImage(true);
+    ig::IGUIImage *vs_1     = gui->addImage(ic::rect<s32>(140+offset+width + 4*(offset+width),153-height, 140+offset+2*width + 4*(offset+width),153)); vs_1->setScaleImage(true);
+    // Wind speed unity
+    iv::ITexture *texture_wind_speed_u = driver->getTexture("data/2d/kmh.png");
+    ig::IGUIImage *image_wind_speed_u = gui->addImage(ic::rect<s32>(120+offset+2*width + 4*(offset+width), 112-height, 120+offset+2*width+ 4*(offset+width)+40, 112));
+    image_wind_speed_u->setImage(texture_wind_speed_u);
+    image_wind_speed_u->setScaleImage(true);
+    // Altitude unity
+    iv::ITexture *texture_altitude_u = driver->getTexture("data/2d/m.png");
+    ig::IGUIImage *image_altitude_u = gui->addImage(ic::rect<s32>(90+offset+2*width + 4*(offset+width),132-height_u, 90+offset+2*width + 4*(offset+width)+16,132));
+    image_altitude_u->setImage(texture_altitude_u);
+    image_altitude_u->setScaleImage(true);
+    // Vertical speed unitys
+    iv::ITexture *texture_vertical_speed_u = driver->getTexture("data/2d/ms.png");
+    ig::IGUIImage *image_vertical_speed_u = gui->addImage(ic::rect<s32>(140+offset+3*width + 4*(offset+width),153-12, 140+offset+3*width + 4*(offset+width)+29,153));
+    image_vertical_speed_u->setImage(texture_vertical_speed_u);
+    image_vertical_speed_u->setScaleImage(true);
 
     // Collision management
     scene::ITriangleSelector *selector_city;
@@ -247,7 +269,6 @@ int main()
         compass_level->setCompassHeading(0);
         // Arrows
         CGUICompass* compass_arrows = new CGUICompass(ic::rect<s32>(10, 10, 80, 80), gui, nullptr);
-
         compass_arrows->setCompassTexture(texture_arrows);
         compass_arrows->setCompassHeading(50);
         // Wind speed number update
@@ -268,11 +289,18 @@ int main()
         vs_100->setImage(numbers[(abs(vertical_speed) / 100) % 10]);
         vs_10->setImage(numbers[(abs(vertical_speed) / 10) % 10]);
         vs_1->setImage(numbers[(abs(vertical_speed) / 1) % 10]);
-        // Update the plane orientation
+        // Update the 2d plane orientation and the vertical speed sign
         if(vertical_speed >= 0)
+        {
+            sign->setImage(texture_plus);
             compass_plane->setCompassHeading(0);
+        }
         else
+        {
+            sign->setImage(texture_minus);
             compass_plane->setCompassHeading(-55);
+        }
+
 
         //Movements of the plane
         receiver.MovePlane(plane_node);
