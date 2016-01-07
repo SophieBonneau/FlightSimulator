@@ -4,14 +4,13 @@
 #include <vector>
 
 #include "CGUICompass.hpp"
+#include "GUIElements.hpp"
 
 using namespace irr;
 namespace ic = irr::core;
 namespace is = irr::scene;
 namespace iv = irr::video;
 namespace ig = irr::gui;
-
-int gauge_value = 30;
 
 
 struct MyEventReceiver : IEventReceiver
@@ -98,15 +97,6 @@ struct MyEventReceiver : IEventReceiver
             {
                 keyIsDown[KEY_KEY_D] = false;
             }
-
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_I)
-            {
-                gauge_value ++;
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_K)
-            {
-                gauge_value --;
-            }
         }
 
         return false;
@@ -117,20 +107,6 @@ struct MyEventReceiver : IEventReceiver
     bool keyIsDown[KEY_KEY_CODES_COUNT];
 };
 
-void setGaugeOffset(int& gauge_offset, int percentage, int gauge_height)
-{
-    if(percentage < 0 || percentage > 100)
-    {
-        std::cout<<"Error, the percentage must be between 0 and 100."<<std::endl;
-    }
-    else
-    {
-        double div = (gauge_height-4)*percentage/100;
-        gauge_offset = (gauge_height-4) - int(div);
-        //std::cout<<"gauge offset = "<<gauge_offset<<std::endl;
-    }
-}
-
 int main()
 {
     // display values
@@ -138,17 +114,22 @@ int main()
     int altitude = 1000;
     int vertical_speed = -20;
     int gauge_offset = 0;
+    bool stall = true;
 
-    // Le gestionnaire d'événements
+    // Event manager
     MyEventReceiver receiver;
 
-    // Création de la fenêtre et du système de rendu.
+    // Window and rendering system creation
     IrrlichtDevice *device = createDevice(iv::EDT_OPENGL,
                                           ic::dimension2d<u32>(640, 480),
                                           16, false, false, false, &receiver);
     iv::IVideoDriver *driver = device->getVideoDriver();
     is::ISceneManager *smgr = device->getSceneManager();
     ig::IGUIEnvironment *gui = device->getGUIEnvironment();
+
+    // GUI elements mananger
+    GUIElements* guiManager = new GUIElements();
+    guiManager->setDevice(device);
 
     //City
     is::IMesh *city_mesh = smgr->getMesh("data/city_cercles.obj");
@@ -181,94 +162,8 @@ int main()
     //plan_water->setPosition(ic::vector3df(-1000,-502, 100));
     plan_water->setPosition(ic::vector3df(0,-2, 0));
 
-    //2D elements
-    // Compass
-    iv::ITexture *texture_compass = driver->getTexture("data/2d/compass.png");
-    ig::IGUIImage *image_compass = gui->addImage(ic::rect<s32>(10, 10, 80, 80));
-    image_compass->setImage(texture_compass);
-    image_compass->setScaleImage(true);
-    // Level and arrows textures
-    iv::ITexture *texture_level = driver->getTexture("data/2d/level.png");
-    iv::ITexture *texture_arrows = driver->getTexture("data/2d/arrows.png");
-    // Wind speed
-    iv::ITexture *texture_wind_speed = driver->getTexture("data/2d/wind-speed.png");
-    ig::IGUIImage *image_wind_speed = gui->addImage(ic::rect<s32>(10, 100, 120, 115));
-    image_wind_speed->setImage(texture_wind_speed);
-    image_wind_speed->setScaleImage(true);
-    // Altitude
-    iv::ITexture *texture_altitude = driver->getTexture("data/2d/altitude.png");
-    ig::IGUIImage *image_altitude = gui->addImage(ic::rect<s32>(10, 120, 90, 135));
-    image_altitude->setImage(texture_altitude);
-    image_altitude->setScaleImage(true);
-    // Vertical speed
-    iv::ITexture *texture_vertical_speed = driver->getTexture("data/2d/vertical-speed.png");
-    ig::IGUIImage *image_vertical_speed = gui->addImage(ic::rect<s32>(10, 140, 140, 155));
-    image_vertical_speed->setImage(texture_vertical_speed);
-    image_vertical_speed->setScaleImage(true);
-    // Up/down plane
-    iv::ITexture *texture_plane = driver->getTexture("data/2d/plane-up.png");
-    CGUICompass* compass_plane = new CGUICompass(ic::rect<s32>(20,160,50,190), gui, nullptr);
-    compass_plane->setCompassTexture(texture_plane);
-    if(vertical_speed <0)
-    {
-        compass_plane->setCompassHeading(90);
-    }
-    //Numbers
-    iv::ITexture *numbers[10];
-    numbers[0] = driver->getTexture("data/2d/numbers/0.png");
-    numbers[1] = driver->getTexture("data/2d/numbers/1.png");
-    numbers[2] = driver->getTexture("data/2d/numbers/2.png");
-    numbers[3] = driver->getTexture("data/2d/numbers/3.png");
-    numbers[4] = driver->getTexture("data/2d/numbers/4.png");
-    numbers[5] = driver->getTexture("data/2d/numbers/5.png");
-    numbers[6] = driver->getTexture("data/2d/numbers/6.png");
-    numbers[7] = driver->getTexture("data/2d/numbers/7.png");
-    numbers[8] = driver->getTexture("data/2d/numbers/8.png");
-    numbers[9] = driver->getTexture("data/2d/numbers/9.png");
-    // Places for the wind speed
-    int width = 10;
-    int height = 11;
-    int height_u = 9;
-    int offset = 1;
-    ig::IGUIImage *ws_10000 = gui->addImage(ic::rect<s32>(120+offset,112-height, 120+offset+width,112)); ws_10000->setScaleImage(true);
-    ig::IGUIImage *ws_1000  = gui->addImage(ic::rect<s32>(120+offset + offset+width,112-height, 120+offset+width + offset+width,112)); ws_1000->setScaleImage(true);
-    ig::IGUIImage *ws_100   = gui->addImage(ic::rect<s32>(120+offset + 2*(offset+width),112-height, 120+offset+width + 2*(offset+width),112)); ws_100->setScaleImage(true);
-    ig::IGUIImage *ws_10    = gui->addImage(ic::rect<s32>(120+offset + 3*(offset+width),112-height, 120+offset+width + 3*(offset+width),112)); ws_10->setScaleImage(true);
-    ig::IGUIImage *ws_1     = gui->addImage(ic::rect<s32>(120+offset + 4*(offset+width),112-height, 120+offset+width + 4*(offset+width),112)); ws_1->setScaleImage(true);
-    // Places for the altitude
-    ig::IGUIImage *a_10000 = gui->addImage(ic::rect<s32>(90+offset,133-height, 90+offset+width,133)); a_10000->setScaleImage(true);
-    ig::IGUIImage *a_1000  = gui->addImage(ic::rect<s32>(90+offset + offset+width,133-height, 90+offset+width + offset+width,133)); a_1000->setScaleImage(true);
-    ig::IGUIImage *a_100   = gui->addImage(ic::rect<s32>(90+offset + 2*(offset+width),133-height, 90+offset+width + 2*(offset+width),133)); a_100->setScaleImage(true);
-    ig::IGUIImage *a_10    = gui->addImage(ic::rect<s32>(90+offset + 3*(offset+width),133-height, 90+offset+width + 3*(offset+width),133)); a_10->setScaleImage(true);
-    ig::IGUIImage *a_1     = gui->addImage(ic::rect<s32>(90+offset + 4*(offset+width),133-height, 90+offset+width + 4*(offset+width),133)); a_1->setScaleImage(true);
-    // Places for vertical speed
-    ig::IGUIImage *sign = gui->addImage(ic::rect<s32>(140+offset,153-height, 140+offset+width,153)); sign->setScaleImage(true);
-    iv::ITexture *texture_plus = driver->getTexture("data/2d/+.png");
-    iv::ITexture *texture_minus = driver->getTexture("data/2d/-.png");
-    sign->setImage(texture_plus);
-    ig::IGUIImage *vs_10000 = gui->addImage(ic::rect<s32>(140+offset+width,153-height, 140+offset+2*width,153)); sign->setScaleImage(true);vs_10000->setScaleImage(true);
-    ig::IGUIImage *vs_1000  = gui->addImage(ic::rect<s32>(140+offset+width + offset+width,153-height, 140+offset+2*width + offset+width,153)); vs_1000->setScaleImage(true);
-    ig::IGUIImage *vs_100   = gui->addImage(ic::rect<s32>(140+offset+width + 2*(offset+width),153-height, 140+offset+2*width + 2*(offset+width),153)); vs_100->setScaleImage(true);
-    ig::IGUIImage *vs_10    = gui->addImage(ic::rect<s32>(140+offset+width + 3*(offset+width),153-height, 140+offset+2*width + 3*(offset+width),153)); vs_10->setScaleImage(true);
-    ig::IGUIImage *vs_1     = gui->addImage(ic::rect<s32>(140+offset+width + 4*(offset+width),153-height, 140+offset+2*width + 4*(offset+width),153)); vs_1->setScaleImage(true);
-    // Wind speed unity
-    iv::ITexture *texture_wind_speed_u = driver->getTexture("data/2d/kmh.png");
-    ig::IGUIImage *image_wind_speed_u = gui->addImage(ic::rect<s32>(120+offset+2*width + 4*(offset+width), 112-height, 120+offset+2*width+ 4*(offset+width)+40, 112));
-    image_wind_speed_u->setImage(texture_wind_speed_u);
-    image_wind_speed_u->setScaleImage(true);
-    // Altitude unity
-    iv::ITexture *texture_altitude_u = driver->getTexture("data/2d/m.png");
-    ig::IGUIImage *image_altitude_u = gui->addImage(ic::rect<s32>(90+offset+2*width + 4*(offset+width),132-height_u, 90+offset+2*width + 4*(offset+width)+16,132));
-    image_altitude_u->setImage(texture_altitude_u);
-    image_altitude_u->setScaleImage(true);
-    // Vertical speed unitys
-    iv::ITexture *texture_vertical_speed_u = driver->getTexture("data/2d/ms.png");
-    ig::IGUIImage *image_vertical_speed_u = gui->addImage(ic::rect<s32>(140+offset+3*width + 4*(offset+width),153-12, 140+offset+3*width + 4*(offset+width)+29,153));
-    image_vertical_speed_u->setImage(texture_vertical_speed_u);
-    image_vertical_speed_u->setScaleImage(true);
-    // Gauge textures
-    iv::ITexture *texture_gauge_empty = driver->getTexture("data/2d/gauge-empty.png");
-    iv::ITexture *texture_gauge_full = driver->getTexture("data/2d/gauge-full.png");
+    // 2D elements initialization
+    guiManager->initialize2DElements();
 
     // Collision management
     scene::ITriangleSelector *selector_city;
@@ -288,78 +183,19 @@ int main()
         //Camera position
         smgr->addCameraSceneNode(plane_node, ic::vector3df(-34, 18, 0), plane_node->getPosition()+ic::vector3df(0, 10, 0));
 
-        //2D elements
-        // Horizontal level
-        CGUICompass* compass_level = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width/2 - 40,
-                                                             device->getVideoDriver()->getScreenSize().Height/2 - 30,
-                                                             device->getVideoDriver()->getScreenSize().Width/2 + 40,
-                                                             device->getVideoDriver()->getScreenSize().Height/2 + 30), gui, nullptr);
-        compass_level->setCompassTexture(texture_level);
-        compass_level->setCompassHeading(0);
-        // Gauge empty
-        int gauge_width = 20;
-        int gauge_height = 200;
-        CGUICompass* compass_gauge_empty = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width -10 - gauge_width,
-                                                                         10,
-                                                                         device->getVideoDriver()->getScreenSize().Width -10,
-                                                                         10 + gauge_height), gui, nullptr);
-        compass_gauge_empty->setCompassTexture(texture_gauge_empty);
-        //Gauge full
-        setGaugeOffset(gauge_offset, gauge_value, gauge_height);
-        //gauge_offset = 0;
-        CGUICompass* compass_gauge_full = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width -10 - gauge_width + 4,
-                                                                         10 +2+gauge_offset,
-                                                                         device->getVideoDriver()->getScreenSize().Width -10 -4,
-                                                                         10 + gauge_height -2), gui, nullptr);
-        compass_gauge_full->setCompassTexture(texture_gauge_full);
 
-        // Arrows
-        CGUICompass* compass_arrows = new CGUICompass(ic::rect<s32>(10, 10, 80, 80), gui, nullptr);
-        compass_arrows->setCompassTexture(texture_arrows);
-        compass_arrows->setCompassHeading(50);
-        // Wind speed number update
-        ws_10000->setImage(numbers[(wind_speed / 10000) % 10]);
-        ws_1000->setImage(numbers[(wind_speed / 1000) % 10]);
-        ws_100->setImage(numbers[(wind_speed / 100) % 10]);
-        ws_10->setImage(numbers[(wind_speed / 10) % 10]);
-        ws_1->setImage(numbers[(wind_speed / 1) % 10]);
-        // altitude number update
-        a_10000->setImage(numbers[(altitude / 10000) % 10]);
-        a_1000->setImage(numbers[(altitude / 1000) % 10]);
-        a_100->setImage(numbers[(altitude / 100) % 10]);
-        a_10->setImage(numbers[(altitude / 10) % 10]);
-        a_1->setImage(numbers[(altitude / 1) % 10]);
-        // vertical speed number update
-        vs_10000->setImage(numbers[(abs(vertical_speed) / 10000) % 10]);
-        vs_1000->setImage(numbers[(abs(vertical_speed) / 1000) % 10]);
-        vs_100->setImage(numbers[(abs(vertical_speed) / 100) % 10]);
-        vs_10->setImage(numbers[(abs(vertical_speed) / 10) % 10]);
-        vs_1->setImage(numbers[(abs(vertical_speed) / 1) % 10]);
-        // Update the 2d plane orientation and the vertical speed sign
-        if(vertical_speed >= 0)
-        {
-            sign->setImage(texture_plus);
-            compass_plane->setCompassHeading(0);
-        }
-        else
-        {
-            sign->setImage(texture_minus);
-            compass_plane->setCompassHeading(-55);
-        }
-
+        //Update 2D elements
+        guiManager->update2DElements();
 
         //Movements of the plane
         receiver.MovePlane(plane_node);
         // Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
+
         // Draw the scene
         smgr->drawAll();
         gui->drawAll();
-        compass_level->draw();
-        compass_arrows->draw();
-        compass_plane->draw();
-        compass_gauge_empty->draw();
-        compass_gauge_full->draw();
+
         driver->endScene();
     }
     device->drop();
