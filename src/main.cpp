@@ -11,6 +11,8 @@ namespace is = irr::scene;
 namespace iv = irr::video;
 namespace ig = irr::gui;
 
+int gauge_value = 30;
+
 
 struct MyEventReceiver : IEventReceiver
 {
@@ -96,6 +98,15 @@ struct MyEventReceiver : IEventReceiver
             {
                 keyIsDown[KEY_KEY_D] = false;
             }
+
+            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_I)
+            {
+                gauge_value ++;
+            }
+            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_K)
+            {
+                gauge_value --;
+            }
         }
 
         return false;
@@ -106,7 +117,7 @@ struct MyEventReceiver : IEventReceiver
     bool keyIsDown[KEY_KEY_CODES_COUNT];
 };
 
-void setGaugeOffset(int& gauge_offset, int percetage)
+void setGaugeOffset(int& gauge_offset, int percentage, int gauge_height)
 {
     if(percentage < 0 || percentage > 100)
     {
@@ -114,7 +125,9 @@ void setGaugeOffset(int& gauge_offset, int percetage)
     }
     else
     {
-
+        double div = (gauge_height-4)*percentage/100;
+        gauge_offset = (gauge_height-4) - int(div);
+        //std::cout<<"gauge offset = "<<gauge_offset<<std::endl;
     }
 }
 
@@ -284,7 +297,7 @@ int main()
         compass_level->setCompassTexture(texture_level);
         compass_level->setCompassHeading(0);
         // Gauge empty
-        int gauge_width = 30;
+        int gauge_width = 20;
         int gauge_height = 200;
         CGUICompass* compass_gauge_empty = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width -10 - gauge_width,
                                                                          10,
@@ -292,8 +305,10 @@ int main()
                                                                          10 + gauge_height), gui, nullptr);
         compass_gauge_empty->setCompassTexture(texture_gauge_empty);
         //Gauge full
+        setGaugeOffset(gauge_offset, gauge_value, gauge_height);
+        //gauge_offset = 0;
         CGUICompass* compass_gauge_full = new CGUICompass(ic::rect<s32>(device->getVideoDriver()->getScreenSize().Width -10 - gauge_width + 4,
-                                                                         20 +2+gauge_offset,
+                                                                         10 +2+gauge_offset,
                                                                          device->getVideoDriver()->getScreenSize().Width -10 -4,
                                                                          10 + gauge_height -2), gui, nullptr);
         compass_gauge_full->setCompassTexture(texture_gauge_full);
