@@ -77,7 +77,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 map_Kd data/city/Texture_city/cty2x.jpg
-map_Bump /Maps/default_b.jpg
+map_Bump data/city/Texture_city/default_b.jpg
 
 newmtl default_bldgs_dowtown
 Ns 0.000000

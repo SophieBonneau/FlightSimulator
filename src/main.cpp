@@ -292,7 +292,6 @@ int main()
     is::ISceneManager *smgr = device->getSceneManager();
     ig::IGUIEnvironment *gui = device->getGUIEnvironment();
 
-
     // GUI elements mananger
     GUIElements* guiManager = new GUIElements();
     guiManager->setDevice(device);
@@ -354,9 +353,6 @@ int main()
 
     while(device->run())
     {
-        //Camera position
-        smgr->addCameraSceneNode(plane_node, ic::vector3df(-34, 18, 0), plane_node->getPosition()+ic::vector3df(0, 10, 0));
-
         //Update 2D elements
         std::vector<CGUICompass*> compasses = guiManager->update2DElements();
 
@@ -400,8 +396,6 @@ int main()
         {
             compasses[i]->draw();
         }
-
-
 
         driver->endScene();
     }
