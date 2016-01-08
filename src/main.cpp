@@ -183,9 +183,8 @@ int main()
         //Camera position
         smgr->addCameraSceneNode(plane_node, ic::vector3df(-34, 18, 0), plane_node->getPosition()+ic::vector3df(0, 10, 0));
 
-
         //Update 2D elements
-        guiManager->update2DElements();
+        std::vector<CGUICompass*> compasses = guiManager->update2DElements();
 
         //Movements of the plane
         receiver.MovePlane(plane_node);
@@ -195,6 +194,13 @@ int main()
         // Draw the scene
         smgr->drawAll();
         gui->drawAll();
+
+        for(unsigned int i = 0; i < compasses.size(); i++)
+        {
+            compasses[i]->draw();
+        }
+
+
 
         driver->endScene();
     }

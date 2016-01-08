@@ -1,5 +1,9 @@
 #include <irrlicht.h>
 
+#include <vector>
+
+//#include "CGUICompass.hpp"
+
 
 using namespace irr;
 namespace ig = irr::gui;
@@ -7,6 +11,7 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
+class CGUICompass;
 class GUIElements
 {
 public:
@@ -16,14 +21,14 @@ public:
     ~GUIElements();
 
     // Setters and getters
-    void setDevice(IrrlichtDevice *);
+    void setDevice(IrrlichtDevice*);
 
     // Initialize 2D elements
     // ! We must have called setDevice first !
     bool initialize2DElements();
     // Update 2D elements
     // ! We must have called setDevice first !
-    bool update2DElements();
+    std::vector<CGUICompass*> update2DElements();
 
 private:
 

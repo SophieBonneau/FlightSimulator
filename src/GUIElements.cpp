@@ -142,13 +142,14 @@ void GUIElements::setGaugeOffset(int& gauge_offset, int percentage, int gauge_he
 }
 
 
-bool GUIElements::update2DElements()
+std::vector<CGUICompass*> GUIElements::update2DElements()
 {
+    std::vector<CGUICompass*> compasses;
     if(this->device == nullptr || this->driver == nullptr || this->gui == nullptr || this->smgr == nullptr)
     {
         std::cout<<"Error: you must have set the device" <<
                    " to GUIElements before calling intialize2DElements"<<std::endl;
-        return false;
+        return compasses;
     }
 
     //2D plane
@@ -222,13 +223,12 @@ bool GUIElements::update2DElements()
 
     }
 
-    // Draw compass elements
-    compass_level->draw();
-    compass_arrows->draw();
-    compass_plane->draw();
-    compass_gauge_empty->draw();
-    compass_gauge_full->draw();
+    compasses.push_back(compass_level);
+    compasses.push_back(compass_arrows);
+    compasses.push_back(compass_plane);
+    compasses.push_back(compass_gauge_empty);
+    compasses.push_back(compass_gauge_full);
 
-    return true;
+    return compasses;
 }
 
