@@ -34,6 +34,10 @@ private:
 
     // To change the fuel gauge level
     void setGaugeOffset(int&, int, int);
+    // To get the upper left point of an image
+    ic::vector2d<s32> getUpperLeftPoint(ig::IGUIImage* image);
+    // To get the upper right point of an image
+    ic::vector2d<s32> getLowerRightPoint(ig::IGUIImage* image);
 
     is::ISceneManager *smgr;
     iv::IVideoDriver *driver;
@@ -65,6 +69,8 @@ private:
     iv::ITexture *texture_vertical_speed_u;
     iv::ITexture *texture_gauge_empty;
     iv::ITexture *texture_gauge_full;
+    iv::ITexture *texture_background;
+
     // Images
     ig::IGUIImage *image_compass;
     ig::IGUIImage *image_wind_speed;
@@ -89,6 +95,27 @@ private:
     ig::IGUIImage *image_wind_speed_u;
     ig::IGUIImage *image_altitude_u;
     ig::IGUIImage *image_vertical_speed_u;
+    ig::IGUIImage *image_background;
+
+    // Positions
+    int background_height;
+    int background_width;
+    int background_offset_x;
+    int background_offset_y;
+    int text_offset_x;
+    int text_offset_y;
+    int text_ws_length;
+    int text_ws_u_length;
+    int text_ws_height;
+    int text_altitude_length;
+    int text_altitude_u_length;
+    int text_altitude_height;
+    int text_vs_length;
+    int text_vs_u_length;
+    int text_vs_height;
+    int text_number_height;
+    int text_number_length;
+    int text_number_offset_x;
 
 
 };
