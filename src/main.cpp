@@ -298,7 +298,7 @@ int main()
     guiManager->setDevice(device);
 
     //City
-    is::IMesh *city_mesh = smgr->getMesh("data/city_cercles.obj");
+    is::IMesh *city_mesh = smgr->getMesh("data/city/city_cercles.obj");
     is::ISceneNode *city_node;
     city_node = smgr->addOctreeSceneNode(city_mesh,nullptr,-1,1024);
     city_node->setMaterialFlag(iv::EMF_LIGHTING,false);

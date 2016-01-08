@@ -27,7 +27,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/Mountains.001.png
+map_Kd data/city/Texture_city/Mountains.001.png
 
 newmtl Metal_-_Iron_Cast
 Ns 96.078431
@@ -46,7 +46,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/snd2_01.jpg
+map_Kd data/city/Texture_city/snd2_01.jpg
 
 newmtl default.001
 Ns 0.000000
@@ -56,7 +56,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/cty1.jpg
+map_Kd data/city/Texture_city/cty1.jpg
 
 newmtl default_bldg
 Ns 0.000000
@@ -66,7 +66,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/antenna.jpg
+map_Kd data/city/Texture_city/antenna.jpg
 
 newmtl default_bldgs2
 Ns 0.000000
@@ -76,7 +76,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/cty2x.jpg
+map_Kd data/city/Texture_city/cty2x.jpg
 map_Bump /Maps/default_b.jpg
 
 newmtl default_bldgs_dowtown
@@ -87,7 +87,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/fac_231.jpg
+map_Kd data/city/Texture_city/fac_231.jpg
 
 newmtl default_body
 Ns 0.000000
@@ -331,7 +331,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/ac2.jpg
+map_Kd data/city/Texture_city/ac2.jpg
 
 newmtl default_country_club_house
 Ns 0.000000
@@ -341,7 +341,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/fac_151.jpg
+map_Kd data/city/Texture_city/fac_151.jpg
 
 newmtl default_floor_mult
 Ns 0.000000
@@ -351,7 +351,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/antenna.jpg
+map_Kd data/city/Texture_city/antenna.jpg
 
 newmtl default_house_complex
 Ns 0.000000
@@ -361,7 +361,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/sf1c.jpg
+map_Kd data/city/Texture_city/sf1c.jpg
 
 newmtl default_interior_land
 Ns 0.000000
@@ -371,7 +371,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/dm1.jpg
+map_Kd data/city/Texture_city/dm1.jpg
 
 newmtl default_parking
 Ns 0.000000
@@ -381,7 +381,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/pe1b2.jpg
+map_Kd data/city/Texture_city/pe1b2.jpg
 
 newmtl default_rims_mult3
 Ns 0.000000
@@ -409,7 +409,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/roofti8.jpg
+map_Kd data/city/Texture_city/roofti8.jpg
 
 newmtl default_roof_&_pumps_mult
 Ns 0.000000
@@ -428,7 +428,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/sx1.jpg
+map_Kd data/city/Texture_city/sx1.jpg
 
 newmtl default_roof_shopping_center
 Ns 0.000000
@@ -438,7 +438,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/rf2.jpg
+map_Kd data/city/Texture_city/rf2.jpg
 
 newmtl default_s1
 Ns 0.000000
@@ -448,7 +448,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/Pepsi_Commercial_by_mindfuckx.jpg
+map_Kd data/city/Texture_city/Pepsi_Commercial_by_mindfuckx.jpg
 
 newmtl default_s1_cocacola
 Ns 0.000000
@@ -458,7 +458,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/dk1.jpg
+map_Kd data/city/Texture_city/dk1.jpg
 
 newmtl default_s1_fedex
 Ns 0.000000
@@ -468,7 +468,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/fx1.jpg
+map_Kd data/city/Texture_city/fx1.jpg
 
 newmtl default_s1_sprite
 Ns 0.000000
@@ -478,7 +478,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/logo_sprite-794746.jpg
+map_Kd data/city/Texture_city/logo_sprite-794746.jpg
 
 newmtl default_s1_uhaul
 Ns 0.000000
@@ -488,7 +488,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/ct1_02.jpg
+map_Kd data/city/Texture_city/ct1_02.jpg
 
 newmtl default_shopping_center
 Ns 0.000000
@@ -498,7 +498,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/dmq1c2.jpg
+map_Kd data/city/Texture_city/dmq1c2.jpg
 
 newmtl default_sidewalks
 Ns 0.000000
@@ -508,7 +508,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/ang1.jpg
+map_Kd data/city/Texture_city/ang1.jpg
 
 newmtl default_station.mult
 Ns 0.000000
@@ -644,7 +644,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/sx1.jpg
+map_Kd data/city/Texture_city/sx1.jpg
 
 newmtl default_town_walls
 Ns 0.000000
@@ -654,7 +654,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/g1.jpg
+map_Kd data/city/Texture_city/g1.jpg
 
 newmtl default_wall2
 Ns 0.000000
@@ -664,7 +664,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/dmq1c2.jpg
+map_Kd data/city/Texture_city/dmq1c2.jpg
 
 newmtl default_window_mult
 Ns 0.000000
@@ -674,7 +674,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Texture_city/sxa1.jpg
+map_Kd data/city/Texture_city/sxa1.jpg
 
 newmtl default_windows
 Ns 0.000000
