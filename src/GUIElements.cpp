@@ -26,17 +26,29 @@ GUIElements::GUIElements()
     this->text_offset_x = 10;
     this->text_offset_y = 10;
     this->text_ws_length = 100;
-    this->text_ws_u_length = 15;
+    this->text_ws_u_length = 37;
     this->text_ws_height = 15;
     this->text_altitude_length = 70;
+    this->text_altitude_u_length = 13;
     this->text_altitude_height = 13;
     this->text_vs_length = 110;
     this->text_vs_height = 14;
+    this->text_vs_u_length = 25;
     this->text_number_height = 12;
     this->text_number_length = 10;
     this->text_number_offset_x = 1;
-    this->text_altitude_u_length = 15;
-    this->text_vs_u_length = 30;
+    this->text_space_length = 3;
+    this->plane_offset_x = 20;
+    this->plane_offset_y = 20;
+    this->plane_height = 50;
+    this->plane_width = 75;
+
+    // Blinking elements
+    plane_red = true;
+
+    // Timer
+    this->timer = 0;
+
 
 }
 
@@ -71,6 +83,11 @@ void GUIElements::setDevice(IrrlichtDevice* device)
     this->smgr = this->device->getSceneManager();
     this->driver = this->device->getVideoDriver();
     this->gui = this->device->getGUIEnvironment();
+}
+
+void GUIElements::setStall(const bool& stall)
+{
+    this->stall = stall;
 }
 
 
@@ -180,10 +197,10 @@ bool GUIElements::initialize2DElements()
                                                       altitude_lrp.Y ,
                                                       altitude_lrp.X + text_number_offset_x + 4*text_number_length,
                                                       altitude_lrp.Y + text_number_height)); a_10->setScaleImage(true);
-    this->a_1     = this->gui->addImage(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 4*text_number_length,
-                                                      ws_lrp.Y ,
-                                                      ws_lrp.X + text_number_offset_x + 5*text_number_length,
-                                                      ws_lrp.Y + text_number_height)); a_1->setScaleImage(true);
+    this->a_1     = this->gui->addImage(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 4*text_number_length,
+                                                      altitude_lrp.Y ,
+                                                      altitude_lrp.X + text_number_offset_x + 5*text_number_length,
+                                                      altitude_lrp.Y + text_number_height)); a_1->setScaleImage(true);
     // Places for vertical speed
     ic::vector2d<s32> vs_lrp = this->getLowerRightPoint(this->image_vertical_speed);
     this->sign = this->gui->addImage(ic::rect<s32>(vs_lrp.X + text_number_offset_x,
@@ -196,7 +213,7 @@ bool GUIElements::initialize2DElements()
     this->vs_10000 = this->gui->addImage(ic::rect<s32>(vs_lrp.X + text_number_offset_x + text_number_length,
                                                        vs_lrp.Y ,
                                                        vs_lrp.X + text_number_offset_x + 2*text_number_length,
-                                                       vs_lrp.Y + text_number_height)); sign->setScaleImage(true);vs_10000->setScaleImage(true);
+                                                       vs_lrp.Y + text_number_height)); vs_10000->setScaleImage(true);
     this->vs_1000  = this->gui->addImage(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 2*text_number_length,
                                                        vs_lrp.Y ,
                                                        vs_lrp.X + text_number_offset_x + 3*text_number_length,
@@ -216,27 +233,27 @@ bool GUIElements::initialize2DElements()
     // Wind speed unity
     ic::vector2d<s32> ws_last_number_lrp = this->getLowerRightPoint(this->ws_1);
     this->texture_wind_speed_u = this->driver->getTexture("data/2d/kmh.png");
-    this->image_wind_speed_u = this->gui->addImage(ic::rect<s32>(ws_last_number_lrp.X + text_number_offset_x,
+    this->image_wind_speed_u = this->gui->addImage(ic::rect<s32>(ws_last_number_lrp.X + text_number_offset_x + text_space_length,
                                                                  ws_last_number_lrp.Y ,
-                                                                 ws_last_number_lrp.X + text_number_offset_x + text_ws_u_length,
+                                                                 ws_last_number_lrp.X + text_number_offset_x + text_ws_u_length + text_space_length,
                                                                  ws_last_number_lrp.Y + text_number_height));
     this->image_wind_speed_u->setImage(this->texture_wind_speed_u);
     this->image_wind_speed_u->setScaleImage(true);
     // Altitude unity
     ic::vector2d<s32> altitude_last_number_lrp = this->getLowerRightPoint(this->a_1);
     this->texture_altitude_u = this->driver->getTexture("data/2d/m.png");
-    this->image_altitude_u = this->gui->addImage(ic::rect<s32>(altitude_last_number_lrp.X + text_number_offset_x,
+    this->image_altitude_u = this->gui->addImage(ic::rect<s32>(altitude_last_number_lrp.X + text_number_offset_x + text_space_length,
                                                                altitude_last_number_lrp.Y ,
-                                                               altitude_last_number_lrp.X + text_number_offset_x + text_altitude_u_length,
+                                                               altitude_last_number_lrp.X + text_number_offset_x + text_altitude_u_length + text_space_length,
                                                                altitude_last_number_lrp.Y + text_number_height));
-    image_altitude_u->setImage(this->texture_altitude_u);
-    image_altitude_u->setScaleImage(true);
-    // Vertical speed unitys
+    this->image_altitude_u->setImage(this->texture_altitude_u);
+    this->image_altitude_u->setScaleImage(true);
+    // Vertical speed unity
     this->texture_vertical_speed_u = this->driver->getTexture("data/2d/ms.png");
     ic::vector2d<s32> vs_last_number_lrp = this->getLowerRightPoint(this->vs_1);
-    this->image_vertical_speed_u = this->gui->addImage(ic::rect<s32>(vs_last_number_lrp.X + text_number_offset_x,
+    this->image_vertical_speed_u = this->gui->addImage(ic::rect<s32>(vs_last_number_lrp.X + text_number_offset_x + text_space_length,
                                                                      vs_last_number_lrp.Y ,
-                                                                     vs_last_number_lrp.X + text_number_offset_x + text_vs_u_length,
+                                                                     vs_last_number_lrp.X + text_number_offset_x + text_vs_u_length + text_space_length,
                                                                      vs_last_number_lrp.Y + text_number_height));
     this->image_vertical_speed_u->setImage(this->texture_vertical_speed_u);
     this->image_vertical_speed_u->setScaleImage(true);
@@ -292,9 +309,100 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                                        background_ulp.Y + 5*text_offset_y,
                                                                        background_ulp.X + text_offset_x + text_vs_length,
                                                                        background_ulp.Y + 5*text_offset_y + text_vs_height));
+    // Numbers
+    ic::vector2d<s32> ws_lrp = this->getLowerRightPoint(this->image_wind_speed);
+    this->ws_10000->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x,
+                                                       ws_lrp.Y ,
+                                                       ws_lrp.X + text_number_offset_x + text_number_length,
+                                                       ws_lrp.Y + text_number_height));
+    this->ws_1000->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + text_number_length,
+                                                       ws_lrp.Y ,
+                                                       ws_lrp.X + text_number_offset_x + 2*text_number_length,
+                                                       ws_lrp.Y + text_number_height));
+    this->ws_100->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 2*text_number_length,
+                                                       ws_lrp.Y ,
+                                                       ws_lrp.X + text_number_offset_x + 3*text_number_length,
+                                                       ws_lrp.Y + text_number_height));
+    this->ws_10->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 3*text_number_length,
+                                                       ws_lrp.Y ,
+                                                       ws_lrp.X + text_number_offset_x + 4*text_number_length,
+                                                       ws_lrp.Y + text_number_height));
+    this->ws_1->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 4*text_number_length,
+                                                       ws_lrp.Y ,
+                                                       ws_lrp.X + text_number_offset_x + 5*text_number_length,
+                                                       ws_lrp.Y + text_number_height));
+    ic::vector2d<s32> altitude_lrp = this->getLowerRightPoint(this->image_altitude);
+    this->a_10000->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x,
+                                                      altitude_lrp.Y ,
+                                                      altitude_lrp.X + text_number_offset_x + text_number_length,
+                                                      altitude_lrp.Y + text_number_height));
+    this->a_1000->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + text_number_length,
+                                                      altitude_lrp.Y ,
+                                                      altitude_lrp.X + text_number_offset_x + 2*text_number_length,
+                                                      altitude_lrp.Y + text_number_height));
+    this->a_100->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 2*text_number_length,
+                                                      altitude_lrp.Y ,
+                                                      altitude_lrp.X + text_number_offset_x + 3*text_number_length,
+                                                      altitude_lrp.Y + text_number_height));
+    this->a_10->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 3*text_number_length,
+                                                      altitude_lrp.Y ,
+                                                      altitude_lrp.X + text_number_offset_x + 4*text_number_length,
+                                                      altitude_lrp.Y + text_number_height));
+    this->a_1->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 4*text_number_length,
+                                                      altitude_lrp.Y ,
+                                                      altitude_lrp.X + text_number_offset_x + 5*text_number_length,
+                                                      altitude_lrp.Y + text_number_height));
+    ic::vector2d<s32> vs_lrp = this->getLowerRightPoint(this->image_vertical_speed);
+    this->sign->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x,
+                                                   vs_lrp.Y ,
+                                                   vs_lrp.X + text_number_offset_x + text_number_length,
+                                                   vs_lrp.Y + text_number_height));
+    this->vs_10000->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + text_number_length,
+                                                       vs_lrp.Y ,
+                                                       vs_lrp.X + text_number_offset_x + 2*text_number_length,
+                                                       vs_lrp.Y + text_number_height));
+    this->vs_1000->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 2*text_number_length,
+                                                       vs_lrp.Y ,
+                                                       vs_lrp.X + text_number_offset_x + 3*text_number_length,
+                                                       vs_lrp.Y + text_number_height));
+    this->vs_100->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 3*text_number_length,
+                                                       vs_lrp.Y ,
+                                                       vs_lrp.X + text_number_offset_x + 4*text_number_length,
+                                                       vs_lrp.Y + text_number_height));
+    this->vs_10->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 4*text_number_length,
+                                                       vs_lrp.Y ,
+                                                       vs_lrp.X + text_number_offset_x + 5*text_number_length,
+                                                       vs_lrp.Y + text_number_height));
+    this->vs_1->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 5*text_number_length,
+                                                       vs_lrp.Y ,
+                                                       vs_lrp.X + text_number_offset_x + 6*text_number_length,
+                                                       vs_lrp.Y + text_number_height));
+    // Unities
+    ic::vector2d<s32> ws_last_number_lrp = this->getLowerRightPoint(this->ws_1);
+    this->image_wind_speed_u->setRelativePosition(ic::rect<s32>(ws_last_number_lrp.X + text_number_offset_x + text_space_length,
+                                                                 ws_last_number_lrp.Y ,
+                                                                 ws_last_number_lrp.X + text_number_offset_x + text_ws_u_length + text_space_length,
+                                                                 ws_last_number_lrp.Y + text_number_height));
+    ic::vector2d<s32> altitude_last_number_lrp = this->getLowerRightPoint(this->a_1);
+    this->image_altitude_u->setRelativePosition(ic::rect<s32>(altitude_last_number_lrp.X + text_number_offset_x + text_space_length,
+                                                               altitude_last_number_lrp.Y ,
+                                                               altitude_last_number_lrp.X + text_number_offset_x + text_altitude_u_length + text_space_length,
+                                                               altitude_last_number_lrp.Y + text_number_height));
+    ic::vector2d<s32> vs_last_number_lrp = this->getLowerRightPoint(this->vs_1);
+    this->image_vertical_speed_u->setRelativePosition(ic::rect<s32>(vs_last_number_lrp.X + text_number_offset_x + text_space_length,
+                                                                     vs_last_number_lrp.Y ,
+                                                                     vs_last_number_lrp.X + text_number_offset_x + text_vs_u_length + text_space_length,
+                                                                     vs_last_number_lrp.Y + text_number_height));
     //2D plane
-    CGUICompass* compass_plane = new CGUICompass(ic::rect<s32>(20,160,50,190), gui, nullptr);
-    compass_plane->setCompassTexture(this->texture_plane);
+    CGUICompass* compass_plane = new CGUICompass(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->plane_offset_x - this->plane_width,
+                                                               this->plane_offset_y,
+                                                               this->device->getVideoDriver()->getScreenSize().Width - this->plane_offset_x,
+                                                               this->plane_offset_y + this->plane_height), gui, nullptr);
+
+    if(this->plane_red == true)
+        compass_plane->setCompassTexture(texture_plane_red);
+    else
+        compass_plane->setCompassTexture(texture_plane);
     if(this->vertical_speed <0)
     {
         compass_plane->setCompassHeading(90);
@@ -350,14 +458,17 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     {
         sign->setImage(texture_plus);
         compass_plane->setCompassHeading(0);
+        this->plane_red = false;
     }
     else
     {
         sign->setImage(texture_minus);
-        if(this->stall == true)
+        if(this->stall == true && this->timer%10==0)
         {
-            compass_plane->setCompassTexture(texture_plane_red);
+            this->plane_red = !this->plane_red;
         }
+
+
         compass_plane->setCompassHeading(-55);
 
 
@@ -368,6 +479,9 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     compasses.push_back(compass_plane);
     compasses.push_back(compass_gauge_empty);
     compasses.push_back(compass_gauge_full);
+
+    // Update timer
+    timer++;
 
     return compasses;
 }

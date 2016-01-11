@@ -22,6 +22,7 @@ public:
 
     // Setters and getters
     void setDevice(IrrlichtDevice*);
+    void setStall(const bool&);
 
     // Initialize 2D elements
     // ! We must have called setDevice first !
@@ -116,6 +117,17 @@ private:
     int text_number_height;
     int text_number_length;
     int text_number_offset_x;
+    int text_space_length;
+    int plane_offset_x;
+    int plane_offset_y;
+    int plane_height;
+    int plane_width;
+
+    // Elements blinking
+    bool plane_red;
+
+    // Timer
+    int timer;
 
 
 };
