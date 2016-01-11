@@ -51,6 +51,7 @@ private:
     int vertical_speed;
     int gauge_offset;
     bool stall;
+    int gauge_percentage;
 
     // Display elements
     // Textures
@@ -68,8 +69,11 @@ private:
     iv::ITexture *texture_wind_speed_u;
     iv::ITexture *texture_altitude_u;
     iv::ITexture *texture_vertical_speed_u;
+    iv::ITexture *texture_fuel;
     iv::ITexture *texture_gauge_empty;
-    iv::ITexture *texture_gauge_full;
+    iv::ITexture *texture_gauge_full_green;
+    iv::ITexture *texture_gauge_full_red;
+    iv::ITexture *texture_gauge_full_orange;
     iv::ITexture *texture_background;
 
     // Images
@@ -97,6 +101,8 @@ private:
     ig::IGUIImage *image_altitude_u;
     ig::IGUIImage *image_vertical_speed_u;
     ig::IGUIImage *image_background;
+    ig::IGUIImage *image_fuel;
+    ig::IGUIImage *image_gauge_empty;
 
     // Positions
     int background_height;
@@ -122,6 +128,13 @@ private:
     int plane_offset_y;
     int plane_height;
     int plane_width;
+    int gauge_height;
+    int gauge_width;
+    int gauge_offset_x;
+    int gauge_offset_y;
+    int fuel_offset_x;
+    int fuel_height;
+    int fuel_width;
 
     // Elements blinking
     bool plane_red;
