@@ -22,6 +22,7 @@ public:
 
     // Setters and getters
     void setDevice(IrrlichtDevice*);
+    void setStall(const bool&);
 
     // Initialize 2D elements
     // ! We must have called setDevice first !
@@ -34,6 +35,11 @@ private:
 
     // To change the fuel gauge level
     void setGaugeOffset(int&, int, int);
+    // To get the upper left point of an image
+    ic::vector2d<s32> getUpperLeftPoint(ig::IGUIImage* image);
+    // To get the upper right point of an image
+    ic::vector2d<s32> getLowerRightPoint(ig::IGUIImage* image);
+
 
     is::ISceneManager *smgr;
     iv::IVideoDriver *driver;
@@ -46,6 +52,7 @@ private:
     int vertical_speed;
     int gauge_offset;
     bool stall;
+    int gauge_percentage;
 
     // Display elements
     // Textures
@@ -63,8 +70,13 @@ private:
     iv::ITexture *texture_wind_speed_u;
     iv::ITexture *texture_altitude_u;
     iv::ITexture *texture_vertical_speed_u;
+    iv::ITexture *texture_fuel;
     iv::ITexture *texture_gauge_empty;
-    iv::ITexture *texture_gauge_full;
+    iv::ITexture *texture_gauge_full_green;
+    iv::ITexture *texture_gauge_full_red;
+    iv::ITexture *texture_gauge_full_orange;
+    iv::ITexture *texture_background;
+
     // Images
     ig::IGUIImage *image_compass;
     ig::IGUIImage *image_wind_speed;
@@ -89,6 +101,50 @@ private:
     ig::IGUIImage *image_wind_speed_u;
     ig::IGUIImage *image_altitude_u;
     ig::IGUIImage *image_vertical_speed_u;
+    ig::IGUIImage *image_background;
+    ig::IGUIImage *image_fuel;
+    ig::IGUIImage *image_gauge_empty;
+
+    // Positions
+    int compass_length;
+    int compass_offset_x;
+    int compass_offset_y;
+    int background_height;
+    int background_width;
+    int background_offset_x;
+    int background_offset_y;
+    int text_offset_x;
+    int text_offset_y;
+    int text_ws_length;
+    int text_ws_u_length;
+    int text_ws_height;
+    int text_altitude_length;
+    int text_altitude_u_length;
+    int text_altitude_height;
+    int text_vs_length;
+    int text_vs_u_length;
+    int text_vs_height;
+    int text_number_height;
+    int text_number_length;
+    int text_number_offset_x;
+    int text_space_length;
+    int plane_offset_x;
+    int plane_offset_y;
+    int plane_height;
+    int plane_width;
+    int gauge_height;
+    int gauge_width;
+    int gauge_offset_x;
+    int gauge_offset_y;
+    int fuel_offset_x;
+    int fuel_height;
+    int fuel_width;
+
+    // Elements blinking
+    bool plane_red;
+
+    // Timer
+    int timer;
 
 
 };
