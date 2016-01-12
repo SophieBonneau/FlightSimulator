@@ -19,12 +19,32 @@ struct MyEventReceiver : IEventReceiver
     is::ISceneNode *parentNode;
     bool keyIsDown[KEY_KEY_CODES_COUNT];
 
-    float speedStep;
-    float rotStep;
-    float altitudeStep;
+    //Init steps
+    const float speedStep         = 0.005f;
+    const float altitudeAngleStep = 0.1;
+    const float rotationAngleStep = 0.1f;
 
-    float planeSpeed    = 0;
-    float planeAltitude = 0;
+    //Init plane constructor parameters
+    const float voidPlaneWeightKg = 957.0f;
+
+    const float minPlaneSpeedKt  = 0.0f;
+    const float maxPlaneSpeedKt  = 158.0f;
+    const float flatStallSpeedKt = 44.0f;
+
+    const float minPlaneSpeed   = fromKtToGameUnit(minPlaneSpeedKt);
+    const float maxPlaneSpeed   = fromKtToGameUnit(maxPlaneSpeedKt);
+    const float flatStallSpeed  = fromKtToGameUnit(flatStallSpeedKt);
+
+    //Init plane limits values
+    float loadFactor = 1.0f;
+    float stallSpeed = -100.0f;
+
+    //Init moving plane values
+    float planeWeight     = voidPlaneWeightKg;
+    float planeSpeed      = 0.0f;
+    float planeSpeedFloor = 0.0f;
+    float planeAltitude   = 130.0f;
+    float rotationAngle   = 0.0f;
 
     /************************************************************************************/
     /******************************** Constructor ***************************************/
@@ -32,11 +52,8 @@ struct MyEventReceiver : IEventReceiver
     MyEventReceiver()
     {
         for(unsigned int i = 0; i<KEY_KEY_CODES_COUNT; ++i)
-        {
             keyIsDown[i] = false;
-        }
     }
-
 
     /************************************************************************************/
     /******************************** Getters & setters *********************************/
@@ -49,151 +66,110 @@ struct MyEventReceiver : IEventReceiver
     /* float getAltitude: getter for the altitude value
      * return:  planeAltitude: the altitude value
     */
-    float getSpeed(){    return planeSpeed;  }
+    float getSpeed(){    return planeSpeedFloor;  }
 
-    /* void setSteps: function used to initialize the increase and decrease step of different parameters
-     * params:  const float speedStep:      the step used to increase and decrese the plane speed
-     *          const float rotStep:        the step used to turn the plane to the left or to the right
-     *          const float altitudeStep:   the step used to increase and decrese the plane altitude
+    /* float getRotation: getter for the rotation value (plane go to the left or the right)
+     * return:  rotationAngle: the rotation value
     */
-    void setSteps(const float speedStep, const float rotStep, const float altitudeStep)
-    {
-        this->speedStep     = speedStep;
-        this->rotStep       = rotStep;
-        this->altitudeStep  = altitudeStep;
-    }
+    float getRotation(){    return rotationAngle;  }
+
+    /* void setPlaneWeight: function used to initialize the planeWeight
+     * params:  const float planeWeight:      the plane weight
+    */
+    void setPlaneWeight(const float planeWeight){     this->planeWeight = planeWeight;    }
 
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
+    float fromKtToGameUnit(float valueToConvert)
+    {
+        return valueToConvert / 300.0f;
+    }
+
+    float fromGameUnitToKt(float valueToConvert)
+    {
+        return valueToConvert * 300.0f;
+    }
+
     void movePlane(is::IAnimatedMeshSceneNode *node, is::ISceneNode *parentNode)
     {
+        if(stallSpeed < planeSpeed && stallSpeed * 1.1 > planeSpeed)
+        {
+        }
+        if(stallSpeed >= planeSpeed)
+        {
+        }
         //Increase or decrease the plane speed
         ic::vector3df childRotation = node->getRotation();
-        ic::vector3df parentRotation = parentNode->getRotation();
 
         if(keyIsDown[KEY_KEY_Z] == true)
         {
-            if(planeSpeed < 0.5)
+            if(planeSpeed < maxPlaneSpeed)
+            {
                 planeSpeed += speedStep;
-            else
-                std::cout<<"Your plane is already at the highest speed !"<<std::endl;
+                planeSpeedFloor = planeSpeed;
+            }
         }
         if(keyIsDown[KEY_KEY_S] == true)
         {
-            std::cout<<"TD : decrease the plane speed"<<std::endl;
-            if(planeSpeed > 0)
+            if(planeSpeed > minPlaneSpeed)
+            {
                 planeSpeed -= speedStep;
-            else
-                std::cout<<"Your plane has already stop !"<<std::endl;
+                planeSpeedFloor = planeSpeed;
+            }
         }
 
         //Open the side panels of the plane to turn to the right or the left
         if(keyIsDown[KEY_KEY_D] == true)
         {
-            parentRotation.Y += rotStep;
-            childRotation.Z -= 0.1;
-            parentNode->setRotation(parentRotation);
-            node->setRotation(childRotation);
-        }
-        if(keyIsDown[KEY_KEY_D] == false)
-        {
-            //parentRotation.Y += rotStep;
-            if(childRotation.Z < 0) {
-                childRotation.Z += 0.1;
+            //TD: Add the wind effect
+            //If the plane is flat (not in the wrong inclinaison)
+            if(childRotation.Z <= 0)
+            {
+                childRotation.Z -= rotationAngleStep;
+                node->setRotation(childRotation);
             }
-            parentNode->setRotation(parentRotation);
-            node->setRotation(childRotation);
-
+            else
+            {
+                childRotation.Z -= 2 * rotationAngleStep;
+                node->setRotation(childRotation);
+            }
         }
         if(keyIsDown[KEY_KEY_Q] == true)
         {
-            std::cout<<"TD : Turn the plane to the left"<<std::endl;
-            parentRotation.Y -= rotStep;
-            childRotation.Z  += 0.1;
-            parentNode->setRotation(parentRotation);
-            node->setRotation(childRotation);
-        }
-        if(keyIsDown[KEY_KEY_Q] == false)
-        {
-            //parentRotation.Y += rotStep;
-            if(childRotation.Z > 0) {
-                childRotation.Z -= 0.1;
+            if(childRotation.Z >= 0)
+            {
+                childRotation.Z += rotationAngleStep;
+                node->setRotation(childRotation);
             }
-            parentNode->setRotation(parentRotation);
-            node->setRotation(childRotation);
-
+            else
+            {
+                childRotation.Z += 2 * rotationAngleStep;
+                node->setRotation(childRotation);
+            }
         }
         //Get the plane up or down
         if(keyIsDown[KEY_KEY_A] == true)
         {
-            if(planeAltitude < 60)
-            {
-                planeAltitude += altitudeStep;
-                if(childRotation.X > -45)
-                {
-                    childRotation.X -= 0.1;
-                    node->setRotation(childRotation);
-                    std::cout<<"badass values"<<childRotation.X<<std::endl;
-                }
-            }
-            else
-            {
-                if(childRotation.X < 0)
-                {
-                    childRotation.X += 0.1;
-                    node->setRotation(childRotation);
-                    std::cout<<"Your plane is already at the highest altitude !"<<std::endl;
-                }
-            }
-        }
-        else if(childRotation.X < 0)
-        {
-            childRotation.X += 0.1;
+            childRotation.X -= altitudeAngleStep;
             node->setRotation(childRotation);
-            std::cout<<"Your plane is already at the highest altitude !"<<std::endl;
         }
         if(keyIsDown[KEY_KEY_E] == true)
         {
-            if(planeAltitude > 0)
-            {
-                planeAltitude -= altitudeStep;
-                if(childRotation.X < 45)
-                {
-                    childRotation.X += 0.1;
-                    node->setRotation(childRotation);
-                }
-            }
-            else
-            {
-                if(childRotation.X > 0)
-                {
-                    childRotation.X -= 0.1;
-                    node->setRotation(childRotation);
-                    std::cout<<"Your plane is already on the floor !"<<std::endl;
-                }
-            }
-        }
-        else if(childRotation.X > 0)
-        {
-            childRotation.X -= 0.1;
+            childRotation.X += altitudeAngleStep;
             node->setRotation(childRotation);
-            std::cout<<"Your plane is already on the floor !"<<std::endl;
         }
 
-        //Rear or unrear the plane
-        if(keyIsDown[KEY_KEY_P] == true)
-        {
-            std::cout<<"TD : rear the plane"<<std::endl;
-        }
-        else
-        {
-            //std::cout<<"TD : unrear the plane"<<std::endl;
-        }
-        /*node->setPosition(position);
-        node->setRotation(rotation);*/
+        planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
+        planeAltitude -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
 
+        std::cout<<"Altitude virage : "<<planeAltitude<<std::endl;
 
+        rotationAngle -= childRotation.Z / 20;
+
+        //Compute the stall speed
+        loadFactor = (1/cos(-childRotation.Z*core::DEGTORAD));
+        stallSpeed = sqrt(loadFactor) * flatStallSpeed;
     }
 
     /************************************************************************************/
@@ -275,11 +251,11 @@ struct MyEventReceiver : IEventReceiver
 int main()
 {
     // display values
-    int wind_speed = 20;
-    int altitude = 1000;
-    int vertical_speed = -20;
-    int gauge_offset = 0;
-    bool stall = true;
+    int wind_speed      = 20;
+    int altitude        = 1000;
+    int vertical_speed  = -20;
+    int gauge_offset    = 0;
+    bool stall          = true;
 
     // Event manager
     MyEventReceiver receiver;
@@ -323,33 +299,19 @@ int main()
     plan_water->setMaterialType(video::EMT_REFLECTION_2_LAYER);
     plan_water->setPosition(ic::vector3df(0,-2, 0));
 
-    //Init steps
-    float speedStep     = 0.01f;
-    float rotStep       = 0.3f;
-    float altitudeStep  = 0.1f;
-    receiver.setSteps(speedStep, rotStep, altitudeStep);
-
     // 2D elements initialization
     guiManager->initialize2DElements();
-
-    // Collision management
-    scene::ITriangleSelector *selector_city;
-    selector_city = smgr->createOctreeTriangleSelector(city_mesh, city_node);
-    city_node->setTriangleSelector(selector_city);
-    scene::ISceneNodeAnimator *anim_collision_plane_city;
-    anim_collision_plane_city = smgr->createCollisionResponseAnimator(selector_city,
-                                                 parentNode,
-                                                 ic::vector3df(10, 10, 10), // radiuses
-                                                 ic::vector3df(0, 0, 0),  // gravity
-                                                 ic::vector3df(0, 0, 0));  // center offset
-    plane_node->addAnimator(anim_collision_plane_city);
-
-    float planeSpeed    = 0;
-    float planeAltitude = 0;
 
     //Init the plane state
     //To change to false: true only for tests
     bool inFlight = true;
+
+    float planeWeigth = 1000.0f;
+    receiver.setPlaneWeight(planeWeigth);
+
+    float planeSpeed    = 0.0f;
+    float planeAltitude = 0.0f;
+    float rotAngle      = 0.0f;
 
     while(device->run())
     {
@@ -360,14 +322,19 @@ int main()
         //  inFlight = true
         //Else, ie. plane on the ground, in take-off position and in landing position
         //  inFlight = false
-        ic::vector3df position = parentNode->getPosition();
-        ic::vector3df rotation = parentNode->getRotation();
 
         if(inFlight)
         {
             //Movements of the plane
+            ic::vector3df rotation = parentNode->getRotation();
+
+            rotation.Y = receiver.getRotation();
+            parentNode->setRotation(rotation);
+
             planeSpeed      = receiver.getSpeed();
             planeAltitude   = receiver.getAltitude();
+
+            ic::vector3df position = parentNode->getPosition();
 
             position.X += planeSpeed * sin(rotation.Y * M_PI / 180.0);
             position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
