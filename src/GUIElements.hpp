@@ -40,6 +40,7 @@ private:
     // To get the upper right point of an image
     ic::vector2d<s32> getLowerRightPoint(ig::IGUIImage* image);
 
+
     is::ISceneManager *smgr;
     iv::IVideoDriver *driver;
     ig::IGUIEnvironment *gui;
@@ -105,6 +106,9 @@ private:
     ig::IGUIImage *image_gauge_empty;
 
     // Positions
+    int compass_length;
+    int compass_offset_x;
+    int compass_offset_y;
     int background_height;
     int background_width;
     int background_offset_x;
