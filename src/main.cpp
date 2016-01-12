@@ -15,7 +15,7 @@ namespace ig = irr::gui;
 
 struct MyEventReceiver : IEventReceiver
 {
-    is::IAnimatedMeshSceneNode *node;
+    is::ISceneNode *node;
     is::ISceneNode *parentNode;
     bool keyIsDown[KEY_KEY_CODES_COUNT];
 
@@ -66,7 +66,7 @@ struct MyEventReceiver : IEventReceiver
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
-    void movePlane(is::IAnimatedMeshSceneNode *node, is::ISceneNode *parentNode)
+    void movePlane(is::ISceneNode *node, is::ISceneNode *parentNode)
     {
         //Increase or decrease the plane speed
         ic::vector3df childRotation = node->getRotation();
@@ -111,6 +111,7 @@ struct MyEventReceiver : IEventReceiver
             std::cout<<"TD : Turn the plane to the left"<<std::endl;
             parentRotation.Y -= rotStep;
             childRotation.Z  += 0.1;
+
             parentNode->setRotation(parentRotation);
             node->setRotation(childRotation);
         }
@@ -272,6 +273,27 @@ struct MyEventReceiver : IEventReceiver
     }
 };
 
+void manageCollisionsWithScenery(is::ISceneManager *smgr,
+                                 is::IMesh *city_mesh,
+                                 is::ISceneNode* city_node,
+                                 is::IAnimatedMeshSceneNode *plane,
+                                 is::ISceneNode *parentNode)
+{
+    // Création du triangle selector
+    scene::ITriangleSelector *selector_city;
+    selector_city = smgr->createOctreeTriangleSelector(city_mesh, city_node);
+    city_node->setTriangleSelector(selector_city);
+    // Et l'animateur/collisionneur
+    scene::ISceneNodeAnimator *anim_collision_plane_city;
+    anim_collision_plane_city = smgr->createCollisionResponseAnimator(selector_city,
+                                                 parentNode,  // Le noeud que l'on veut gérer
+                                                 ic::vector3df(2.8, 0.5, 0.4), // "rayons" du perso
+                                                 ic::vector3df(0, 0, 0),  // gravity
+                                                 ic::vector3df(1.0,0,0));  //décalage du centre
+    parentNode->addAnimator(anim_collision_plane_city);
+    //smgr->addSphereSceneNode(5.0,16,0,-1,ic::vector3df(10,0,0),ic::vector3df(0,0,0),ic::vector3df(1.0,1.0,1.0));
+}
+
 int main()
 {
     // display values
@@ -304,12 +326,20 @@ int main()
     city_node->setScale(ic::vector3df(10,10,10));
 
     //Init the object plane
-    is::IAnimatedMesh *plane_mesh = smgr->getMesh("data/plane/Cessna172.obj");
+    is::IAnimatedMesh *plane_mesh = smgr->getMesh("data/plane/plane.obj");
+    is::IAnimatedMesh *screw_mesh = smgr->getMesh("data/plane/screw2.obj");
     is::ISceneNode *parentNode = smgr->addEmptySceneNode();
+    is::ISceneNode *parentRotationNode = smgr->addEmptySceneNode();
     is::IAnimatedMeshSceneNode *plane_node= smgr->addAnimatedMeshSceneNode(plane_mesh);
-    plane_node->setParent(parentNode);
+    is::IAnimatedMeshSceneNode *screw_node= smgr->addAnimatedMeshSceneNode(screw_mesh);
+    parentRotationNode->setParent(parentNode);
+    plane_node->setParent(parentRotationNode);
     plane_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     plane_node->setScale(ic::vector3df(0.05,0.05,0.05));
+    screw_node->setParent(parentRotationNode);
+    screw_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    screw_node->setScale(ic::vector3df(0.05,0.05,0.05));
+    screw_node->setPosition(ic::vector3df(0.0,0.25,0.35));
 
     //Water
      is::IMesh *mesh_water = smgr->addHillPlaneMesh( "myHill",
@@ -332,17 +362,8 @@ int main()
     // 2D elements initialization
     guiManager->initialize2DElements();
 
-    // Collision management
-    scene::ITriangleSelector *selector_city;
-    selector_city = smgr->createOctreeTriangleSelector(city_mesh, city_node);
-    city_node->setTriangleSelector(selector_city);
-    scene::ISceneNodeAnimator *anim_collision_plane_city;
-    anim_collision_plane_city = smgr->createCollisionResponseAnimator(selector_city,
-                                                 parentNode,
-                                                 ic::vector3df(10, 10, 10), // radiuses
-                                                 ic::vector3df(0, 0, 0),  // gravity
-                                                 ic::vector3df(0, 0, 0));  // center offset
-    plane_node->addAnimator(anim_collision_plane_city);
+    // Collision management with scenery
+    manageCollisionsWithScenery(smgr, city_mesh, city_node, plane_node, parentNode);
 
     float planeSpeed    = 0;
     float planeAltitude = 0;
@@ -363,6 +384,8 @@ int main()
         ic::vector3df position = parentNode->getPosition();
         ic::vector3df rotation = parentNode->getRotation();
 
+        ic::vector3df rotation_screw = screw_node->getRotation();
+
         if(inFlight)
         {
             //Movements of the plane
@@ -373,9 +396,13 @@ int main()
             position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
             position.Y  = planeAltitude;
 
-            parentNode->setPosition(position);
+            rotation_screw.Z += 30.0;
 
-            receiver.movePlane(plane_node, parentNode);
+            parentNode->setPosition(position);
+            screw_node->setRotation(rotation_screw);
+
+            receiver.movePlane(parentRotationNode, parentNode);
+
         }
         else
         {
