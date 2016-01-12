@@ -163,7 +163,7 @@ struct MyEventReceiver : IEventReceiver
         planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
         planeAltitude -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
 
-        std::cout<<"Altitude virage : "<<planeAltitude<<std::endl;
+        //std::cout<<"Altitude virage : "<<planeAltitude<<std::endl;
 
         rotationAngle -= childRotation.Z / 20;
 

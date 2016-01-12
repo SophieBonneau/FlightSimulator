@@ -15,9 +15,11 @@ GUIElements::GUIElements()
     this->wind_speed = 20;
     this->altitude = 1000;
     this->vertical_speed = -20;
-    this->gauge_offset = 0;
+    this->gauge_h_offset = 0;
+    this->gauge_v_offset = 0;
     this->stall = true;
-    this->gauge_percentage = 70;
+    this->gauge_h_percentage = 60;
+    this->gauge_v_slope = 0;
 
     // Positions
     this->compass_length = 55;
@@ -46,10 +48,12 @@ GUIElements::GUIElements()
     this->plane_offset_y = 20;
     this->plane_height = 50;
     this->plane_width = 75;
-    this->gauge_height = 25;
-    this->gauge_width = 250;
-    this->gauge_offset_x = 10;
-    this->gauge_offset_y = 10;
+    this->gauge_v_height = 25;
+    this->gauge_v_width = 250;
+    this->gauge_h_offset_x = 10;
+    this->gauge_h_offset_y = 10;
+    this->gauge_v_offset_x = 20;
+    this->gauge_v_offset_y = 100;
     this->fuel_offset_x = 10;
     this->fuel_height = 25;
     this->fuel_width = 24;
@@ -86,8 +90,6 @@ ic::vector2d<s32> GUIElements::getLowerRightPoint(ig::IGUIImage* image)
 
     return point;
 }
-
-
 
 void GUIElements::setDevice(IrrlichtDevice* device)
 {
@@ -271,21 +273,29 @@ bool GUIElements::initialize2DElements()
     this->image_vertical_speed_u->setImage(this->texture_vertical_speed_u);
     this->image_vertical_speed_u->setScaleImage(true);
     // Gauge textures
-    this->texture_gauge_empty = this->driver->getTexture("data/2d/gauge-empty.png");
-    this->texture_gauge_full_red = this->driver->getTexture("data/2d/gauge-full-red.png");
-    this->texture_gauge_full_green = this->driver->getTexture("data/2d/gauge-full-green.png");
-    this->texture_gauge_full_orange = this->driver->getTexture("data/2d/gauge-full-orange.png");
-    // Gauge empty
-    this->image_gauge_empty = this->gui->addImage(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->gauge_width - gauge_offset_x,
-                                                                     this->device->getVideoDriver()->getScreenSize().Height - this->gauge_height - gauge_offset_y,
-                                                                     this->device->getVideoDriver()->getScreenSize().Width - gauge_offset_x,
-                                                                     this->device->getVideoDriver()->getScreenSize().Height - gauge_offset_y));
-    this->image_gauge_empty->setImage(this->texture_gauge_empty);
-    this->image_gauge_empty->setScaleImage(true);
+    this->texture_gauge_empty_h = this->driver->getTexture("data/2d/gauge-empty.png");
+    this->texture_gauge_full_red_h = this->driver->getTexture("data/2d/gauge-full-red.png");
+    this->texture_gauge_full_green_h = this->driver->getTexture("data/2d/gauge-full-green.png");
+    this->texture_gauge_full_orange_h = this->driver->getTexture("data/2d/gauge-full-orange.png");
+    this->texture_gauge_empty_v = this->driver->getTexture("data/2d/gauge-empty-vertical.png");
+    // Gauge empty horizontal
+    this->image_gauge_empty_h= this->gui->addImage(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->gauge_h_width - gauge_h_offset_x,
+                                                                     this->device->getVideoDriver()->getScreenSize().Height - this->gauge_h_height - gauge_h_offset_y,
+                                                                     this->device->getVideoDriver()->getScreenSize().Width - gauge_h_offset_x,
+                                                                     this->device->getVideoDriver()->getScreenSize().Height - gauge_h_offset_y));
+    this->image_gauge_empty_h->setImage(this->texture_gauge_empty_h);
+    this->image_gauge_empty_h->setScaleImage(true);
+    // Gauge empty vertical
+    this->image_gauge_empty_v= this->gui->addImage(ic::rect<s32>(gauge_v_offset_x,
+                                                                     gauge_v_offset_y,
+                                                                     gauge_v_offset_x + gauge_v_height,
+                                                                     gauge_v_offset_y + gauge_v_width));
+    this->image_gauge_empty_v->setImage(this->texture_gauge_empty_v);
+    this->image_gauge_empty_v->setScaleImage(true);
 
     // Fuel
     this->texture_fuel = this->driver->getTexture("data/2d/fuel.png");
-    ic::vector2d<s32> gauge_ulp = this->getUpperLeftPoint(this->image_gauge_empty);
+    ic::vector2d<s32> gauge_ulp = this->getUpperLeftPoint(this->image_gauge_empty_h);
     this->image_fuel = this->gui->addImage(ic::rect<s32>(gauge_ulp.X - this->fuel_width - this->fuel_offset_x,
                                                                      gauge_ulp.Y,
                                                                      gauge_ulp.X - this->fuel_offset_x,
@@ -296,16 +306,28 @@ bool GUIElements::initialize2DElements()
     return true;
 }
 
-void GUIElements::setGaugeOffset(int& gauge_offset, int percentage, int gauge_height)
+void GUIElements::computeHorizontalGaugeOffset(int& gauge_offset, int percentage, int gauge_width)
 {
     if(percentage < 0 || percentage > 100)
     {
-        std::cout<<"Error, the percentage must be between 0 and 100."<<std::endl;
+        std::cout<<"Error, the slope must be between -1 and 1."<<std::endl;
     }
     else
     {
-        double div = (gauge_height-4)*percentage/100;
-        gauge_offset = (gauge_height-4) - int(div);
+        double div = (gauge_width-4)*percentage/100;
+        gauge_offset = (gauge_width-4) - int(div);
+    }
+}
+
+void GUIElements::computeVerticalGaugeOffset(int& gauge_offset, double slope, int gauge_height)
+{
+    if(slope < -1 || slope > 1)
+    {
+        std::cout<<"Error, the  must be between 0 and 100."<<std::endl;
+    }
+    else
+    {
+        gauge_offset = -int(slope*gauge_height/2);
     }
 }
 
@@ -327,16 +349,9 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                               this->device->getVideoDriver()->getScreenSize().Height -background_offset_y - background_height,
                                                               background_offset_x + background_width,
                                                               this->device->getVideoDriver()->getScreenSize().Height -background_offset_y));
-    // Gauge empty
-    gauge_height = int(this->device->getVideoDriver()->getScreenSize().Height*0.050);
-    gauge_width = int(this->device->getVideoDriver()->getScreenSize().Width*0.35);
-    this->image_gauge_empty->setRelativePosition(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->gauge_width - gauge_offset_x,
-                                                                     this->device->getVideoDriver()->getScreenSize().Height - this->gauge_height - gauge_offset_y,
-                                                                     this->device->getVideoDriver()->getScreenSize().Width - gauge_offset_x,
-                                                                     this->device->getVideoDriver()->getScreenSize().Height - gauge_offset_y));
     // Fuel
-    ic::vector2d<s32> gauge_ulp = this->getUpperLeftPoint(this->image_gauge_empty);
-    this->fuel_height = this->gauge_height;
+    ic::vector2d<s32> gauge_ulp = this->getUpperLeftPoint(this->image_gauge_empty_h);
+    this->fuel_height = this->gauge_h_height;
     this->fuel_width = this->fuel_height;
     this->image_fuel->setRelativePosition(ic::rect<s32>(gauge_ulp.X - this->fuel_width - this->fuel_offset_x,
                                                                      gauge_ulp.Y,
@@ -476,20 +491,57 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                          this->device->getVideoDriver()->getScreenSize().Height/2 + 30), this->gui, nullptr);
     compass_level->setCompassTexture(texture_level);
     compass_level->setCompassHeading(0);*/
-    //Gauge full
-    setGaugeOffset(this->gauge_offset, this->gauge_percentage, this->gauge_width);
+    //Horizontal gauge full
+    computeHorizontalGaugeOffset(this->gauge_h_offset, this->gauge_h_percentage, this->gauge_h_width);
     //gauge_offset = 0;
-    CGUICompass* compass_gauge_full = new CGUICompass(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->gauge_width - gauge_offset_x + gauge_offset + 4,
-                                                                    this->device->getVideoDriver()->getScreenSize().Height - this->gauge_height - gauge_offset_y + 4,
-                                                                    this->device->getVideoDriver()->getScreenSize().Width - gauge_offset_x - 4,
-                                                                    this->device->getVideoDriver()->getScreenSize().Height - gauge_offset_y -4), this->gui, nullptr);
-    if(this->gauge_percentage > 63)
-        compass_gauge_full->setCompassTexture(texture_gauge_full_green);
-    else if (this->gauge_percentage<63 && this->gauge_percentage>33)
-        compass_gauge_full->setCompassTexture(texture_gauge_full_orange);
+    CGUICompass* compass_h_gauge_full = new CGUICompass(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->gauge_h_width - gauge_h_offset_x + gauge_h_offset + 4,
+                                                                    this->device->getVideoDriver()->getScreenSize().Height - this->gauge_h_height - gauge_h_offset_y + 4,
+                                                                    this->device->getVideoDriver()->getScreenSize().Width - gauge_h_offset_x - 4,
+                                                                    this->device->getVideoDriver()->getScreenSize().Height - gauge_h_offset_y -4), this->gui, nullptr);
+    if(this->gauge_h_percentage > 63)
+        compass_h_gauge_full->setCompassTexture(texture_gauge_full_green_h);
+    else if (this->gauge_h_percentage<63 && this->gauge_h_percentage>33)
+        compass_h_gauge_full->setCompassTexture(texture_gauge_full_orange_h);
     else
-    compass_gauge_full->setCompassTexture(texture_gauge_full_red);
+    compass_h_gauge_full->setCompassTexture(texture_gauge_full_red_h);
+    // Vertical gauge full
+    gauge_v_offset_y = int(this->device->getVideoDriver()->getScreenSize().Height*0.2);
+    gauge_v_height = int(this->device->getVideoDriver()->getScreenSize().Height*0.4);
+    gauge_v_width = int(this->device->getVideoDriver()->getScreenSize().Width*0.05);
+    computeVerticalGaugeOffset(this->gauge_v_offset, this->gauge_v_slope, this->gauge_v_height);
+    int y1 = gauge_v_offset_y + gauge_v_height/2 + 4;
+    int y2 = gauge_v_offset_y + gauge_v_height/2 - 4 + gauge_v_offset;
+    if(y1 > y2)
+    {
+        int tmp = y1;
+        y1 = y2;
+        y2 = tmp;
+        y1 += gauge_v_height/20;
+    }
 
+    CGUICompass* compass_v_gauge_full = new CGUICompass(ic::rect<s32>(gauge_v_offset_x + gauge_v_width/4,
+                                                                      y1,
+                                                                      gauge_v_offset_x + gauge_v_width - gauge_v_width/4,
+                                                                      y2), this->gui, nullptr);
+    if(this->gauge_v_slope > 0)
+        compass_v_gauge_full->setCompassTexture(texture_gauge_full_green_h);
+    else
+        compass_v_gauge_full->setCompassTexture(texture_gauge_full_red_h);
+
+    //if(this->gauge_h_percentage > 63)
+
+    // Horizontal gauge empty
+    gauge_h_height = int(this->device->getVideoDriver()->getScreenSize().Height*0.05);
+    gauge_h_width = int(this->device->getVideoDriver()->getScreenSize().Width*0.45);
+    this->image_gauge_empty_h->setRelativePosition(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->gauge_h_width - gauge_h_offset_x,
+                                                                     this->device->getVideoDriver()->getScreenSize().Height - this->gauge_h_height - gauge_h_offset_y,
+                                                                     this->device->getVideoDriver()->getScreenSize().Width - gauge_h_offset_x,
+                                                                     this->device->getVideoDriver()->getScreenSize().Height - gauge_h_offset_y));
+    // Vertical gauge empty
+    this->image_gauge_empty_v->setRelativePosition(ic::rect<s32>(gauge_v_offset_x,
+                                                                     gauge_v_offset_y,
+                                                                     gauge_v_offset_x + gauge_v_width,
+                                                                     gauge_v_offset_y + gauge_v_height));
     // Arrows
     this->compass_length = this->device->getVideoDriver()->getScreenSize().Width*0.1;
     CGUICompass* compass_arrows = new CGUICompass(ic::rect<s32>(compass_offset_x, compass_offset_y,
@@ -541,7 +593,8 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     //compasses.push_back(compass_level);
     compasses.push_back(compass_arrows);
     compasses.push_back(compass_plane);
-    compasses.push_back(compass_gauge_full);
+    compasses.push_back(compass_h_gauge_full);
+    compasses.push_back(compass_v_gauge_full);
 
     // Update timer
     timer++;

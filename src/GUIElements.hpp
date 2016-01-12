@@ -33,8 +33,9 @@ public:
 
 private:
 
-    // To change the fuel gauge level
-    void setGaugeOffset(int&, int, int);
+    // To compute the horzontal and vertical gaugue offset to fill them
+    void computeHorizontalGaugeOffset(int&, int, int);
+    void computeVerticalGaugeOffset(int&, double, int);
     // To get the upper left point of an image
     ic::vector2d<s32> getUpperLeftPoint(ig::IGUIImage* image);
     // To get the upper right point of an image
@@ -50,9 +51,11 @@ private:
     int wind_speed;
     int altitude;
     int vertical_speed;
-    int gauge_offset;
+    int gauge_h_offset;
+    int gauge_v_offset;
     bool stall;
-    int gauge_percentage;
+    int gauge_h_percentage;
+    double gauge_v_slope;
 
     // Display elements
     // Textures
@@ -71,11 +74,13 @@ private:
     iv::ITexture *texture_altitude_u;
     iv::ITexture *texture_vertical_speed_u;
     iv::ITexture *texture_fuel;
-    iv::ITexture *texture_gauge_empty;
-    iv::ITexture *texture_gauge_full_green;
-    iv::ITexture *texture_gauge_full_red;
-    iv::ITexture *texture_gauge_full_orange;
+    iv::ITexture *texture_gauge_empty_h;
+    iv::ITexture *texture_gauge_full_green_h;
+    iv::ITexture *texture_gauge_full_red_h;
+    iv::ITexture *texture_gauge_full_orange_h;
+    iv::ITexture *texture_gauge_empty_v;
     iv::ITexture *texture_background;
+
 
     // Images
     ig::IGUIImage *image_compass;
@@ -103,7 +108,8 @@ private:
     ig::IGUIImage *image_vertical_speed_u;
     ig::IGUIImage *image_background;
     ig::IGUIImage *image_fuel;
-    ig::IGUIImage *image_gauge_empty;
+    ig::IGUIImage *image_gauge_empty_h;
+    ig::IGUIImage *image_gauge_empty_v;
 
     // Positions
     int compass_length;
@@ -132,10 +138,14 @@ private:
     int plane_offset_y;
     int plane_height;
     int plane_width;
-    int gauge_height;
-    int gauge_width;
-    int gauge_offset_x;
-    int gauge_offset_y;
+    int gauge_v_height;
+    int gauge_v_width;
+    int gauge_h_height;
+    int gauge_h_width;
+    int gauge_h_offset_x;
+    int gauge_h_offset_y;
+    int gauge_v_offset_x;
+    int gauge_v_offset_y;
     int fuel_offset_x;
     int fuel_height;
     int fuel_width;
