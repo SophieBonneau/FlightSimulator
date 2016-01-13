@@ -326,6 +326,8 @@ int main()
     GUIElements* guiManager = new GUIElements();
     guiManager->setDevice(device);
 
+    device->getFileSystem()->addFileArchive("data.zip");
+
     //City
     is::IMesh *city_mesh = smgr->getMesh("data/city/city_cercles.obj");
     is::ISceneNode *city_node;
