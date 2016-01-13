@@ -1,0 +1,22 @@
+# Blender MTL File: 'None'
+# Material Count: 2
+
+newmtl Material__0.001
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.258032 0.258032 0.258032
+Ks 0.254902 0.254902 0.254902
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd Texture_plane/Arch73_06_Diff.jpg
+
+newmtl Material__4
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.102802 0.102802 0.102802
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 0.000000
+illum 2
+refl Texture_plane/GlassEnvironmentMap.jpg

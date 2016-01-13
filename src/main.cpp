@@ -17,6 +17,7 @@ struct MyEventReceiver : IEventReceiver
 {
     is::ISceneNode *node;
     is::ISceneNode *parentNode;
+    is::IAnimatedMeshSceneNode *leftwing_node;
     bool keyIsDown[KEY_KEY_CODES_COUNT];
 
     //Init steps
@@ -91,7 +92,10 @@ struct MyEventReceiver : IEventReceiver
         return valueToConvert * 300.0f;
     }
 
-    void movePlane(is::ISceneNode *node)
+    void movePlane(is::ISceneNode *node,
+                   is::IAnimatedMeshSceneNode *leftwing_node, is::IAnimatedMeshSceneNode *rightwing_node,
+                   is::IAnimatedMeshSceneNode *tail_node,
+                   is::IAnimatedMeshSceneNode *lefttail_node, is::IAnimatedMeshSceneNode *righttail_node)
     {
         if(stallSpeed < planeSpeed && stallSpeed * 1.1 > planeSpeed)
         {
@@ -101,6 +105,11 @@ struct MyEventReceiver : IEventReceiver
         }
         //Increase or decrease the plane speed
         ic::vector3df childRotation = node->getRotation();
+        ic::vector3df leftwingRotation = leftwing_node->getRotation();
+        ic::vector3df rightwingRotation = rightwing_node->getRotation();
+        ic::vector3df tailRotation = tail_node->getRotation();
+        ic::vector3df lefttailRotation = lefttail_node->getRotation();
+        ic::vector3df righttailRotation = righttail_node->getRotation();
 
         if(keyIsDown[KEY_KEY_Z] == true)
         {
@@ -121,18 +130,25 @@ struct MyEventReceiver : IEventReceiver
 
         //Open the side panels of the plane to turn to the right or the left
         if(keyIsDown[KEY_KEY_D] == true)
+
         {
             //TD: Add the wind effect
             //If the plane is flat (not in the wrong inclinaison)
             if(childRotation.Z <= 0)
             {
                 childRotation.Z -= rotationAngleStep;
-                node->setRotation(childRotation);
+                leftwingRotation.X -= 0.1;
+                rightwingRotation.X += 0.1;
+                tailRotation.Y -= 0.1;
+                tailRotation.Z += 0.05;
             }
             else
             {
                 childRotation.Z -= 2 * rotationAngleStep;
-                node->setRotation(childRotation);
+                leftwingRotation.X -= 2 * 0.1;
+                rightwingRotation.X += 2 * 0.1;
+                tailRotation.Y -= 2 * 0.1;
+                tailRotation.Z += 2 * 0.05;
             }
         }
         if(keyIsDown[KEY_KEY_Q] == true)
@@ -140,25 +156,42 @@ struct MyEventReceiver : IEventReceiver
             if(childRotation.Z >= 0)
             {
                 childRotation.Z += rotationAngleStep;
-                node->setRotation(childRotation);
+                leftwingRotation.X += 0.1;
+                rightwingRotation.X -= 0.1;
+                tailRotation.Y += 0.1;
+                tailRotation.Z -= 0.05;
             }
             else
             {
                 childRotation.Z += 2 * rotationAngleStep;
-                node->setRotation(childRotation);
+                leftwingRotation.X += 2 * 0.1;
+                rightwingRotation.X -= 2* 0.1;
+                tailRotation.Y += 2 * 0.1;
+                tailRotation.Z -= 2 * 0.05;
             }
         }
         //Get the plane up or down
         if(keyIsDown[KEY_KEY_A] == true)
         {
             childRotation.X -= altitudeAngleStep;
-            node->setRotation(childRotation);
+            lefttailRotation.X += 0.1;
+            righttailRotation.X += 0.1;
         }
         if(keyIsDown[KEY_KEY_E] == true)
         {
             childRotation.X += altitudeAngleStep;
-            node->setRotation(childRotation);
+            lefttailRotation.X -= 0.1;
+            righttailRotation.X -= 0.1;
+
         }
+
+        node->setRotation(childRotation);
+        leftwing_node->setRotation(leftwingRotation);
+        rightwing_node->setRotation(rightwingRotation);
+        tail_node->setRotation(tailRotation);
+        lefttail_node->setRotation(lefttailRotation);
+        righttail_node->setRotation(righttailRotation);
+
 
         planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
         planeAltitude -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
@@ -301,20 +334,61 @@ int main()
     city_node->setScale(ic::vector3df(10,10,10));
 
     //Init the object plane
-    is::IAnimatedMesh *plane_mesh = smgr->getMesh("data/plane/plane.obj");
-    is::IAnimatedMesh *screw_mesh = smgr->getMesh("data/plane/screw2.obj");
+    //2 parents: trajectory and rotation
     is::ISceneNode *parentNode = smgr->addEmptySceneNode();
     is::ISceneNode *parentRotationNode = smgr->addEmptySceneNode();
-    is::IAnimatedMeshSceneNode *plane_node= smgr->addAnimatedMeshSceneNode(plane_mesh);
-    is::IAnimatedMeshSceneNode *screw_node= smgr->addAnimatedMeshSceneNode(screw_mesh);
     parentRotationNode->setParent(parentNode);
+
+    //Init the plane
+    is::IAnimatedMesh *plane_mesh = smgr->getMesh("data/plane/plane.obj");
+    is::IAnimatedMeshSceneNode *plane_node= smgr->addAnimatedMeshSceneNode(plane_mesh);
     plane_node->setParent(parentRotationNode);
     plane_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     plane_node->setScale(ic::vector3df(0.05,0.05,0.05));
+
+    //Init the screw
+    is::IAnimatedMesh *screw_mesh = smgr->getMesh("data/plane/screw.obj");
+    is::IAnimatedMeshSceneNode *screw_node= smgr->addAnimatedMeshSceneNode(screw_mesh);
     screw_node->setParent(parentRotationNode);
     screw_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     screw_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    screw_node->setPosition(ic::vector3df(0.0,0.25,0.35));
+    screw_node->setPosition(ic::vector3df(0.0,0.19,0.58));
+
+    //Init the two wings
+    is::IAnimatedMesh *leftwing_mesh = smgr->getMesh("data/plane/leftWing.obj");
+    is::IAnimatedMesh *rightwing_mesh = smgr->getMesh("data/plane/rightWing.obj");
+    is::IAnimatedMeshSceneNode *leftwing_node = smgr->addAnimatedMeshSceneNode(leftwing_mesh);
+    is::IAnimatedMeshSceneNode *rightwing_node = smgr->addAnimatedMeshSceneNode(rightwing_mesh);
+    leftwing_node->setParent(parentRotationNode);
+    leftwing_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    leftwing_node->setScale(ic::vector3df(0.05,0.05,0.05));
+    leftwing_node->setPosition(ic::vector3df(-0.667,0.303,0.19));
+    rightwing_node->setParent(parentRotationNode);
+    rightwing_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    rightwing_node->setScale(ic::vector3df(0.05,0.05,0.05));
+    rightwing_node->setPosition(ic::vector3df(0.667,0.306,0.19));
+
+    //Init the tail
+    is::IAnimatedMesh *tail_mesh = smgr->getMesh("data/plane/tail.obj");
+    is::IAnimatedMeshSceneNode *tail_node= smgr->addAnimatedMeshSceneNode(tail_mesh);
+    tail_node->setParent(parentRotationNode);
+    tail_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    tail_node->setScale(ic::vector3df(0.05,0.05,0.05));
+    tail_node->setPosition(ic::vector3df(0.001,0.355,-0.53));
+
+    //Init the left and right tails
+    is::IAnimatedMesh *lefttail_mesh = smgr->getMesh("data/plane/leftTail.obj");
+    is::IAnimatedMeshSceneNode *lefttail_node= smgr->addAnimatedMeshSceneNode(lefttail_mesh);
+    lefttail_node->setParent(parentRotationNode);
+    lefttail_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    lefttail_node->setScale(ic::vector3df(0.05,0.05,0.05));
+    lefttail_node->setPosition(ic::vector3df(-0.205,0.23,-0.441));
+    is::IAnimatedMesh *rightttail_mesh = smgr->getMesh("data/plane/rightTail.obj");
+    is::IAnimatedMeshSceneNode *rightttail_node= smgr->addAnimatedMeshSceneNode(rightttail_mesh);
+    rightttail_node->setParent(parentRotationNode);
+    rightttail_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    rightttail_node->setScale(ic::vector3df(0.05,0.05,0.05));
+    rightttail_node->setPosition(ic::vector3df(0.208,0.225,-0.441));
 
     //Water
      is::IMesh *mesh_water = smgr->addHillPlaneMesh( "myHill",
@@ -379,7 +453,7 @@ int main()
             parentNode->setPosition(position);
             screw_node->setRotation(rotation_screw);
 
-            receiver.movePlane(parentRotationNode);
+            receiver.movePlane(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
 
         }
         else
@@ -388,7 +462,7 @@ int main()
         }
 
         //Camera position
-        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 18, -34), parentNode->getPosition());
+        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
 
         //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
