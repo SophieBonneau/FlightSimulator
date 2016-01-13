@@ -58,6 +58,10 @@ GUIElements::GUIElements()
     this->fuel_height = 25;
     this->fuel_width = 24;
 
+    // Window size
+    this->precedent_window_size.Height = 0;
+    this->precedent_window_size.Width = 0;
+
 
     // Blinking elements
     plane_red = true;
@@ -104,6 +108,169 @@ void GUIElements::setStall(const bool& stall)
     this->stall = stall;
 }
 
+void GUIElements::updateDimensions()
+{
+    ic::dimension2d<u32> window_dimension = this->device->getVideoDriver()->getScreenSize();
+    // Background
+    background_height = window_dimension.Height*0.15;
+    background_width = window_dimension.Width*0.4;
+
+    // Fuel
+    this->fuel_height = this->gauge_h_height;
+    this->fuel_width = this->fuel_height;
+
+    // Text
+    this->text_offset_y = this->background_height*0.15;
+
+    // Wind speed text
+    this->text_ws_length = this->background_width*0.41;
+    this->text_ws_height = this->background_height*0.25;
+
+    // Altitude text
+    this->text_altitude_length = this->background_width*0.30;
+    this->text_altitude_height = this->background_height*0.196;
+
+    // Vertical speed text
+    this->text_vs_length = this->background_width*0.47;
+    this->text_vs_height = this->background_height*0.21;
+
+    // Numbers
+    this->text_number_length = this->background_width*0.043;
+    this->text_number_height = this->background_height*0.17;
+
+    // Wind speed unity text
+    this->text_ws_u_length = window_dimension.Width*0.068;
+    // Altitude unity text
+    this->text_altitude_u_length = window_dimension.Width*0.023;
+    // Vertical speed unity text
+    this->text_vs_u_length = this->background_width*0.13;
+
+    // Vertical gauge
+    gauge_v_offset_y = window_dimension.Height*0.2;
+    gauge_v_height = window_dimension.Height*0.4;
+    gauge_v_width = window_dimension.Width*0.05;
+
+    // Horizontal gauge
+    gauge_h_height = window_dimension.Height*0.05;
+    gauge_h_width = window_dimension.Width*0.45;
+
+    // Compass
+    this->compass_length = window_dimension.Height*0.13;
+}
+void GUIElements::updatePositions()
+{
+    // Background
+    this->image_background->setRelativePosition(ic::rect<s32>(background_offset_x,
+                                                              this->device->getVideoDriver()->getScreenSize().Height -background_offset_y - background_height,
+                                                              background_offset_x + background_width,
+                                                              this->device->getVideoDriver()->getScreenSize().Height -background_offset_y));
+    // Fuel
+    ic::vector2d<s32> gauge_ulp = this->getUpperLeftPoint(this->image_gauge_empty_h);
+    this->image_fuel->setRelativePosition(ic::rect<s32>(gauge_ulp.X - this->fuel_width - this->fuel_offset_x,
+                                                                     gauge_ulp.Y,
+                                                                     gauge_ulp.X - this->fuel_offset_x,
+                                                                     gauge_ulp.Y + this->fuel_height));
+    //Wind speed text
+    ic::vector2d<s32> background_ulp = this->getUpperLeftPoint(this->image_background);
+    this->image_wind_speed->setRelativePosition(ic::rect<s32>(background_ulp.X + text_offset_x,
+                                                                   background_ulp.Y + text_offset_y,
+                                                                   background_ulp.X + text_offset_x + text_ws_length,
+                                                                   background_ulp.Y + text_offset_y + text_ws_height));
+    //Altitude text
+    this->image_altitude->setRelativePosition(ic::rect<s32>(background_ulp.X + text_offset_x,
+                                                                 background_ulp.Y + 3*text_offset_y,
+                                                                 background_ulp.X + text_offset_x + text_altitude_length,
+                                                                 background_ulp.Y + 3*text_offset_y + text_altitude_height));
+    // Vertical speed text
+    this->image_vertical_speed->setRelativePosition(ic::rect<s32>(background_ulp.X + text_offset_x,
+                                                                       background_ulp.Y + 5*text_offset_y,
+                                                                       background_ulp.X + text_offset_x + text_vs_length,
+                                                                       background_ulp.Y + 5*text_offset_y + text_vs_height));
+    // Numbers
+    ic::vector2d<s32> ws_lrp = this->getLowerRightPoint(this->image_wind_speed);
+    this->ws_10000->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + text_space_length,
+                                                       ws_lrp.Y +1,
+                                                       ws_lrp.X + text_number_offset_x + text_number_length + text_space_length,
+                                                       ws_lrp.Y + text_number_height +1));
+    this->ws_1000->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + text_number_length + text_space_length,
+                                                       ws_lrp.Y +1,
+                                                       ws_lrp.X + text_number_offset_x + 2*text_number_length + text_space_length,
+                                                       ws_lrp.Y + text_number_height +1));
+    this->ws_100->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 2*text_number_length + text_space_length,
+                                                       ws_lrp.Y +1,
+                                                       ws_lrp.X + text_number_offset_x + 3*text_number_length + text_space_length,
+                                                       ws_lrp.Y + text_number_height +1));
+    this->ws_10->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 3*text_number_length + text_space_length,
+                                                       ws_lrp.Y +1,
+                                                       ws_lrp.X + text_number_offset_x + 4*text_number_length + text_space_length,
+                                                       ws_lrp.Y + text_number_height +1));
+    this->ws_1->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 4*text_number_length + text_space_length,
+                                                       ws_lrp.Y +1,
+                                                       ws_lrp.X + text_number_offset_x + 5*text_number_length + text_space_length,
+                                                       ws_lrp.Y + text_number_height +1));
+    ic::vector2d<s32> altitude_lrp = this->getLowerRightPoint(this->image_altitude);
+    this->a_10000->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + text_space_length,
+                                                      altitude_lrp.Y +1,
+                                                      altitude_lrp.X + text_number_offset_x + text_number_length + text_space_length,
+                                                      altitude_lrp.Y + text_number_height +1));
+    this->a_1000->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + text_number_length + text_space_length,
+                                                      altitude_lrp.Y +1,
+                                                      altitude_lrp.X + text_number_offset_x + 2*text_number_length + text_space_length,
+                                                      altitude_lrp.Y + text_number_height +1));
+    this->a_100->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 2*text_number_length + text_space_length,
+                                                      altitude_lrp.Y +1,
+                                                      altitude_lrp.X + text_number_offset_x + 3*text_number_length + text_space_length,
+                                                      altitude_lrp.Y + text_number_height +1));
+    this->a_10->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 3*text_number_length + text_space_length,
+                                                      altitude_lrp.Y +1,
+                                                      altitude_lrp.X + text_number_offset_x + 4*text_number_length + text_space_length,
+                                                      altitude_lrp.Y + text_number_height +1));
+    this->a_1->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 4*text_number_length + text_space_length,
+                                                      altitude_lrp.Y +1,
+                                                      altitude_lrp.X + text_number_offset_x + 5*text_number_length + text_space_length,
+                                                      altitude_lrp.Y + text_number_height +1));
+    ic::vector2d<s32> vs_lrp = this->getLowerRightPoint(this->image_vertical_speed);
+    this->sign->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + text_space_length,
+                                                   vs_lrp.Y +1,
+                                                   vs_lrp.X + text_number_offset_x + text_number_length + text_space_length,
+                                                   vs_lrp.Y + text_number_height +1));
+    this->vs_10000->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y +1,
+                                                       vs_lrp.X + text_number_offset_x + 2*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y + text_number_height +1));
+    this->vs_1000->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 2*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y +1,
+                                                       vs_lrp.X + text_number_offset_x + 3*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y + text_number_height +1));
+    this->vs_100->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 3*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y +1,
+                                                       vs_lrp.X + text_number_offset_x + 4*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y + text_number_height +1));
+    this->vs_10->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 4*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y +1,
+                                                       vs_lrp.X + text_number_offset_x + 5*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y + text_number_height +1));
+    this->vs_1->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 5*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y +1,
+                                                       vs_lrp.X + text_number_offset_x + 6*text_number_length + 3*text_space_length/2,
+                                                       vs_lrp.Y + text_number_height +1));
+    // Unities
+    ic::vector2d<s32> ws_last_number_lrp = this->getLowerRightPoint(this->ws_1);
+    this->image_wind_speed_u->setRelativePosition(ic::rect<s32>(ws_last_number_lrp.X + text_number_offset_x + text_space_length,
+                                                                 ws_last_number_lrp.Y ,
+                                                                 ws_last_number_lrp.X + text_number_offset_x + text_ws_u_length + text_space_length,
+                                                                 ws_last_number_lrp.Y + text_number_height));
+    ic::vector2d<s32> altitude_last_number_lrp = this->getLowerRightPoint(this->a_1);
+    this->image_altitude_u->setRelativePosition(ic::rect<s32>(altitude_last_number_lrp.X + text_number_offset_x + text_space_length,
+                                                               altitude_last_number_lrp.Y +1,
+                                                               altitude_last_number_lrp.X + text_number_offset_x + text_altitude_u_length + text_space_length,
+                                                               altitude_last_number_lrp.Y + text_number_height -1));
+    ic::vector2d<s32> vs_last_number_lrp = this->getLowerRightPoint(this->vs_1);
+    this->image_vertical_speed_u->setRelativePosition(ic::rect<s32>(vs_last_number_lrp.X + text_number_offset_x + text_space_length,
+                                                                     vs_last_number_lrp.Y ,
+                                                                     vs_last_number_lrp.X + text_number_offset_x + text_vs_u_length + text_space_length,
+                                                                     vs_last_number_lrp.Y + text_number_height));
+}
 
 bool GUIElements::initialize2DElements()
 {
@@ -298,6 +465,10 @@ bool GUIElements::initialize2DElements()
     this->image_fuel->setImage(this->texture_fuel);
     this->image_fuel->setScaleImage(true);
 
+    // Adapt elements dimensions and positions to the initial window dimensions
+    updateDimensions();
+    updatePositions();
+
     return true;
 }
 
@@ -343,138 +514,16 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
         return compasses;
     }
 
-    // Background
-    background_height = int(this->device->getVideoDriver()->getScreenSize().Height*0.15);
-    background_width = int(this->device->getVideoDriver()->getScreenSize().Width*0.4);
-    this->image_background->setRelativePosition(ic::rect<s32>(background_offset_x,
-                                                              this->device->getVideoDriver()->getScreenSize().Height -background_offset_y - background_height,
-                                                              background_offset_x + background_width,
-                                                              this->device->getVideoDriver()->getScreenSize().Height -background_offset_y));
-    // Fuel
-    ic::vector2d<s32> gauge_ulp = this->getUpperLeftPoint(this->image_gauge_empty_h);
-    this->fuel_height = this->gauge_h_height;
-    this->fuel_width = this->fuel_height;
-    this->image_fuel->setRelativePosition(ic::rect<s32>(gauge_ulp.X - this->fuel_width - this->fuel_offset_x,
-                                                                     gauge_ulp.Y,
-                                                                     gauge_ulp.X - this->fuel_offset_x,
-                                                                     gauge_ulp.Y + this->fuel_height));
-    //Wind speed
-    ic::vector2d<s32> background_ulp = this->getUpperLeftPoint(this->image_background);
-    this->text_ws_length = this->background_width*0.41;
-    this->text_ws_height = this->background_height*0.25;
-    this->text_offset_y = this->background_height*0.15;
-    this->image_wind_speed->setRelativePosition(ic::rect<s32>(background_ulp.X + text_offset_x,
-                                                                   background_ulp.Y + text_offset_y,
-                                                                   background_ulp.X + text_offset_x + text_ws_length,
-                                                                   background_ulp.Y + text_offset_y + text_ws_height));
-    //Altitude
-    this->text_altitude_length = this->background_width*0.30;
-    this->text_altitude_height = this->background_height*0.196;
-    this->image_altitude->setRelativePosition(ic::rect<s32>(background_ulp.X + text_offset_x,
-                                                                 background_ulp.Y + 3*text_offset_y,
-                                                                 background_ulp.X + text_offset_x + text_altitude_length,
-                                                                 background_ulp.Y + 3*text_offset_y + text_altitude_height));
-    // Vertical speed
-    this->text_vs_length = this->background_width*0.47;
-    this->text_vs_height = this->background_height*0.21;
-    this->image_vertical_speed->setRelativePosition(ic::rect<s32>(background_ulp.X + text_offset_x,
-                                                                       background_ulp.Y + 5*text_offset_y,
-                                                                       background_ulp.X + text_offset_x + text_vs_length,
-                                                                       background_ulp.Y + 5*text_offset_y + text_vs_height));
-    // Numbers
-    ic::vector2d<s32> ws_lrp = this->getLowerRightPoint(this->image_wind_speed);
-    this->text_number_length = this->background_width*0.043;
-    this->text_number_height = this->background_height*0.17;
-    this->ws_10000->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + text_space_length,
-                                                       ws_lrp.Y +1,
-                                                       ws_lrp.X + text_number_offset_x + text_number_length + text_space_length,
-                                                       ws_lrp.Y + text_number_height +1));
-    this->ws_1000->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + text_number_length + text_space_length,
-                                                       ws_lrp.Y +1,
-                                                       ws_lrp.X + text_number_offset_x + 2*text_number_length + text_space_length,
-                                                       ws_lrp.Y + text_number_height +1));
-    this->ws_100->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 2*text_number_length + text_space_length,
-                                                       ws_lrp.Y +1,
-                                                       ws_lrp.X + text_number_offset_x + 3*text_number_length + text_space_length,
-                                                       ws_lrp.Y + text_number_height +1));
-    this->ws_10->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 3*text_number_length + text_space_length,
-                                                       ws_lrp.Y +1,
-                                                       ws_lrp.X + text_number_offset_x + 4*text_number_length + text_space_length,
-                                                       ws_lrp.Y + text_number_height +1));
-    this->ws_1->setRelativePosition(ic::rect<s32>(ws_lrp.X + text_number_offset_x + 4*text_number_length + text_space_length,
-                                                       ws_lrp.Y +1,
-                                                       ws_lrp.X + text_number_offset_x + 5*text_number_length + text_space_length,
-                                                       ws_lrp.Y + text_number_height +1));
-    ic::vector2d<s32> altitude_lrp = this->getLowerRightPoint(this->image_altitude);
-    this->a_10000->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + text_space_length,
-                                                      altitude_lrp.Y +1,
-                                                      altitude_lrp.X + text_number_offset_x + text_number_length + text_space_length,
-                                                      altitude_lrp.Y + text_number_height +1));
-    this->a_1000->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + text_number_length + text_space_length,
-                                                      altitude_lrp.Y +1,
-                                                      altitude_lrp.X + text_number_offset_x + 2*text_number_length + text_space_length,
-                                                      altitude_lrp.Y + text_number_height +1));
-    this->a_100->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 2*text_number_length + text_space_length,
-                                                      altitude_lrp.Y +1,
-                                                      altitude_lrp.X + text_number_offset_x + 3*text_number_length + text_space_length,
-                                                      altitude_lrp.Y + text_number_height +1));
-    this->a_10->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 3*text_number_length + text_space_length,
-                                                      altitude_lrp.Y +1,
-                                                      altitude_lrp.X + text_number_offset_x + 4*text_number_length + text_space_length,
-                                                      altitude_lrp.Y + text_number_height +1));
-    this->a_1->setRelativePosition(ic::rect<s32>(altitude_lrp.X + text_number_offset_x + 4*text_number_length + text_space_length,
-                                                      altitude_lrp.Y +1,
-                                                      altitude_lrp.X + text_number_offset_x + 5*text_number_length + text_space_length,
-                                                      altitude_lrp.Y + text_number_height +1));
-    ic::vector2d<s32> vs_lrp = this->getLowerRightPoint(this->image_vertical_speed);
-    this->sign->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + text_space_length,
-                                                   vs_lrp.Y +1,
-                                                   vs_lrp.X + text_number_offset_x + text_number_length + text_space_length,
-                                                   vs_lrp.Y + text_number_height +1));
-    this->vs_10000->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y +1,
-                                                       vs_lrp.X + text_number_offset_x + 2*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y + text_number_height +1));
-    this->vs_1000->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 2*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y +1,
-                                                       vs_lrp.X + text_number_offset_x + 3*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y + text_number_height +1));
-    this->vs_100->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 3*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y +1,
-                                                       vs_lrp.X + text_number_offset_x + 4*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y + text_number_height +1));
-    this->vs_10->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 4*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y +1,
-                                                       vs_lrp.X + text_number_offset_x + 5*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y + text_number_height +1));
-    this->vs_1->setRelativePosition(ic::rect<s32>(vs_lrp.X + text_number_offset_x + 5*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y +1,
-                                                       vs_lrp.X + text_number_offset_x + 6*text_number_length + 3*text_space_length/2,
-                                                       vs_lrp.Y + text_number_height +1));
-    // Unities
-    ic::vector2d<s32> ws_last_number_lrp = this->getLowerRightPoint(this->ws_1);
-    this->text_ws_u_length = this->device->getVideoDriver()->getScreenSize().Width*0.068;
-    this->image_wind_speed_u->setRelativePosition(ic::rect<s32>(ws_last_number_lrp.X + text_number_offset_x + text_space_length,
-                                                                 ws_last_number_lrp.Y ,
-                                                                 ws_last_number_lrp.X + text_number_offset_x + text_ws_u_length + text_space_length,
-                                                                 ws_last_number_lrp.Y + text_number_height));
-    ic::vector2d<s32> altitude_last_number_lrp = this->getLowerRightPoint(this->a_1);
-    this->text_altitude_u_length = this->device->getVideoDriver()->getScreenSize().Width*0.023;
-    this->image_altitude_u->setRelativePosition(ic::rect<s32>(altitude_last_number_lrp.X + text_number_offset_x + text_space_length,
-                                                               altitude_last_number_lrp.Y +1,
-                                                               altitude_last_number_lrp.X + text_number_offset_x + text_altitude_u_length + text_space_length,
-                                                               altitude_last_number_lrp.Y + text_number_height -1));
-    ic::vector2d<s32> vs_last_number_lrp = this->getLowerRightPoint(this->vs_1);
-    this->text_vs_u_length = this->background_width*0.13;
-    this->image_vertical_speed_u->setRelativePosition(ic::rect<s32>(vs_last_number_lrp.X + text_number_offset_x + text_space_length,
-                                                                     vs_last_number_lrp.Y ,
-                                                                     vs_last_number_lrp.X + text_number_offset_x + text_vs_u_length + text_space_length,
-                                                                     vs_last_number_lrp.Y + text_number_height));
+    updateDimensions();
+    updatePositions();
+
     //2D plane
     CGUICompass* compass_plane = new CGUICompass(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->plane_offset_x - this->plane_width,
                                                                this->plane_offset_y,
                                                                this->device->getVideoDriver()->getScreenSize().Width - this->plane_offset_x,
                                                                this->plane_offset_y + this->plane_height), gui, nullptr);
+
+    compass_plane->setCompassRelativePosition();
     if(this->plane_red == true)
         compass_plane->setCompassTexture(texture_plane_red);
     else
@@ -505,9 +554,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     else
     compass_h_gauge_full->setCompassTexture(texture_gauge_full_red_h);
     // Vertical gauge full
-    gauge_v_offset_y = int(this->device->getVideoDriver()->getScreenSize().Height*0.2);
-    gauge_v_height = int(this->device->getVideoDriver()->getScreenSize().Height*0.4);
-    gauge_v_width = int(this->device->getVideoDriver()->getScreenSize().Width*0.05);
     computeVerticalGaugeOffset(this->gauge_v_offset, this->gauge_v_slope, this->gauge_v_height);
     int y1 = gauge_v_offset_y + gauge_v_height/2;
     int y2 = gauge_v_offset_y + gauge_v_height/2 - 4 + gauge_v_offset;
@@ -529,8 +575,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
         compass_v_gauge_full->setCompassTexture(texture_gauge_full_red_h);
 
     // Horizontal gauge empty
-    gauge_h_height = int(this->device->getVideoDriver()->getScreenSize().Height*0.05);
-    gauge_h_width = int(this->device->getVideoDriver()->getScreenSize().Width*0.45);
     this->image_gauge_empty_h->setRelativePosition(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->gauge_h_width - gauge_h_offset_x,
                                                                      this->device->getVideoDriver()->getScreenSize().Height - this->gauge_h_height - gauge_h_offset_y,
                                                                      this->device->getVideoDriver()->getScreenSize().Width - gauge_h_offset_x,
@@ -541,7 +585,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                                      gauge_v_offset_x + gauge_v_width,
                                                                      gauge_v_offset_y + gauge_v_height));
     // Compass
-    this->compass_length = int(this->device->getVideoDriver()->getScreenSize().Height*0.13);
     CGUICompass* compass_compass = new CGUICompass(ic::rect<s32>(compass_offset_x, compass_offset_y,
                                                             compass_offset_x + compass_length, compass_offset_y + compass_length), this->gui, nullptr);
     compass_compass->setCompassTexture(texture_compass);
@@ -591,6 +634,9 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     compasses.push_back(compass_plane);
     compasses.push_back(compass_h_gauge_full);
     compasses.push_back(compass_v_gauge_full);
+
+    // Update the window size
+    this->precedent_window_size = this->device->getVideoDriver()->getScreenSize();
 
     // Update timer
     timer++;

@@ -40,6 +40,10 @@ private:
     ic::vector2d<s32> getUpperLeftPoint(ig::IGUIImage* image);
     // To get the upper right point of an image
     ic::vector2d<s32> getLowerRightPoint(ig::IGUIImage* image);
+    // To update element dimensions when the window is resized
+    void updateDimensions();
+    // To update element positions when the window has been resized and the dimensions recomputed
+    void updatePositions();
 
 
     is::ISceneManager *smgr;
@@ -56,6 +60,9 @@ private:
     bool stall;
     int gauge_h_percentage;
     double gauge_v_slope;
+
+    // Window size
+    ic::dimension2d<u32> precedent_window_size;
 
     // Display elements
     // Textures
@@ -79,7 +86,6 @@ private:
     iv::ITexture *texture_gauge_full_orange_h;
     iv::ITexture *texture_gauge_empty_v;
     iv::ITexture *texture_background;
-
 
     // Images
     ig::IGUIImage *image_wind_speed;
