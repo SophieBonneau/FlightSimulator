@@ -18,8 +18,8 @@ GUIElements::GUIElements()
     this->gauge_h_offset = 0;
     this->gauge_v_offset = 0;
     this->stall = true;
-    this->gauge_h_percentage = 60;
-    this->gauge_v_slope = 0;
+    this->gauge_h_percentage = 10;
+    this->gauge_v_slope = 0.5;
 
     // Positions
     this->compass_length = 55;
@@ -124,13 +124,8 @@ bool GUIElements::initialize2DElements()
     this->image_background->setScaleImage(true);
     // Compass
     this->texture_compass = this->driver->getTexture("data/2d/compass.png");
-    this->image_compass = this->gui->addImage(ic::rect<s32>(compass_offset_x, compass_offset_y,
-                                                            compass_offset_x + compass_length, compass_offset_y + compass_length));
-    this->image_compass->setImage(this->texture_compass);
-    this->image_compass->setScaleImage(true);
     // Level and arrows textures
     this->texture_level = this->driver->getTexture("data/2d/level.png");
-    this->texture_arrows = this->driver->getTexture("data/2d/arrows.png");
     // Wind speed
     this->texture_wind_speed = this->driver->getTexture("data/2d/wind-speed.png");
 
@@ -316,6 +311,8 @@ void GUIElements::computeHorizontalGaugeOffset(int& gauge_offset, int percentage
     {
         double div = (gauge_width-4)*percentage/100;
         gauge_offset = (gauge_width-4) - int(div);
+        if(gauge_offset == 0)
+            gauge_offset = -1;
     }
 }
 
@@ -328,6 +325,10 @@ void GUIElements::computeVerticalGaugeOffset(int& gauge_offset, double slope, in
     else
     {
         gauge_offset = -int(slope*gauge_height/2);
+        if (gauge_offset == 0)
+        {
+            gauge_offset = -2;
+        }
     }
 }
 
@@ -357,9 +358,9 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                                      gauge_ulp.Y,
                                                                      gauge_ulp.X - this->fuel_offset_x,
                                                                      gauge_ulp.Y + this->fuel_height));
-    //Windspeed
+    //Wind speed
     ic::vector2d<s32> background_ulp = this->getUpperLeftPoint(this->image_background);
-    this->text_ws_length = this->background_width*0.38;
+    this->text_ws_length = this->background_width*0.41;
     this->text_ws_height = this->background_height*0.25;
     this->text_offset_y = this->background_height*0.15;
     this->image_wind_speed->setRelativePosition(ic::rect<s32>(background_ulp.X + text_offset_x,
@@ -474,7 +475,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                                this->plane_offset_y,
                                                                this->device->getVideoDriver()->getScreenSize().Width - this->plane_offset_x,
                                                                this->plane_offset_y + this->plane_height), gui, nullptr);
-
     if(this->plane_red == true)
         compass_plane->setCompassTexture(texture_plane_red);
     else
@@ -493,7 +493,7 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     compass_level->setCompassHeading(0);*/
     //Horizontal gauge full
     computeHorizontalGaugeOffset(this->gauge_h_offset, this->gauge_h_percentage, this->gauge_h_width);
-    //gauge_offset = 0;
+    //gauge_offset = 0
     CGUICompass* compass_h_gauge_full = new CGUICompass(ic::rect<s32>(this->device->getVideoDriver()->getScreenSize().Width - this->gauge_h_width - gauge_h_offset_x + gauge_h_offset + 4,
                                                                     this->device->getVideoDriver()->getScreenSize().Height - this->gauge_h_height - gauge_h_offset_y + 4,
                                                                     this->device->getVideoDriver()->getScreenSize().Width - gauge_h_offset_x - 4,
@@ -509,7 +509,7 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     gauge_v_height = int(this->device->getVideoDriver()->getScreenSize().Height*0.4);
     gauge_v_width = int(this->device->getVideoDriver()->getScreenSize().Width*0.05);
     computeVerticalGaugeOffset(this->gauge_v_offset, this->gauge_v_slope, this->gauge_v_height);
-    int y1 = gauge_v_offset_y + gauge_v_height/2 + 4;
+    int y1 = gauge_v_offset_y + gauge_v_height/2;
     int y2 = gauge_v_offset_y + gauge_v_height/2 - 4 + gauge_v_offset;
     if(y1 > y2)
     {
@@ -528,8 +528,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     else
         compass_v_gauge_full->setCompassTexture(texture_gauge_full_red_h);
 
-    //if(this->gauge_h_percentage > 63)
-
     // Horizontal gauge empty
     gauge_h_height = int(this->device->getVideoDriver()->getScreenSize().Height*0.05);
     gauge_h_width = int(this->device->getVideoDriver()->getScreenSize().Width*0.45);
@@ -542,15 +540,13 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                                      gauge_v_offset_y,
                                                                      gauge_v_offset_x + gauge_v_width,
                                                                      gauge_v_offset_y + gauge_v_height));
-    // Arrows
-    this->compass_length = this->device->getVideoDriver()->getScreenSize().Width*0.1;
-    CGUICompass* compass_arrows = new CGUICompass(ic::rect<s32>(compass_offset_x, compass_offset_y,
-                                                                compass_offset_x + compass_length, compass_offset_y + compass_length), this->gui, nullptr);
-    compass_arrows->setCompassTexture(texture_arrows);
-    compass_arrows->setCompassHeading(50);
     // Compass
-    this->image_compass->setRelativePosition(ic::rect<s32>(compass_offset_x, compass_offset_y,
-                                                            compass_offset_x + compass_length, compass_offset_y + compass_length));
+    this->compass_length = int(this->device->getVideoDriver()->getScreenSize().Height*0.13);
+    CGUICompass* compass_compass = new CGUICompass(ic::rect<s32>(compass_offset_x, compass_offset_y,
+                                                            compass_offset_x + compass_length, compass_offset_y + compass_length), this->gui, nullptr);
+    compass_compass->setCompassTexture(texture_compass);
+    compass_compass->setCompassHeading(30);
+
     // Wind speed number update
     ws_10000->setImage(numbers[(this->wind_speed / 10000) % 10]);
     ws_1000->setImage(numbers[(this->wind_speed / 1000) % 10]);
@@ -591,7 +587,7 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     }
 
     //compasses.push_back(compass_level);
-    compasses.push_back(compass_arrows);
+    compasses.push_back(compass_compass);
     compasses.push_back(compass_plane);
     compasses.push_back(compass_h_gauge_full);
     compasses.push_back(compass_v_gauge_full);

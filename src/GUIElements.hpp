@@ -61,7 +61,6 @@ private:
     // Textures
     iv::ITexture *texture_compass;
     iv::ITexture *texture_level;
-    iv::ITexture *texture_arrows;
     iv::ITexture *texture_wind_speed;
     iv::ITexture *texture_altitude;
     iv::ITexture *texture_vertical_speed;
@@ -83,7 +82,6 @@ private:
 
 
     // Images
-    ig::IGUIImage *image_compass;
     ig::IGUIImage *image_wind_speed;
     ig::IGUIImage *image_altitude;
     ig::IGUIImage *image_vertical_speed;
