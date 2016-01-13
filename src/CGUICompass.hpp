@@ -1,5 +1,7 @@
 #include <irrlicht.h>
 
+#include <iostream>
+
 
 using namespace irr;
 namespace ig = irr::gui;
@@ -13,6 +15,7 @@ class CGUICompass : public ig::IGUIElement
     CGUICompass(ic::rect<s32> rect, ig::IGUIEnvironment* env, ig::IGUIElement* parent)
     : ig::IGUIElement(ig::EGUIET_ELEMENT, env, parent, -1, rect)
     {
+        this->rectangle = rect;
         Mesh.Vertices.set_used(4);
         Mesh.Indices .set_used(6);
 
@@ -56,41 +59,47 @@ class CGUICompass : public ig::IGUIElement
     //! render the compass
     virtual void draw()
     {
-        iv::IVideoDriver* driver = Environment->getVideoDriver();
-        if (! (driver && IsVisible))
-            return;
+        if(this->rectangle.getHeight() >0 && this->rectangle.getWidth() >0)
+        {
+            //position.X
+            iv::IVideoDriver* driver = Environment->getVideoDriver();
+            if (! (driver && IsVisible))
+                return;
 
-        ic::rect<s32> oldViewPort = driver->getViewPort();
-        driver->setViewPort(getAbsolutePosition());
+            ic::rect<s32> oldViewPort = driver->getViewPort();
+            driver->setViewPort(getAbsolutePosition());
 
-        // clear the projection matrix
-        ic::matrix4 oldProjMat = driver->getTransform(video::ETS_PROJECTION);
-        driver->setTransform(iv::ETS_PROJECTION, ic::matrix4());
+            // clear the projection matrix
+            ic::matrix4 oldProjMat = driver->getTransform(video::ETS_PROJECTION);
+            driver->setTransform(iv::ETS_PROJECTION, ic::matrix4());
 
-        // clear the view matrix
-        core::matrix4 oldViewMat = driver->getTransform(video::ETS_VIEW);
-        driver->setTransform(iv::ETS_VIEW, core::matrix4());
+            // clear the view matrix
+            core::matrix4 oldViewMat = driver->getTransform(video::ETS_VIEW);
+            driver->setTransform(iv::ETS_VIEW, core::matrix4());
 
-        driver->setTransform(iv::ETS_WORLD, Matrix);
+            driver->setTransform(iv::ETS_WORLD, Matrix);
 
-        driver->setMaterial(Mesh.Material);
+            driver->setMaterial(Mesh.Material);
 
-        driver->drawMeshBuffer(&Mesh);
+            driver->drawMeshBuffer(&Mesh);
 
-        //driver->makeColorKeyTexture(Mesh.getMaterial().getTexture(0),video::SColor(255,255,255,1));
+            //driver->makeColorKeyTexture(Mesh.getMaterial().getTexture(0),video::SColor(255,255,255,1));
 
 
-        // restore view matrix
-        driver->setTransform(iv::ETS_VIEW, oldViewMat);
+            // restore view matrix
+            driver->setTransform(iv::ETS_VIEW, oldViewMat);
 
-        // restore projection matrix
-        driver->setTransform(iv::ETS_PROJECTION, oldProjMat);
+            // restore projection matrix
+            driver->setTransform(iv::ETS_PROJECTION, oldProjMat);
 
-        // restore the view area
-        driver->setViewPort(oldViewPort);
+            // restore the view area
+            driver->setViewPort(oldViewPort);
+        }
+
     }
 
     private:
     is::SMeshBuffer Mesh;
     ic::matrix4 Matrix;
+    ic::rect<s32> rectangle;
 };
