@@ -15,20 +15,20 @@ public:
     // Constructor
     Screw(irr::scene::ISceneManager*, irr::scene::ISceneNode*, irr::io::path);
     // Destructor
-    ~Screw();
+    ~Screw(){}
 
     // Setters and getters
-    inline void setScale(const irr::core::vector3df& scale);
-    const irr::core::vector3df& getScale() const;
+    void setScale(const irr::core::vector3df& scale){this->scale = scale; }
+    const irr::core::vector3df& getScale() const {return this->scale; }
 
-    void setPosition(const irr::core::vector3df& position);
-    const irr::core::vector3df& getPosition() const;
+    void setPosition(const irr::core::vector3df& position){this->position = position; }
+    const irr::core::vector3df& getPosition() const {return this->position; }
 
-    void setMeshPath(const irr::io::path& meshPath);
-    const irr::io::path& getMeshPath() const;
+    void setMeshPath(const irr::io::path& meshPath){this->meshPath = meshPath; }
+    const irr::io::path& getMeshPath() const{return this->meshPath; }
 
-    void setRotationStep(const double rotationStep);
-    double getRotationStep() const;
+    void setRotationStep(const double rotationStep){this->rotationStep = rotationStep; }
+    double getRotationStep() const {return this->rotationStep; }
 
     // To initialize mesh and node
     int initialize();

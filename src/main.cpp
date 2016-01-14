@@ -7,6 +7,8 @@
 #include "GUIElements.hpp"
 #include "Water.hpp"
 #include "Screw.hpp"
+#include "City.hpp"
+#include "Plane.hpp"
 
 using namespace irr;
 namespace ic = irr::core;
@@ -503,11 +505,8 @@ int main()
     device->getFileSystem()->addFileArchive("data.zip");
 
     //City
-    is::IMesh *city_mesh = smgr->getMesh("data/city/city_cercles.obj");
-    is::ISceneNode *city_node;
-    city_node = smgr->addOctreeSceneNode(city_mesh,nullptr,-1,1024);
-    city_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    city_node->setScale(ic::vector3df(10,10,10));
+    City city = City(smgr, "data/city/city_cercles.obj");
+    city.initialize();
 
     //Init the object plane
     //2 parents: trajectory and rotation
@@ -516,18 +515,15 @@ int main()
     parentRotationNode->setParent(parentNode);
 
     //Init the plane
-    is::IAnimatedMesh *plane_mesh = smgr->getMesh("data/plane/plane.obj");
-    is::IAnimatedMeshSceneNode *plane_node= smgr->addAnimatedMeshSceneNode(plane_mesh);
-    plane_node->setParent(parentRotationNode);
-    plane_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    plane_node->setScale(ic::vector3df(0.05,0.05,0.05));
+    Plane plane = Plane(smgr, parentRotationNode, "data/plane/screw.obj");
+    plane.initialize();
 
     //Init the screw
     Screw screw = Screw(smgr, parentRotationNode, "data/plane/screw.obj");
     screw.initialize();
 
     //Init the two wings
-    is::IAnimatedMesh *leftwing_mesh = smgr->getMesh("data/plane/leftWing.obj");
+    /*is::IAnimatedMesh *leftwing_mesh = smgr->getMesh("data/plane/leftWing.obj");
     is::IAnimatedMesh *rightwing_mesh = smgr->getMesh("data/plane/rightWing.obj");
     is::IAnimatedMeshSceneNode *leftwing_node = smgr->addAnimatedMeshSceneNode(leftwing_mesh);
     is::IAnimatedMeshSceneNode *rightwing_node = smgr->addAnimatedMeshSceneNode(rightwing_mesh);
@@ -560,7 +556,7 @@ int main()
     rightttail_node->setParent(parentRotationNode);
     rightttail_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     rightttail_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    rightttail_node->setPosition(ic::vector3df(0.208,0.225,-0.441));
+    rightttail_node->setPosition(ic::vector3df(0.208,0.225,-0.441));*/
 
     //Water
     Water* water = new Water(smgr, driver->getTexture("data/water/water.jpg"));
@@ -610,7 +606,7 @@ int main()
             // Update screw rotation
             screw.updateRotation();
 
-            receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
+            //receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
 
             rotation.Y      = receiver.getRotation();
             planeSpeed      = receiver.getSpeed();
@@ -637,8 +633,8 @@ int main()
         parentNode->setPosition(position);
 
         //Camera position
-        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
-        //smgr->addCameraSceneNodeFPS();
+        //smgr->addCameraSceneNode(plane.getNode(), ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
+        smgr->addCameraSceneNodeFPS();
 
         //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));

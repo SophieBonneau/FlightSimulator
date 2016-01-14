@@ -26,53 +26,6 @@ Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::i
 
 }
 
-// Destructor
-Screw::~Screw()
-{
-
-}
-
-// Getters and setters
-void Screw::setScale(const ic::vector3df& scale)
-{
-    this->scale = scale;
-}
-
-void Screw::setPosition(const ic::vector3df& position)
-{
-    this->position = position;
-}
-
-void Screw::setMeshPath(const irr::io::path& meshPath)
-{
-    this->meshPath = meshPath;
-}
-
-void Screw::setRotationStep(const double rotationStep)
-{
-    this->rotationStep = rotationStep;
-}
-
-const irr::core::vector3df& Screw::getScale() const
-{
-    return this->scale;
-}
-
-const irr::core::vector3df& Screw::getPosition() const
-{
-    return this->position;
-}
-
-const irr::io::path& Screw::getMeshPath() const
-{
-    return this->meshPath;
-}
-
-double Screw::getRotationStep() const
-{
-    return this->rotationStep;
-}
-
 // To initialize water mesh and node
 int Screw::initialize()
 {
