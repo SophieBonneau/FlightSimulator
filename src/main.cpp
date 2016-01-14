@@ -5,6 +5,8 @@
 
 #include "CGUICompass.hpp"
 #include "GUIElements.hpp"
+#include "Water.hpp"
+#include "Screw.hpp"
 
 using namespace irr;
 namespace ic = irr::core;
@@ -302,6 +304,8 @@ void manageCollisionsWithScenery(is::ISceneManager *smgr,
     //smgr->addSphereSceneNode(5.0,16,0,-1,ic::vector3df(10,0,0),ic::vector3df(0,0,0),ic::vector3df(1.0,1.0,1.0));
 }
 
+
+
 int main()
 {
     // display values
@@ -349,12 +353,8 @@ int main()
     plane_node->setScale(ic::vector3df(0.05,0.05,0.05));
 
     //Init the screw
-    is::IAnimatedMesh *screw_mesh = smgr->getMesh("data/plane/screw.obj");
-    is::IAnimatedMeshSceneNode *screw_node= smgr->addAnimatedMeshSceneNode(screw_mesh);
-    screw_node->setParent(parentRotationNode);
-    screw_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    screw_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    screw_node->setPosition(ic::vector3df(0.0,0.19,0.58));
+    Screw screw = Screw(smgr, parentRotationNode, "data/plane/screw.obj");
+    screw.initialize();
 
     //Init the two wings
     is::IAnimatedMesh *leftwing_mesh = smgr->getMesh("data/plane/leftWing.obj");
@@ -393,22 +393,14 @@ int main()
     rightttail_node->setPosition(ic::vector3df(0.208,0.225,-0.441));
 
     //Water
-     is::IMesh *mesh_water = smgr->addHillPlaneMesh( "myHill",
-           core::dimension2d<f32>(4.6,4.6),
-           core::dimension2d<u32>(200,200), 0, 0,
-           core::dimension2d<f32>(0,0),
-           core::dimension2d<f32>(5,5));
-    scene::ISceneNode* plan_water = smgr->addWaterSurfaceSceneNode(mesh_water, 0.2f, 500.0f, 10.0f);
-    plan_water->setMaterialTexture(0, driver->getTexture("data/water/water.jpg"));
-    plan_water->setMaterialFlag(iv::EMF_LIGHTING, false);
-    plan_water->setMaterialType(video::EMT_REFLECTION_2_LAYER);
-    plan_water->setPosition(ic::vector3df(0,-2, 0));
+    Water* water = new Water(smgr, driver->getTexture("data/water/water.jpg"));
+    water->initialize();
 
     // 2D elements initialization
     guiManager->initialize2DElements();
 
     // Collision management with scenery
-    manageCollisionsWithScenery(smgr, city_mesh, city_node, plane_node, parentNode);
+    //manageCollisionsWithScenery(smgr, city_mesh, city_node, plane_node, parentNode);
 
     //Init the plane state
     //To change to false: true only for tests
@@ -431,10 +423,11 @@ int main()
         //Else, ie. plane on the ground, in take-off position and in landing position
         //  inFlight = false
 
-        ic::vector3df rotation_screw = screw_node->getRotation();
-
         if(inFlight)
         {
+            // Update screw rotation
+            screw.updateRotation();
+
             //Movements of the plane
             ic::vector3df rotation = parentNode->getRotation();
 
@@ -450,12 +443,10 @@ int main()
             position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
             position.Y  = planeAltitude;
 
-            rotation_screw.Z += 30.0;
-
             parentNode->setPosition(position);
-            screw_node->setRotation(rotation_screw);
 
-            receiver.movePlane(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
+
+            //receiver.movePlane(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
 
         }
         else
@@ -464,7 +455,7 @@ int main()
         }
 
         //Camera position
-        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
+        //smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
 
         //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
