@@ -24,8 +24,6 @@ Water::Water(is::ISceneManager* smgr, video::ITexture * textureWater)
     this->tileCount = ic::dimension2d<u32>(200,200);
     this->countHills = ic::dimension2d<f32>(0,0);
     this->textureRepeatCount = ic::dimension2d<f32>(5,5);
-
-    this->textureWater = nullptr;
 }
 
 // Destructor

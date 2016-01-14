@@ -18,7 +18,7 @@ public:
     ~Screw();
 
     // Setters and getters
-    void setScale(const irr::core::vector3df& scale);
+    inline void setScale(const irr::core::vector3df& scale);
     const irr::core::vector3df& getScale() const;
 
     void setPosition(const irr::core::vector3df& position);
@@ -34,7 +34,6 @@ public:
     int initialize();
     // To update the screw rotation while render
     int updateRotation();
-
 
 private:
     irr::scene::ISceneManager* smgr;

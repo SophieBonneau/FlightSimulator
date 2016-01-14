@@ -476,8 +476,6 @@ void manageCollisionsWithScenery(is::ISceneManager *smgr,
     //smgr->addSphereSceneNode(5.0,16,0,-1,ic::vector3df(10,0,0),ic::vector3df(0,0,0),ic::vector3df(1.0,1.0,1.0));
 }
 
-
-
 int main()
 {
     // display values
@@ -495,7 +493,7 @@ int main()
                                           ic::dimension2d<u32>(640, 480),
                                           16, false, false, false, &receiver);
     iv::IVideoDriver *driver = device->getVideoDriver();
-    is::ISceneManager *smgr = device->getSceneManager();
+    is::ISceneManager *smgr  = device->getSceneManager();
     ig::IGUIEnvironment *gui = device->getGUIEnvironment();
 
     // GUI elements mananger
@@ -593,7 +591,6 @@ int main()
         ic::vector3df rotation = parentNode->getRotation();
         ic::vector3df position = parentNode->getPosition();
 
-
         if(receiver.onFloor)
         {
             receiver.planeOnFloor(parentRotationNode);
@@ -622,8 +619,6 @@ int main()
             position.X += planeSpeed * sin(rotation.Y * M_PI / 180.0);
             position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
             position.Y  = planeAltitude;
-
-            rotation_screw.Z += 30.0;
         }
         else if(receiver.inLanding)
         {
@@ -640,10 +635,10 @@ int main()
 
         parentNode->setRotation(rotation);
         parentNode->setPosition(position);
-        screw_node->setRotation(rotation_screw);
 
         //Camera position
-        //smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
+        smgr->addCameraSceneNode(plane_node, ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
+        //smgr->addCameraSceneNodeFPS();
 
         //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
