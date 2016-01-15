@@ -32,6 +32,8 @@ public:
 private:
 
     void manageCollisionsWithSurroundings(irr::scene::IMesh *city_mesh, irr::scene::ISceneNode* city_node);
+    void initializeObjects();
+    void initializeGui();
 
 
     // Render objects

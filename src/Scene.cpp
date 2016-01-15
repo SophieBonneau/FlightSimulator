@@ -38,29 +38,8 @@ void Scene::initializeIrrlicht()
     m_gui = m_device->getGUIEnvironment();
 }
 
-
-void Scene::manageCollisionsWithSurroundings(irr::scene::IMesh *city_mesh, irr::scene::ISceneNode* city_node)
+void Scene::initializeObjects()
 {
-    // Création du triangle selector
-    scene::ITriangleSelector *selector_city;
-    selector_city = m_smgr->createOctreeTriangleSelector(city_mesh, city_node);
-    city_node->setTriangleSelector(selector_city);
-    // Et l'animateur/collisionneur
-    scene::ISceneNodeAnimator *anim_collision_plane_city;
-    anim_collision_plane_city = m_smgr->createCollisionResponseAnimator(selector_city,
-                                                 m_parentNode,  // Le noeud que l'on veut gérer
-                                                 ic::vector3df(2.8, 0.5, 0.4), // "rayons" du perso
-                                                 ic::vector3df(0, 0, 0),  // gravity
-                                                 ic::vector3df(1.0,0,0));  //décalage du centre
-    m_parentNode->addAnimator(anim_collision_plane_city);
-}
-
-void Scene::initializeData()
-{
-    // GUI elements mananger
-    m_guiManager = new GUIElements();
-    m_guiManager->setDevice(m_device);
-
     m_device->getFileSystem()->addFileArchive("data.zip");
 
     //City
@@ -104,11 +83,41 @@ void Scene::initializeData()
     Water* water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"));
     water->initialize();
 
-    // 2D elements initialization
-    m_guiManager->initialize2DElements();
-
     // Collision management with surroundings
     manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
+}
+void Scene::initializeGui()
+{
+    // GUI elements mananger
+    m_guiManager = new GUIElements();
+    m_guiManager->setDevice(m_device);
+
+    // 2D elements initialization
+    m_guiManager->initialize2DElements();
+}
+
+
+void Scene::manageCollisionsWithSurroundings(irr::scene::IMesh *city_mesh, irr::scene::ISceneNode* city_node)
+{
+    // Création du triangle selector
+    scene::ITriangleSelector *selector_city;
+    selector_city = m_smgr->createOctreeTriangleSelector(city_mesh, city_node);
+    city_node->setTriangleSelector(selector_city);
+    // Et l'animateur/collisionneur
+    scene::ISceneNodeAnimator *anim_collision_plane_city;
+    anim_collision_plane_city = m_smgr->createCollisionResponseAnimator(selector_city,
+                                                 m_parentNode,  // Le noeud que l'on veut gérer
+                                                 ic::vector3df(2.8, 0.5, 0.4), // "rayons" du perso
+                                                 ic::vector3df(0, 0, 0),  // gravity
+                                                 ic::vector3df(1.0,0,0));  //décalage du centre
+    m_parentNode->addAnimator(anim_collision_plane_city);
+}
+
+void Scene::initializeData()
+{
+    initializeGui();
+    initializeObjects();
+
 }
 
 void Scene::render()
