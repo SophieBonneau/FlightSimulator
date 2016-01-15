@@ -3,14 +3,14 @@
 #include <time.h>
 #include <vector>
 
-#include "CGUICompass.hpp"
-#include "GUIElements.hpp"
-#include "Water.hpp"
-#include "Screw.hpp"
-#include "City.hpp"
-#include "Body.hpp"
-#include "Wing.hpp"
-#include "Tail.hpp"
+#include "GUI/CGUICompass.hpp"
+#include "GUI/GUIElements.hpp"
+#include "Objects/Surroundings/Water.hpp"
+#include "Objects/Plane/Screw.hpp"
+#include "Objects/Surroundings/City.hpp"
+#include "Objects/Plane/Body.hpp"
+#include "Objects/Plane/Wing.hpp"
+#include "Objects/Plane/Tail.hpp"
 
 using namespace irr;
 namespace ic = irr::core;
