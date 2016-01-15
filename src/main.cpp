@@ -3,12 +3,14 @@
 #include <time.h>
 #include <vector>
 
-#include "CGUICompass.hpp"
-#include "GUIElements.hpp"
-#include "Water.hpp"
-#include "Screw.hpp"
-#include "City.hpp"
-#include "Plane.hpp"
+#include "GUI/CGUICompass.hpp"
+#include "GUI/GUIElements.hpp"
+#include "Objects/Surroundings/Water.hpp"
+#include "Objects/Plane/Screw.hpp"
+#include "Objects/Surroundings/City.hpp"
+#include "Objects/Plane/Body.hpp"
+#include "Objects/Plane/Wing.hpp"
+#include "Objects/Plane/Tail.hpp"
 
 using namespace irr;
 namespace ic = irr::core;
@@ -452,7 +454,7 @@ struct MyEventReceiver : IEventReceiver
     }
 };
 
-void manageCollisionsWithScenery(is::ISceneManager *smgr,
+void manageCollisionsWithSurroundings(is::ISceneManager *smgr,
                                  is::IMesh *city_mesh,
                                  is::ISceneNode* city_node,
                                  is::IAnimatedMeshSceneNode *plane,
@@ -510,48 +512,32 @@ int main()
     parentRotationNode->setParent(parentNode);
 
     //Init the plane
-    Plane plane = Plane(smgr, parentRotationNode, "data/plane/plane.obj");
-    plane.initialize();
+
+    Body body = Body(smgr, parentRotationNode, "data/plane/plane.obj"); // "data/plane/plane.obj"
+    body.initialize();
 
     //Init the screw
     Screw screw = Screw(smgr, parentRotationNode, "data/plane/screw.obj");
     screw.initialize();
 
     //Init the two wings
-    is::IAnimatedMesh *leftwing_mesh = smgr->getMesh("data/plane/leftWing.obj");
-    is::IAnimatedMesh *rightwing_mesh = smgr->getMesh("data/plane/rightWing.obj");
-    is::IAnimatedMeshSceneNode *leftwing_node = smgr->addAnimatedMeshSceneNode(leftwing_mesh);
-    is::IAnimatedMeshSceneNode *rightwing_node = smgr->addAnimatedMeshSceneNode(rightwing_mesh);
-    leftwing_node->setParent(parentRotationNode);
-    leftwing_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    leftwing_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    leftwing_node->setPosition(ic::vector3df(-0.667,0.303,0.19));
-    rightwing_node->setParent(parentRotationNode);
-    rightwing_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    rightwing_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    rightwing_node->setPosition(ic::vector3df(0.667,0.306,0.19));
+    Wing* leftWing = new Wing(smgr, parentRotationNode,"data/plane/screw.obj"); // "data/plane/wing.obj"
+    leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));
+    leftWing->initialize();
+    Wing* rightWing = new Wing(smgr, parentRotationNode,"data/plane/screw.obj"); // "data/plane/wing.obj"
+    rightWing->setPosition(ic::vector3df(0.667,0.303,0.19));
+    rightWing->initialize();
 
-    //Init the tail
-    is::IAnimatedMesh *tail_mesh = smgr->getMesh("data/plane/tail.obj");
-    is::IAnimatedMeshSceneNode *tail_node= smgr->addAnimatedMeshSceneNode(tail_mesh);
-    tail_node->setParent(parentRotationNode);
-    tail_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    tail_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    tail_node->setPosition(ic::vector3df(0.001,0.355,-0.53));
-
-    //Init the left and right tails
-    is::IAnimatedMesh *lefttail_mesh = smgr->getMesh("data/plane/leftTail.obj");
-    is::IAnimatedMeshSceneNode *lefttail_node= smgr->addAnimatedMeshSceneNode(lefttail_mesh);
-    lefttail_node->setParent(parentRotationNode);
-    lefttail_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    lefttail_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    lefttail_node->setPosition(ic::vector3df(-0.205,0.23,-0.441));
-    is::IAnimatedMesh *rightttail_mesh = smgr->getMesh("data/plane/rightTail.obj");
-    is::IAnimatedMeshSceneNode *rightttail_node= smgr->addAnimatedMeshSceneNode(rightttail_mesh);
-    rightttail_node->setParent(parentRotationNode);
-    rightttail_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    rightttail_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    rightttail_node->setPosition(ic::vector3df(0.208,0.225,-0.441));
+    //Init the three tails
+    Tail middleTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
+    middleTail.setPosition(ic::vector3df(0.001,0.355,-0.53));
+    middleTail.initialize();
+    Tail leftTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
+    leftTail.setPosition(ic::vector3df(-0.205,0.23,-0.441));
+    leftTail.initialize();
+    Tail rightTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
+    rightTail.setPosition(ic::vector3df(0.208,0.225,-0.441));
+    rightTail.initialize();
 
     //Water
     Water* water = new Water(smgr, driver->getTexture("data/water/water.jpg"));
@@ -560,8 +546,8 @@ int main()
     // 2D elements initialization
     guiManager->initialize2DElements();
 
-    // Collision management with scenery
-    //manageCollisionsWithScenery(smgr, city_mesh, city_node, plane_node, parentNode);
+    // Collision management with surroundings
+    //manageCollisionsWithSurroundings(smgr, city_mesh, city_node, plane_node, parentNode);
 
     float planeWeigth = 1000.0f;
     receiver.setPlaneWeight(planeWeigth);
@@ -601,7 +587,9 @@ int main()
             // Update screw rotation
             screw.updateRotation();
 
-            receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
+            //receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
+
+            //receiver.planeInFlight(parentRotationNode, leftWing->getNode(), rightWing->getNode(), middleTail.getNode(), leftTail.getNode(), rightTail.getNode());
 
             rotation.Y      = receiver.getRotation();
             planeSpeed      = receiver.getSpeed();
@@ -628,8 +616,8 @@ int main()
         parentNode->setPosition(position);
 
         //Camera position
-        //smgr->addCameraSceneNode(plane.getNode(), ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
-        smgr->addCameraSceneNodeFPS();
+        smgr->addCameraSceneNode(body.getNode(), ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
+        //smgr->addCameraSceneNodeFPS();
 
         //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
