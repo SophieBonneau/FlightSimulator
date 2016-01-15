@@ -56,6 +56,7 @@ struct MyEventReceiver : IEventReceiver
     float planeWeight     = voidPlaneWeightKg;
     float planeSpeed      = 0.0f;
     float planeSpeedFloor = 0.0f;
+    float planeSpeedSlope = 0.0f;
     float planeAltitude   = 0.0f;
     float rotationAngle   = 0.0f;
 
@@ -238,8 +239,6 @@ struct MyEventReceiver : IEventReceiver
         //Increase or decrease the plane speed
         if(keyIsDown[KEY_UP] == true)
         {
-            //plane speed = valeur de vitesse absolue de l'avion
-            // A mettre en paralèlle avec la puissance du moteur, le poids ...
             if(motorPower < maxMotorPower)
                 motorPower += motorStep;
         }
@@ -305,31 +304,22 @@ struct MyEventReceiver : IEventReceiver
             }
         }
 
-        node->setRotation(childRotation);
-
         if(planeSpeed < motorPower)
-            planeSpeed += 1/planeWeight * motorPower;
-        if(planeSpeed > motorPower)
-            planeSpeed -= 1/planeWeight * motorPower;
+            planeSpeed += 10/planeWeight * motorPower;
+        else if(planeSpeed > motorPower)
+            planeSpeed -= 10/planeWeight * motorPower;
+        else
+            planeSpeed  = motorPower;
 
-        std::cout<<"factor : "<<(1 + childRotation.X / 90)<<std::endl;
-
-        if(childRotation.X > 0)
-        {
-            planeSpeed = (1 - childRotation.X / 90) * planeSpeed;
-            planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
-        }
+        if(childRotation.X < 0)
+            planeSpeedSlope = (1 + childRotation.X / 90) * planeSpeed;
         else if(childRotation.X == 0)
-            planeSpeedFloor = planeSpeed;
+            planeSpeedSlope = planeSpeed;
         else if(childRotation.X > 0)
-        {
-            planeSpeed = (1 + childRotation.X / 90) * planeSpeed;
-            planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
-        }
-        planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
+            planeSpeedSlope = (1 + childRotation.X / 90) * planeSpeed;
 
-        std::cout<<"plane speed : "<<planeSpeed<<std::endl;
-        std::cout<<"plane altitude : "<<planeSpeed<<std::endl;
+        planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeedSlope;
+        planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * planeSpeedSlope;
 
         //Compute rotation
         float planeSpeedMByS = fromGameUnitToKt(planeSpeed) * 1.852 * 0.277777777778;
