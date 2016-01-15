@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef CGUICOMPASS
+#define CGUICOMPASS
+
 #include <irrlicht.h>
 
 #include <vector>
