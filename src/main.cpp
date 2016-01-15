@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "GUI/CGUICompass.hpp"
+#include "Event/EventReceiver.hpp"
 #include "GUI/GUIElements.hpp"
 #include "Objects/Surroundings/Water.hpp"
 #include "Objects/Plane/Screw.hpp"
@@ -17,431 +18,6 @@ namespace ic = irr::core;
 namespace is = irr::scene;
 namespace iv = irr::video;
 namespace ig = irr::gui;
-
-
-struct MyEventReceiver : IEventReceiver
-{
-    bool keyIsDown[KEY_KEY_CODES_COUNT];
-
-    //Init steps
-    const float speedStep         = 0.005f;
-    const float motorStep         = 0.01f;
-    const float altitudeAngleStep = 0.1;
-    const float rotationAngleStep = 0.1f;
-
-    //Init plane constructor parameters
-    const float voidPlaneWeightKg = 957.0f;     //Fuel included
-    const float g = 9.81f;  //m.s-2
-
-    //const float bearing = ; // Portance ???
-    const float wingLoading = 68.84f; //Charge alaire kg.m-2
-
-    const float minPlaneSpeedKt  = 0.0f;    //Kt
-    const float maxPlaneSpeedKt  = 158.0f;  //Kt
-    const float flatStallSpeedKt = 44.0f;   //Kt
-
-    //Init motor const
-    float const minMotorPower = 0.0f;
-    float const maxMotorPower = 16.0f;
-
-    const float minPlaneSpeed   = fromKtToGameUnit(minPlaneSpeedKt);    //Irrlicht unit
-    const float maxPlaneSpeed   = fromKtToGameUnit(maxPlaneSpeedKt);    //Irrlicht unit
-    const float flatStallSpeed  = fromKtToGameUnit(flatStallSpeedKt);   //Irrlicht unit
-
-    //Init plane limits values
-    float loadFactor = 1.0f;    //No unit
-    float stallSpeed = -100.0f; //Irrlicht unit
-
-    //Init moving plane values
-    float planeWeight     = voidPlaneWeightKg;
-    float planeSpeed      = 0.0f;
-    float planeSpeedFloor = 0.0f;
-    float planeSpeedSlope = 0.0f;
-    float planeAltitude   = 0.0f;
-    float rotationAngle   = 0.0f;
-
-    float motorPower = 0.0f;
-
-    const float weight = planeWeight * g;
-
-    float isBrakes   = true;
-    float isStalling = false;
-    float isCrashed  = false;
-
-    bool onFloor    = false;
-    bool inTakeOff  = false;
-    bool inFlight   = true;
-    bool inLanding  = false;
-
-    /************************************************************************************/
-    /******************************** Constructor ***************************************/
-    /************************************************************************************/
-    /* MyEventReceiver: struct constructor
-     * Initialise all values of the table containing the state of the keys to false
-     * (not clicked).
-    */
-    MyEventReceiver()
-    {
-        for(unsigned int i = 0; i<KEY_KEY_CODES_COUNT; ++i)
-            keyIsDown[i] = false;
-    }
-
-    /************************************************************************************/
-    /******************************** Getters & setters *********************************/
-    /************************************************************************************/
-    /* float getSpeed: getter for the speed value
-     * return:  planeSpeed: the speed value
-    */
-    float getAltitude(){    return planeAltitude;  }
-
-    /* float getAltitude: getter for the altitude value
-     * return:  planeAltitude: the altitude value
-    */
-    float getSpeed(){    return planeSpeedFloor;  }
-
-    /* float getRotation: getter for the rotation value (plane go to the left or the right)
-     * return:  rotationAngle: the rotation value
-    */
-    float getRotation(){    return rotationAngle;  }
-
-    /* void setPlaneWeight: function used to initialize the planeWeight
-     * params:  const float planeWeight:      the plane weight
-    */
-    void setPlaneWeight(const float planeWeight){     this->planeWeight = planeWeight;    }
-
-    /************************************************************************************/
-    /******************************** Functions *****************************************/
-    /************************************************************************************/
-    /* float fromKtToGameUnit: convert from Kt unit to irrlicht unit (kt = 1.852 km/h)
-     * params:  float valueToConvert:      the value in Kt unit
-     * return:  float:  the value converted
-    */
-    float fromKtToGameUnit(float valueToConvert)
-    {
-        return valueToConvert / 400.0f;
-    }
-
-    /* float fromGameUnitToKt: convert from irrlicht unit to Kt unit (kt = 1.852 km/h)
-     * params:  float valueToConvert:      the value in irrlicht unit
-     * return:  float:  the value converted
-    */
-    float fromGameUnitToKt(float valueToConvert)
-    {
-        return valueToConvert * 400.0f;
-    }
-
-    /* void planeOnFloor:  Calculate the position of the plane and change it direction during the "on floor" phase.
-     *                      Do all the computation for the first phase of the take off
-     * params:  is::ISceneNode *node:   Instance of the global plane node
-     *                                  (permit only to change the plane direction)
-    */
-    void planeOnFloor(is::ISceneNode *node)
-    {
-        //Brakes used only on the plane wheels
-        if(keyIsDown[KEY_KEY_P] == true)
-            isBrakes = !isBrakes;
-
-        if(!isBrakes)
-        {
-            ic::vector3df childRotation = node->getRotation();
-
-            if(keyIsDown[KEY_UP] == true)
-            {
-                if(planeSpeed < maxPlaneSpeed)
-                {
-                    planeSpeed += speedStep;
-                    planeSpeedFloor = planeSpeed;
-                }
-            }
-            if(keyIsDown[KEY_DOWN] == true)
-            {
-                if(planeSpeed > minPlaneSpeed)
-                {
-                    planeSpeed -= speedStep;
-                    planeSpeedFloor = planeSpeed;
-                }
-            }
-
-            if(keyIsDown[KEY_KEY_Z] == true)
-                childRotation.X -= altitudeAngleStep;
-            if(keyIsDown[KEY_KEY_S] == true)
-            {
-                childRotation.X += altitudeAngleStep;
-                if(childRotation.X >=2 )
-                {
-                    onFloor = false;
-                    isCrashed = true;
-                }
-            }
-
-            if(keyIsDown[KEY_KEY_D] == true)
-                rotationAngle  += rotationAngleStep;
-            if(keyIsDown[KEY_KEY_Q] == true)
-                rotationAngle  -= rotationAngleStep;
-
-            node->setRotation(childRotation);
-        }
-    }
-
-    /* void planeInTakeOff:  Calculate the position of the plane and change it direction during the critical pahse of the take off.
-     *                       All changed datas between 0 and 15 meters
-     * params:  is::ISceneNode *node:   Instance of the global plane node
-     *                                  (permit only to change the plane direction)
-    */
-    void planeInTakeOff(is::ISceneNode *node)
-    {
-        ic::vector3df childRotation = node->getRotation();
-
-        if(keyIsDown[KEY_UP] == true)
-        {
-        }
-        if(keyIsDown[KEY_DOWN] == true)
-        {
-        }
-
-        if(keyIsDown[KEY_KEY_Z] == true)
-        if(keyIsDown[KEY_KEY_S] == true)
-        {
-        }
-
-        if(keyIsDown[KEY_KEY_D] == true)
-        {
-        }
-        if(keyIsDown[KEY_KEY_Q] == true)
-        {
-        }
-    }
-
-    /* void planeInFlight:  Calculate the position of the plane and change it direction.
-     *                  All changed data s will be called by the main when nedded
-     * params:  is::ISceneNode *node:   Instance of the global plane node
-     *                                  (permit only to change the plane direction)
-    */
-    void planeInFlight(is::ISceneNode *node,
-                       is::IMeshSceneNode *leftwing_node, is::IMeshSceneNode *rightwing_node,
-                       is::IMeshSceneNode *tail_node,
-                       is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node)
-    {
-        if(stallSpeed < planeSpeed && stallSpeed * 1.1 > planeSpeed)
-        {
-        }
-        if(stallSpeed >= planeSpeed)
-        {
-        }
-
-        ic::vector3df childRotation     = node->getRotation();
-        ic::vector3df leftwingRotation  = leftwing_node->getRotation();
-        ic::vector3df rightwingRotation = rightwing_node->getRotation();
-        ic::vector3df tailRotation      = tail_node->getRotation();
-        ic::vector3df lefttailRotation  = lefttail_node->getRotation();
-        ic::vector3df righttailRotation = righttail_node->getRotation();
-
-        //Increase or decrease the plane speed
-        if(keyIsDown[KEY_UP] == true)
-        {
-            if(motorPower < maxMotorPower)
-                motorPower += motorStep;
-        }
-        if(keyIsDown[KEY_DOWN] == true)
-        {
-            if(motorPower > minMotorPower)
-                motorPower -= motorStep;
-        }
-
-        //Get the plane up or down
-        if(keyIsDown[KEY_KEY_Z] == true)
-        {
-            childRotation.X     -= altitudeAngleStep;
-            lefttailRotation.X  -= 0.1;
-            righttailRotation.X -= 0.1;
-        }
-        if(keyIsDown[KEY_KEY_S] == true)
-        {
-            childRotation.X     += altitudeAngleStep;
-            lefttailRotation.X  += 0.1;
-            righttailRotation.X += 0.1;
-        }
-
-        //Open the side panels of the plane to turn to the right or the left
-        if(keyIsDown[KEY_KEY_D] == true)
-        {
-            //TD: Add the wind effect
-            //If the plane is flat (not in the wrong inclinaison)
-            if(childRotation.Z <= 0)
-            {
-                childRotation.Z     -= rotationAngleStep;
-                leftwingRotation.X  -= 0.1;
-                rightwingRotation.X += 0.1;
-                tailRotation.Y      -= 0.1;
-                tailRotation.Z      += 0.05;
-            }
-            else
-            {
-                childRotation.Z     -= 2 * rotationAngleStep;
-                leftwingRotation.X  -= 2 * 0.1;
-                rightwingRotation.X += 2 * 0.1;
-                tailRotation.Y      -= 2 * 0.1;
-                tailRotation.Z      += 2 * 0.05;
-            }
-        }
-        if(keyIsDown[KEY_KEY_Q] == true)
-        {
-            if(childRotation.Z >= 0)
-            {
-                childRotation.Z     += rotationAngleStep;
-                leftwingRotation.X  += 0.1;
-                rightwingRotation.X -= 0.1;
-                tailRotation.Y      += 0.1;
-                tailRotation.Z      -= 0.05;
-            }
-            else
-            {
-                childRotation.Z     += 2 * rotationAngleStep;
-                leftwingRotation.X  += 2 * 0.1;
-                rightwingRotation.X -= 2* 0.1;
-                tailRotation.Y      += 2 * 0.1;
-                tailRotation.Z      -= 2 * 0.05;
-            }
-        }
-
-        if(planeSpeed < motorPower)
-            planeSpeed += 10/planeWeight * motorPower;
-        else if(planeSpeed > motorPower)
-            planeSpeed -= 10/planeWeight * motorPower;
-        else
-            planeSpeed  = motorPower;
-
-        if(childRotation.X < 0)
-            planeSpeedSlope = (1 + childRotation.X / 90) * planeSpeed;
-        else if(childRotation.X == 0)
-            planeSpeedSlope = planeSpeed;
-        else if(childRotation.X > 0)
-            planeSpeedSlope = (1 + childRotation.X / 90) * planeSpeed;
-
-        planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeedSlope;
-        planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * planeSpeedSlope;
-
-        //Compute rotation
-        float planeSpeedMByS = fromGameUnitToKt(planeSpeed) * 1.852 * 0.277777777778;
-        if(planeSpeedMByS > 0)
-            rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * g / planeSpeedMByS) * core::RADTODEG / 20; // for real values /80
-
-        //Compute the stall speed
-        loadFactor = (1/cos(-childRotation.Z*core::DEGTORAD));
-        stallSpeed = sqrt(loadFactor) * flatStallSpeed;
-
-        node->setRotation(childRotation);
-        leftwing_node->setRotation(leftwingRotation);
-        rightwing_node->setRotation(rightwingRotation);
-        tail_node->setRotation(tailRotation);
-        lefttail_node->setRotation(lefttailRotation);
-        righttail_node->setRotation(righttailRotation);
-    }
-
-    /* void planeInLanding:  Calculate the position of the plane and change it direction during the critical pahse of the landing.
-     *                       All changed datas between 0 and 15 meters
-     * params:  is::ISceneNode *node:   Instance of the global plane node
-     *                                  (permit only to change the plane direction)
-    */
-    void planeInLanding(is::ISceneNode *node)
-    {
-        ic::vector3df childRotation = node->getRotation();
-
-        if(keyIsDown[KEY_UP] == true)
-        {
-        }
-        if(keyIsDown[KEY_DOWN] == true)
-        {
-        }
-
-        if(keyIsDown[KEY_KEY_Z] == true)
-        if(keyIsDown[KEY_KEY_S] == true)
-        {
-        }
-
-        if(keyIsDown[KEY_KEY_D] == true)
-        {
-        }
-        if(keyIsDown[KEY_KEY_Q] == true)
-        {
-        }
-    }
-
-    /************************************************************************************/
-    /******************************** Events ********************************************/
-    /************************************************************************************/
-    bool OnEvent(const SEvent &event)
-    {
-        // Si l'événement est de type clavier (KEY_INPUT)
-        // et du genre pressage de touche
-        // et que la touche est escape, on sort du programme
-        if (event.EventType == EET_KEY_INPUT_EVENT)
-        {
-            if(event.EventType == EET_KEY_INPUT_EVENT && event.KeyInput.Key == KEY_ESCAPE)
-            {
-                exit(0);
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Z && !keyIsDown[KEY_KEY_Z]) // Go up
-            {
-                keyIsDown[KEY_KEY_Z] = true;
-            }
-            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Z && keyIsDown[KEY_KEY_Z])
-            {
-                keyIsDown[KEY_KEY_Z] = false;
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_S && !keyIsDown[KEY_KEY_S]) // Go down
-            {
-                keyIsDown[KEY_KEY_S] = true;
-            }
-            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_S)
-            {
-                keyIsDown[KEY_KEY_S] = false;
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Q && !keyIsDown[KEY_KEY_Q]) // Go left
-            {
-                keyIsDown[KEY_KEY_Q] = true;
-            }
-            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Q) // Stop going left
-            {
-                keyIsDown[KEY_KEY_Q] = false;
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_D && !keyIsDown[KEY_KEY_D]) // Go right
-            {
-                keyIsDown[KEY_KEY_D] = true;
-            }
-            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_D) // Stop going right
-            {
-                keyIsDown[KEY_KEY_D] = false;
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_UP && !keyIsDown[KEY_UP]) // Higher engine speed
-            {
-                keyIsDown[KEY_UP] = true;
-            }
-            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_UP)
-            {
-                keyIsDown[KEY_UP] = false;
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_DOWN && !keyIsDown[KEY_DOWN]) // Lower engine speed
-            {
-                keyIsDown[KEY_DOWN] = true;
-            }
-            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_DOWN)
-            {
-                keyIsDown[KEY_DOWN] = false;
-            }
-            if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P && !keyIsDown[KEY_KEY_P]) // Unlock or lock brakes
-            {
-                keyIsDown[KEY_KEY_P] = true;
-            }
-            if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P)
-            {
-                keyIsDown[KEY_KEY_P] = false;
-            }
-        }
-
-        return false;
-    }
-};
 
 void manageCollisionsWithSurroundings(is::ISceneManager *smgr,
                                  is::IMesh *city_mesh,
@@ -474,12 +50,12 @@ int main()
     bool stall          = true;
 
     // Event manager
-    MyEventReceiver receiver;
+    EventReceiver *receiver = new EventReceiver();
 
     // Window and rendering system creation
     IrrlichtDevice *device = createDevice(iv::EDT_OPENGL,
                                           ic::dimension2d<u32>(640, 480),
-                                          16, false, false, false, &receiver);
+                                          16, false, false, false, receiver);
     iv::IVideoDriver *driver = device->getVideoDriver();
     is::ISceneManager *smgr  = device->getSceneManager();
     ig::IGUIEnvironment *gui = device->getGUIEnvironment();
@@ -531,14 +107,14 @@ int main()
     Water* water = new Water(smgr, driver->getTexture("data/water/water.jpg"));
     water->initialize();
 
-    // 2D elements initialization
+    //2D elements initialization
     guiManager->initialize2DElements();
 
-    // Collision management with surroundings
+    //Collision management with surroundings
     manageCollisionsWithSurroundings(smgr, city->getMesh(), city->getNode(), body->getNode(), parentNode);
 
     float planeWeigth = 1000.0f;
-    receiver.setPlaneWeight(planeWeigth);
+    receiver->setPlaneWeight(planeWeigth);
 
     float planeSpeed    = 0.0f;
     float planeAltitude = 0.0f;
@@ -556,43 +132,40 @@ int main()
         ic::vector3df rotation = parentNode->getRotation();
         ic::vector3df position = parentNode->getPosition();
 
-        if(receiver.onFloor)
+        if(receiver->getOnFloor())
         {
-            receiver.planeOnFloor(parentRotationNode);
+            receiver->planeOnFloor(parentRotationNode);
 
-            rotation.Y      = receiver.getRotation();
-            planeSpeed      = receiver.getSpeed();
+            rotation.Y      = receiver->getRotation();
+            planeSpeed      = receiver->getSpeed();
 
             position.X += planeSpeed * sin(rotation.Y * M_PI / 180.0);
             position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
         }
-        else if(receiver.inTakeOff)
+        else if(receiver->getInTakeOff())
         {
             std::cout<<"TD : plane is taking off"<<std::endl;
         }
-        else if(receiver.inFlight)
+        else if(receiver->getInFlight())
         {
-            // Update screw rotation
+            //Update screw rotation
             screw->updateRotation();
 
-            //receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
+            receiver->planeInFlight(parentRotationNode, leftWing->getNode(), rightWing->getNode(), middleTail->getNode(), leftTail->getNode(), rightTail->getNode());
 
-            receiver.planeInFlight(parentRotationNode, leftWing->getNode(), rightWing->getNode(), middleTail->getNode(), leftTail->getNode(), rightTail->getNode());
-
-
-            rotation.Y      = receiver.getRotation();
-            planeSpeed      = receiver.getSpeed();
-            planeAltitude   = receiver.getAltitude();
+            rotation.Y      = receiver->getRotation();
+            planeSpeed      = receiver->getSpeed();
+            planeAltitude   = receiver->getAltitude();
 
             position.X += planeSpeed * sin(rotation.Y * M_PI / 180.0);
             position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
             position.Y  = planeAltitude;
         }
-        else if(receiver.inLanding)
+        else if(receiver->getInLanding())
         {
             std::cout<<"TD : plane is landing"<<std::endl;
         }
-        else if(receiver.isStalling)
+        else if(receiver->getIsStalling())
         {
             std::cout<<"TD : the plane is stalling"<<std::endl;
         }
@@ -605,7 +178,7 @@ int main()
         parentNode->setPosition(position);
 
         //Camera position
-        smgr->addCameraSceneNode(body->getNode(), ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
+        smgr->addCameraSceneNode(body->getNode(), ic::vector3df(0, 5, -34), parentNode->getPosition()); //default 0,5,-34
 
         //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
