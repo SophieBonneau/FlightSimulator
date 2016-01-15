@@ -192,7 +192,6 @@ struct MyEventReceiver : IEventReceiver
         lefttail_node->setRotation(lefttailRotation);
         righttail_node->setRotation(righttailRotation);
 
-
         planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
         planeAltitude -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
 
@@ -281,25 +280,27 @@ struct MyEventReceiver : IEventReceiver
     }
 };
 
-void manageCollisionsWithScenery(is::ISceneManager *smgr,
-                                 is::IMesh *city_mesh,
-                                 is::ISceneNode* city_node,
-                                 is::IAnimatedMeshSceneNode *plane,
-                                 is::ISceneNode *parentNode)
+is::ISceneNodeAnimatorCollisionResponse* manageCollisionsWithScenery(is::ISceneManager *smgr,
+                                 is::IMesh *landscape_mesh,
+                                 is::ISceneNode* landscape_node,
+                                 is::ISceneNode *plane_node)
 {
-    // Création du triangle selector
-    scene::ITriangleSelector *selector_city;
-    selector_city = smgr->createOctreeTriangleSelector(city_mesh, city_node);
-    city_node->setTriangleSelector(selector_city);
+    //Collision with the landscape
+    scene::ITriangleSelector *selector_landscape;
+    selector_landscape = smgr->createOctreeTriangleSelector(landscape_mesh, landscape_node);
+    landscape_node->setTriangleSelector(selector_landscape);
+    selector_landscape->drop();
     // Et l'animateur/collisionneur
-    scene::ISceneNodeAnimator *anim_collision_plane_city;
-    anim_collision_plane_city = smgr->createCollisionResponseAnimator(selector_city,
-                                                 parentNode,  // Le noeud que l'on veut gérer
+    scene::ISceneNodeAnimatorCollisionResponse *anim_collision_plane_landscape;
+    anim_collision_plane_landscape = smgr->createCollisionResponseAnimator(selector_landscape,
+                                                 plane_node,  // Le noeud que l'on veut gérer
                                                  ic::vector3df(2.8, 0.5, 0.4), // "rayons" du perso
                                                  ic::vector3df(0, 0, 0),  // gravity
-                                                 ic::vector3df(1.0,0,0));  //décalage du centre
-    parentNode->addAnimator(anim_collision_plane_city);
-    //smgr->addSphereSceneNode(5.0,16,0,-1,ic::vector3df(10,0,0),ic::vector3df(0,0,0),ic::vector3df(1.0,1.0,1.0));
+                                                 ic::vector3df(0, 0, 0));  //décalage du centre
+    plane_node->addAnimator(anim_collision_plane_landscape);
+    anim_collision_plane_landscape->drop();
+
+    return anim_collision_plane_landscape;
 }
 
 int main()
@@ -328,12 +329,24 @@ int main()
 
     device->getFileSystem()->addFileArchive("data.zip");
 
-    //City
-    is::IMesh *city_mesh = smgr->getMesh("data/city/city_cercles.obj");
-    is::ISceneNode *city_node;
-    city_node = smgr->addOctreeSceneNode(city_mesh,nullptr,-1,1024);
-    city_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    city_node->setScale(ic::vector3df(10,10,10));
+    //Landscape and cities
+    is::IMesh *cityMesh = smgr->getMesh("data/city/city_cercles.obj");
+    is::ISceneNode *cityNode;
+    cityNode = smgr->addOctreeSceneNode(cityMesh,nullptr,-1,1024);
+    cityNode->setMaterialFlag(iv::EMF_LIGHTING,false);
+    cityNode->setScale(ic::vector3df(10,10,10));
+
+    //Airport and runway
+    is::IMesh *airportMesh = smgr->getMesh("data/airport/airport.obj");
+    is::ISceneNode *airportNode;
+    airportNode = smgr->addOctreeSceneNode(airportMesh,nullptr,-1,1024);
+    airportNode->setMaterialFlag(iv::EMF_LIGHTING,false);
+    airportNode->setScale(ic::vector3df(10,10,10));
+    is::IMesh *runway_mesh = smgr->getMesh("data/airport/runway.obj");
+    is::ISceneNode *runway_node;
+    runway_node = smgr->addOctreeSceneNode(runway_mesh,nullptr,-1,1024);
+    runway_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    runway_node->setScale(ic::vector3df(10,10,10));
 
     //Init the object plane
     //2 parents: trajectory and rotation
@@ -404,11 +417,36 @@ int main()
     plan_water->setMaterialType(video::EMT_REFLECTION_2_LAYER);
     plan_water->setPosition(ic::vector3df(0,-2, 0));
 
+    //Fire
+    // create a particle system
+    scene::IParticleSystemSceneNode* ps = smgr->addParticleSystemSceneNode(false);
+    scene::IParticleEmitter* em = ps->createBoxEmitter(
+        core::aabbox3d<f32>(-7,0,-7,7,1,7), // emitter size
+        core::vector3df(0.0f,0.0f,0.0f),   // initial direction
+        800,1000,                             // emit rate
+        video::SColor(0,255,0,0),       // darkest color
+        video::SColor(0,255,200,200),       // brightest color
+        500,800,0,                         // min and max age, angle
+        core::dimension2df(1.f,1.f),         // min size
+        core::dimension2df(2.f,2.f));        // max size
+
+    scene::IParticleAffector* paf = ps->createFadeOutParticleAffector();
+    ps->addAffector(paf); // same goes for the affector
+    paf->drop();
+    ps->setScale(core::vector3df(0.5,0.5,0.5));
+    ps->setMaterialFlag(video::EMF_LIGHTING, false);
+    ps->setMaterialFlag(video::EMF_ZWRITE_ENABLE, false);
+    ps->setMaterialTexture(0, driver->getTexture("data/fire/fire.jpg"));
+    ps->setMaterialType(video::EMT_TRANSPARENT_ADD_COLOR);
+
     // 2D elements initialization
     guiManager->initialize2DElements();
 
     // Collision management with scenery
-    manageCollisionsWithScenery(smgr, city_mesh, city_node, plane_node, parentNode);
+    scene::ISceneNodeAnimatorCollisionResponse *collisionCity;
+    scene::ISceneNodeAnimatorCollisionResponse *collisionAirport;
+    collisionCity = manageCollisionsWithScenery(smgr, cityMesh, cityNode, parentNode);
+    collisionAirport = manageCollisionsWithScenery(smgr, airportMesh, airportNode, parentNode);
 
     //Init the plane state
     //To change to false: true only for tests
@@ -420,6 +458,8 @@ int main()
     float planeSpeed    = 0.0f;
     float planeAltitude = 0.0f;
     float rotAngle      = 0.0f;
+
+    bool crash = false;
 
     while(device->run())
     {
@@ -433,7 +473,7 @@ int main()
 
         ic::vector3df rotation_screw = screw_node->getRotation();
 
-        if(inFlight)
+        if(inFlight && crash == false)
         {
             //Movements of the plane
             ic::vector3df rotation = parentNode->getRotation();
@@ -461,6 +501,19 @@ int main()
         else
         {
             std::cout<<"TD : plane on the ground, in take-off position and in landing position"<<std::endl;
+        }
+
+        //Detection of collisions
+        ic::vector3df firePosition = ic::vector3df(0.0,-0.1,3.);
+        ps->setPosition(parentNode->getPosition() + firePosition); //position of the fire particules
+        if(collisionCity->collisionOccurred() == true)
+        {
+            firePosition.X = collisionCity->getCollisionPoint().X;
+            firePosition.Y = collisionCity->getCollisionPoint().Y;
+            firePosition.Z = collisionCity->getCollisionPoint().Z;
+            ps->setEmitter(em); // this grabs the emitter of fire particules
+
+            crash = true;
         }
 
         //Camera position
