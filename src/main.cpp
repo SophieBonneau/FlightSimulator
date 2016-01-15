@@ -312,7 +312,7 @@ struct MyEventReceiver : IEventReceiver
         if(planeSpeed > motorPower)
             planeSpeed -= 1/planeWeight * motorPower;
 
-        std::cout<<"factor : "<<childRotation.X<<std::endl;
+        std::cout<<"factor : "<<(1 + childRotation.X / 90)<<std::endl;
 
         if(childRotation.X > 0)
         {
@@ -323,9 +323,8 @@ struct MyEventReceiver : IEventReceiver
             planeSpeedFloor = planeSpeed;
         else if(childRotation.X > 0)
         {
-            //righttailRotation.X -= 0.1;
-            planeSpeed = (1 - childRotation.X / 90) * planeSpeed;
-            planeSpeedFloor = planeSpeed + cos(childRotation.X * core::DEGTORAD) * planeSpeed;
+            planeSpeed = (1 + childRotation.X / 90) * planeSpeed;
+            planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
         }
         planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
 
