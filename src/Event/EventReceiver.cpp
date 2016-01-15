@@ -16,27 +16,27 @@ EventReceiver::EventReceiver()
     //Init keyboard states
     for(unsigned int i = 0; i<KEY_KEY_CODES_COUNT; ++i)
     {
-        this->keyIsDown[i] = false;
+        m_keyIsDown[i] = false;
     }
 
     //Init moving plane values
-    this->planeWeight     = voidPlaneWeightKg;
-    this->planeSpeed      = 0.0f;
-    this->planeSpeedFloor = 0.0f;
-    this->planeSpeedSlope       = 0.0f;
-    this->planeAltitude   = 0.0f;
-    this->rotationAngle   = 0.0f;
+    m_planeWeight     = m_voidPlaneWeightKg;
+    m_planeSpeed      = 0.0f;
+    m_planeSpeedFloor = 0.0f;
+    m_planeSpeedSlope = 0.0f;
+    m_planeAltitude   = 0.0f;
+    m_rotationAngle   = 0.0f;
 
-    this->motorPower = 0.0f;
+    m_motorPower = 0.0f;
 
-    this->isBrakes   = true;
-    this->isStalling = false;
-    this->isCrashed  = false;
+    m_isBrakes   = true;
+    m_isStalling = false;
+    m_isCrashed  = false;
 
-    this->onFloor    = false;
-    this->inTakeOff  = false;
-    this->inFlight   = true;
-    this->inLanding  = false;
+    m_onFloor    = false;
+    m_inTakeOff  = false;
+    m_inFlight   = true;
+    m_inLanding  = false;
 }
 
 float EventReceiver::fromKtToGameUnit(float valueToConvert)
@@ -52,46 +52,46 @@ float EventReceiver::fromGameUnitToKt(float valueToConvert)
 void EventReceiver::planeOnFloor(is::ISceneNode *node)
 {
     //Brakes used only on the plane wheels
-    if(keyIsDown[KEY_KEY_P] == true)
-        isBrakes = !isBrakes;
+    if(m_keyIsDown[KEY_KEY_P] == true)
+        m_isBrakes = !m_isBrakes;
 
-    if(!isBrakes)
+    if(!m_isBrakes)
     {
         ic::vector3df childRotation = node->getRotation();
 
-        if(keyIsDown[KEY_UP] == true)
+        if(m_keyIsDown[KEY_UP] == true)
         {
-            if(planeSpeed < maxPlaneSpeed)
+            if(m_planeSpeed < m_maxPlaneSpeed)
             {
-                planeSpeed += speedStep;
-                planeSpeedFloor = planeSpeed;
+                m_planeSpeed += m_speedStep;
+                m_planeSpeedFloor = m_planeSpeed;
             }
         }
-        if(keyIsDown[KEY_DOWN] == true)
+        if(m_keyIsDown[KEY_DOWN] == true)
         {
-            if(planeSpeed > minPlaneSpeed)
+            if(m_planeSpeed > m_minPlaneSpeed)
             {
-                planeSpeed -= speedStep;
-                planeSpeedFloor = planeSpeed;
+                m_planeSpeed -= m_speedStep;
+                m_planeSpeedFloor = m_planeSpeed;
             }
         }
 
-        if(keyIsDown[KEY_KEY_Z] == true)
-            childRotation.X -= altitudeAngleStep;
-        if(keyIsDown[KEY_KEY_S] == true)
+        if(m_keyIsDown[KEY_KEY_Z] == true)
+            childRotation.X -= m_altitudeAngleStep;
+        if(m_keyIsDown[KEY_KEY_S] == true)
         {
-            childRotation.X += altitudeAngleStep;
+            childRotation.X += m_altitudeAngleStep;
             if(childRotation.X >=2 )
             {
-                onFloor = false;
-                isCrashed = true;
+                m_onFloor = false;
+                m_isCrashed = true;
             }
         }
 
-        if(keyIsDown[KEY_KEY_D] == true)
-            rotationAngle  += rotationAngleStep;
-        if(keyIsDown[KEY_KEY_Q] == true)
-            rotationAngle  -= rotationAngleStep;
+        if(m_keyIsDown[KEY_KEY_D] == true)
+            m_rotationAngle  += m_rotationAngleStep;
+        if(m_keyIsDown[KEY_KEY_Q] == true)
+            m_rotationAngle  -= m_rotationAngleStep;
 
         node->setRotation(childRotation);
     }
@@ -101,22 +101,22 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node)
 {
     ic::vector3df childRotation = node->getRotation();
 
-    if(keyIsDown[KEY_UP] == true)
+    if(m_keyIsDown[KEY_UP] == true)
     {
     }
-    if(keyIsDown[KEY_DOWN] == true)
-    {
-    }
-
-    if(keyIsDown[KEY_KEY_Z] == true)
-    if(keyIsDown[KEY_KEY_S] == true)
+    if(m_keyIsDown[KEY_DOWN] == true)
     {
     }
 
-    if(keyIsDown[KEY_KEY_D] == true)
+    if(m_keyIsDown[KEY_KEY_Z] == true)
+    if(m_keyIsDown[KEY_KEY_S] == true)
     {
     }
-    if(keyIsDown[KEY_KEY_Q] == true)
+
+    if(m_keyIsDown[KEY_KEY_D] == true)
+    {
+    }
+    if(m_keyIsDown[KEY_KEY_Q] == true)
     {
     }
 }
@@ -126,10 +126,10 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
                    is::IMeshSceneNode *tail_node,
                    is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node)
 {
-    if(stallSpeed < planeSpeed && stallSpeed * 1.1 > planeSpeed)
+    if(m_stallSpeed < m_planeSpeed && m_stallSpeed * 1.1 > m_planeSpeed)
     {
     }
-    if(stallSpeed >= planeSpeed)
+    if(m_stallSpeed >= m_planeSpeed)
     {
     }
 
@@ -141,39 +141,39 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
     ic::vector3df righttailRotation = righttail_node->getRotation();
 
     //Increase or decrease the plane speed
-    if(keyIsDown[KEY_UP] == true)
+    if(m_keyIsDown[KEY_UP] == true)
     {
-        if(motorPower < maxMotorPower)
-            motorPower += motorStep;
+        if(m_motorPower < m_maxMotorPower)
+            m_motorPower += m_motorStep;
     }
-    if(keyIsDown[KEY_DOWN] == true)
+    if(m_keyIsDown[KEY_DOWN] == true)
     {
-        if(motorPower > minMotorPower)
-            motorPower -= motorStep;
+        if(m_motorPower > m_minMotorPower)
+            m_motorPower -= m_motorStep;
     }
 
     //Get the plane up or down
-    if(keyIsDown[KEY_KEY_Z] == true)
+    if(m_keyIsDown[KEY_KEY_Z] == true)
     {
-        childRotation.X     -= altitudeAngleStep;
+        childRotation.X     -= m_altitudeAngleStep;
         lefttailRotation.X  -= 0.1;
         righttailRotation.X -= 0.1;
     }
-    if(keyIsDown[KEY_KEY_S] == true)
+    if(m_keyIsDown[KEY_KEY_S] == true)
     {
-        childRotation.X     += altitudeAngleStep;
+        childRotation.X     += m_altitudeAngleStep;
         lefttailRotation.X  += 0.1;
         righttailRotation.X += 0.1;
     }
 
     //Open the side panels of the plane to turn to the right or the left
-    if(keyIsDown[KEY_KEY_D] == true)
+    if(m_keyIsDown[KEY_KEY_D] == true)
     {
         //TD: Add the wind effect
         //If the plane is flat (not in the wrong inclinaison)
         if(childRotation.Z <= 0)
         {
-            childRotation.Z     -= rotationAngleStep;
+            childRotation.Z     -= m_rotationAngleStep;
             leftwingRotation.X  -= 0.1;
             rightwingRotation.X += 0.1;
             tailRotation.Y      -= 0.1;
@@ -181,18 +181,18 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         }
         else
         {
-            childRotation.Z     -= 2 * rotationAngleStep;
+            childRotation.Z     -= 2 * m_rotationAngleStep;
             leftwingRotation.X  -= 2 * 0.1;
             rightwingRotation.X += 2 * 0.1;
             tailRotation.Y      -= 2 * 0.1;
             tailRotation.Z      += 2 * 0.05;
         }
     }
-    if(keyIsDown[KEY_KEY_Q] == true)
+    if(m_keyIsDown[KEY_KEY_Q] == true)
     {
         if(childRotation.Z >= 0)
         {
-            childRotation.Z     += rotationAngleStep;
+            childRotation.Z     += m_rotationAngleStep;
             leftwingRotation.X  += 0.1;
             rightwingRotation.X -= 0.1;
             tailRotation.Y      += 0.1;
@@ -200,7 +200,7 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         }
         else
         {
-            childRotation.Z     += 2 * rotationAngleStep;
+            childRotation.Z     += 2 * m_rotationAngleStep;
             leftwingRotation.X  += 2 * 0.1;
             rightwingRotation.X -= 2* 0.1;
             tailRotation.Y      += 2 * 0.1;
@@ -210,36 +210,31 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
 
     node->setRotation(childRotation);
 
-    if(planeSpeed < motorPower)
-        planeSpeed += 1/planeWeight * motorPower;
-    if(planeSpeed > motorPower)
-        planeSpeed -= 1/planeWeight * motorPower;
-
-    if(planeSpeed < motorPower)
-        planeSpeed += 10/planeWeight * motorPower;
-    else if(planeSpeed > motorPower)
-        planeSpeed -= 10/planeWeight * motorPower;
+    if(m_planeSpeed < m_motorPower)
+        m_planeSpeed += 10/m_planeWeight * m_motorPower;
+    else if(m_planeSpeed > m_motorPower)
+        m_planeSpeed -= 10/m_planeWeight * m_motorPower;
     else
-        planeSpeed  = motorPower;
+        m_planeSpeed  = m_motorPower;
 
     if(childRotation.X < 0)
-        planeSpeedSlope = (1 + childRotation.X / 90) * planeSpeed;
+        m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;
     else if(childRotation.X == 0)
-        planeSpeedSlope = planeSpeed;
+        m_planeSpeedSlope = m_planeSpeed;
     else if(childRotation.X > 0)
-        planeSpeedSlope = (1 + childRotation.X / 90) * planeSpeed;
+        m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;
 
-    planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeedSlope;
-    planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * planeSpeedSlope;
+    m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
+    m_planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
 
     //Compute rotation
-    float planeSpeedMByS = fromGameUnitToKt(planeSpeed) * 1.852 * 0.277777777778;
+    float planeSpeedMByS = fromGameUnitToKt(m_planeSpeed) * 1.852 * 0.277777777778;
     if(planeSpeedMByS > 0)
-        rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * g / planeSpeedMByS) * core::RADTODEG / 20; // for real values /80
+        m_rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * m_g / planeSpeedMByS) * core::RADTODEG / 20; // for real values /80
 
     //Compute the stall speed
-    loadFactor = (1/cos(-childRotation.Z*core::DEGTORAD));
-    stallSpeed = sqrt(loadFactor) * flatStallSpeed;
+    m_loadFactor = (1/cos(-childRotation.Z*core::DEGTORAD));
+    m_stallSpeed = sqrt(m_loadFactor) * m_flatStallSpeed;
 
     node            ->setRotation(childRotation);
     leftwing_node   ->setRotation(leftwingRotation);
@@ -253,22 +248,22 @@ void EventReceiver::planeInLanding(is::ISceneNode *node)
 {
     ic::vector3df childRotation = node->getRotation();
 
-    if(keyIsDown[KEY_UP] == true)
+    if(m_keyIsDown[KEY_UP] == true)
     {
     }
-    if(keyIsDown[KEY_DOWN] == true)
-    {
-    }
-
-    if(keyIsDown[KEY_KEY_Z] == true)
-    if(keyIsDown[KEY_KEY_S] == true)
+    if(m_keyIsDown[KEY_DOWN] == true)
     {
     }
 
-    if(keyIsDown[KEY_KEY_D] == true)
+    if(m_keyIsDown[KEY_KEY_Z] == true)
+    if(m_keyIsDown[KEY_KEY_S] == true)
     {
     }
-    if(keyIsDown[KEY_KEY_Q] == true)
+
+    if(m_keyIsDown[KEY_KEY_D] == true)
+    {
+    }
+    if(m_keyIsDown[KEY_KEY_Q] == true)
     {
     }
 }
@@ -281,61 +276,61 @@ bool EventReceiver::OnEvent(const SEvent &event)
         {
             exit(0);
         }
-        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Z && !keyIsDown[KEY_KEY_Z]) // Go up
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Z && !m_keyIsDown[KEY_KEY_Z]) // Go up
         {
-            keyIsDown[KEY_KEY_Z] = true;
+            m_keyIsDown[KEY_KEY_Z] = true;
         }
-        if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Z && keyIsDown[KEY_KEY_Z])
+        if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Z && m_keyIsDown[KEY_KEY_Z])
         {
-            keyIsDown[KEY_KEY_Z] = false;
+            m_keyIsDown[KEY_KEY_Z] = false;
         }
-        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_S && !keyIsDown[KEY_KEY_S]) // Go down
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_S && !m_keyIsDown[KEY_KEY_S]) // Go down
         {
-            keyIsDown[KEY_KEY_S] = true;
+            m_keyIsDown[KEY_KEY_S] = true;
         }
         if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_S)
         {
-            keyIsDown[KEY_KEY_S] = false;
+            m_keyIsDown[KEY_KEY_S] = false;
         }
-        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Q && !keyIsDown[KEY_KEY_Q]) // Go left
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Q && !m_keyIsDown[KEY_KEY_Q]) // Go left
         {
-            keyIsDown[KEY_KEY_Q] = true;
+            m_keyIsDown[KEY_KEY_Q] = true;
         }
         if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_Q) // Stop going left
         {
-            keyIsDown[KEY_KEY_Q] = false;
+            m_keyIsDown[KEY_KEY_Q] = false;
         }
-        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_D && !keyIsDown[KEY_KEY_D]) // Go right
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_D && !m_keyIsDown[KEY_KEY_D]) // Go right
         {
-            keyIsDown[KEY_KEY_D] = true;
+            m_keyIsDown[KEY_KEY_D] = true;
         }
         if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_D) // Stop going right
         {
-            keyIsDown[KEY_KEY_D] = false;
+            m_keyIsDown[KEY_KEY_D] = false;
         }
-        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_UP && !keyIsDown[KEY_UP]) // Higher engine speed
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_UP && !m_keyIsDown[KEY_UP]) // Higher engine speed
         {
-            keyIsDown[KEY_UP] = true;
+            m_keyIsDown[KEY_UP] = true;
         }
         if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_UP)
         {
-            keyIsDown[KEY_UP] = false;
+            m_keyIsDown[KEY_UP] = false;
         }
-        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_DOWN && !keyIsDown[KEY_DOWN]) // Lower engine speed
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_DOWN && !m_keyIsDown[KEY_DOWN]) // Lower engine speed
         {
-            keyIsDown[KEY_DOWN] = true;
+            m_keyIsDown[KEY_DOWN] = true;
         }
         if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_DOWN)
         {
-            keyIsDown[KEY_DOWN] = false;
+            m_keyIsDown[KEY_DOWN] = false;
         }
-        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P && !keyIsDown[KEY_KEY_P]) // Unlock or lock brakes
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P && !m_keyIsDown[KEY_KEY_P]) // Unlock or lock brakes
         {
-            keyIsDown[KEY_KEY_P] = true;
+            m_keyIsDown[KEY_KEY_P] = true;
         }
         if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P)
         {
-            keyIsDown[KEY_KEY_P] = false;
+            m_keyIsDown[KEY_KEY_P] = false;
         }
     }
     return false;
