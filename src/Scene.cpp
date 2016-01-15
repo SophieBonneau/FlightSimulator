@@ -16,29 +16,29 @@ namespace is = irr::scene;
 Scene::Scene()
 {
     // display values
-    this->wind_speed      = 20;
-    this->altitude        = 1000;
-    this->vertical_speed  = -20;
-    this->gauge_offset    = 0;
-    this->stall          = true;
+    m_wind_speed      = 20;
+    m_altitude        = 1000;
+    m_vertical_speed  = -20;
+    m_gauge_offset    = 0;
+    m_stall          = true;
 
-    this->planeSpeed    = 0.0f;
-    this->planeAltitude = 0.0f;
-    this->rotAngle      = 0.0f;
+    m_planeSpeed    = 0.0f;
+    m_planeAltitude = 0.0f;
+    m_rotAngle      = 0.0f;
 }
 
 void Scene::initializeIrrlicht()
 {
     // Event manager
-    this->receiver = new EventReceiver();
+    m_receiver = new EventReceiver();
 
     // Window and rendering system creation
-    this->device = createDevice(iv::EDT_OPENGL,
+    m_device = createDevice(iv::EDT_OPENGL,
                                           ic::dimension2d<u32>(640, 480),
-                                          16, false, false, false, receiver);
-    this->driver = device->getVideoDriver();
-    this->smgr  = device->getSceneManager();
-    this->gui = device->getGUIEnvironment();
+                                          16, false, false, false, m_receiver);
+    m_driver = m_device->getVideoDriver();
+    m_smgr  = m_device->getSceneManager();
+    m_gui = m_device->getGUIEnvironment();
 }
 
 void Scene::manageCollisionsWithSurroundings(is::ISceneManager *smgr,
@@ -65,108 +65,108 @@ void Scene::manageCollisionsWithSurroundings(is::ISceneManager *smgr,
 void Scene::initializeData()
 {
     // GUI elements mananger
-    this->guiManager = new GUIElements();
-    guiManager->setDevice(device);
+    m_guiManager = new GUIElements();
+    m_guiManager->setDevice(m_device);
 
-    device->getFileSystem()->addFileArchive("data.zip");
+    m_device->getFileSystem()->addFileArchive("data.zip");
 
     //City
-    City* city = new City(smgr, "data/city/city_cercles.obj");
+    City* city = new City(m_smgr, "data/city/city_cercles.obj");
     city->initialize();
 
     //Init the object plane
     //2 parents: trajectory and rotation
-    this->parentNode = smgr->addEmptySceneNode();
-    this->parentRotationNode = smgr->addEmptySceneNode();
-    parentRotationNode->setParent(parentNode);
+    m_parentNode = m_smgr->addEmptySceneNode();
+    m_parentRotationNode = m_smgr->addEmptySceneNode();
+    m_parentRotationNode->setParent(m_parentNode);
 
     //Init the plane
-    this->body = new Body(smgr, parentRotationNode, "data/plane/plane.obj");
-    body->initialize();
+    m_body = new Body(m_smgr, m_parentRotationNode, "data/plane/plane.obj");
+    m_body->initialize();
 
     //Init the screw
-    this->screw = new Screw(smgr, parentRotationNode, "data/plane/screw.obj");
-    screw->initialize();
+    m_screw = new Screw(m_smgr, m_parentRotationNode, "data/plane/screw.obj");
+    m_screw->initialize();
 
     //Init the two wings
-    this->leftWing = new Wing(smgr, parentRotationNode,"data/plane/leftWing.obj");
-    leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));
-    leftWing->initialize();
-    this->rightWing = new Wing(smgr, parentRotationNode,"data/plane/rightWing.obj");
-    rightWing->setPosition(ic::vector3df(0.667,0.303,0.19));
-    rightWing->initialize();
+    m_leftWing = new Wing(m_smgr, m_parentRotationNode,"data/plane/leftWing.obj");
+    m_leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));
+    m_leftWing->initialize();
+    m_rightWing = new Wing(m_smgr, m_parentRotationNode,"data/plane/rightWing.obj");
+    m_rightWing->setPosition(ic::vector3df(0.667,0.303,0.19));
+    m_rightWing->initialize();
 
     //Init the three tails
-    this->middleTail = new Tail(smgr, parentRotationNode, "data/plane/tail.obj");
-    middleTail->setPosition(ic::vector3df(0.001,0.355,-0.53));
-    middleTail->initialize();
-    this->leftTail = new Tail(smgr, parentRotationNode, "data/plane/leftTail.obj");
-    leftTail->setPosition(ic::vector3df(-0.205,0.23,-0.441));
-    leftTail->initialize();
-    this->rightTail = new Tail(smgr, parentRotationNode, "data/plane/rightTail.obj");
-    rightTail->setPosition(ic::vector3df(0.208,0.225,-0.441));
-    rightTail->initialize();
+    m_middleTail = new Tail(m_smgr, m_parentRotationNode, "data/plane/tail.obj");
+    m_middleTail->setPosition(ic::vector3df(0.001,0.355,-0.53));
+    m_middleTail->initialize();
+    m_leftTail = new Tail(m_smgr, m_parentRotationNode, "data/plane/leftTail.obj");
+    m_leftTail->setPosition(ic::vector3df(-0.205,0.23,-0.441));
+    m_leftTail->initialize();
+    m_rightTail = new Tail(m_smgr, m_parentRotationNode, "data/plane/rightTail.obj");
+    m_rightTail->setPosition(ic::vector3df(0.208,0.225,-0.441));
+    m_rightTail->initialize();
 
     //Water
-    Water* water = new Water(smgr, driver->getTexture("data/water/water.jpg"));
+    Water* water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"));
     water->initialize();
 
     // 2D elements initialization
-    guiManager->initialize2DElements();
+    m_guiManager->initialize2DElements();
 
     // Collision management with surroundings
-    manageCollisionsWithSurroundings(smgr, city->getMesh(), city->getNode(), body->getNode(), parentNode);
+    manageCollisionsWithSurroundings(m_smgr, city->getMesh(), city->getNode(), m_body->getNode(), m_parentNode);
 }
 
 void Scene::render()
 {
     //Update 2D elements
-    std::vector<CGUICompass*> compasses = guiManager->update2DElements();
+    std::vector<CGUICompass*> compasses = m_guiManager->update2DElements();
 
     //If the plane is flying then
     //  inFlight = true
     //Else, ie. plane on the ground, in take-off position and in landing position
     //  inFlight = false
-    ic::vector3df rotation = parentNode->getRotation();
-    ic::vector3df position = parentNode->getPosition();
+    ic::vector3df rotation = m_parentNode->getRotation();
+    ic::vector3df position = m_parentNode->getPosition();
 
-    if(receiver->getOnFloor())
+    if(m_receiver->getOnFloor())
     {
-        receiver->planeOnFloor(parentRotationNode);
+        m_receiver->planeOnFloor(m_parentRotationNode);
 
-        rotation.Y      = receiver->getRotation();
-        planeSpeed      = receiver->getSpeed();
+        rotation.Y      = m_receiver->getRotation();
+        m_planeSpeed      = m_receiver->getSpeed();
 
-        position.X += planeSpeed * sin(rotation.Y * M_PI / 180.0);
-        position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
+        position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
+        position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
     }
-    else if(receiver->getInTakeOff())
+    else if(m_receiver->getInTakeOff())
     {
         std::cout<<"TD : plane is taking off"<<std::endl;
     }
-    else if(receiver->getInFlight())
+    else if(m_receiver->getInFlight())
     {
         // Update screw rotation
-        screw->updateRotation();
+        m_screw->updateRotation();
 
         //receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
 
-        receiver->planeInFlight(parentRotationNode, leftWing->getNode(), rightWing->getNode(), middleTail->getNode(), leftTail->getNode(), rightTail->getNode());
+        m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(), m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
 
 
-        rotation.Y      = receiver->getRotation();
-        planeSpeed      = receiver->getSpeed();
-        planeAltitude   = receiver->getAltitude();
+        rotation.Y      = m_receiver->getRotation();
+        m_planeSpeed      = m_receiver->getSpeed();
+        m_planeAltitude   = m_receiver->getAltitude();
 
-        position.X += planeSpeed * sin(rotation.Y * M_PI / 180.0);
-        position.Z += planeSpeed * cos(rotation.Y * M_PI / 180.0);
-        position.Y  = planeAltitude;
+        position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
+        position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
+        position.Y  = m_planeAltitude;
     }
-    else if(receiver->getInLanding())
+    else if(m_receiver->getInLanding())
     {
         std::cout<<"TD : plane is landing"<<std::endl;
     }
-    else if(receiver->getIsStalling())
+    else if(m_receiver->getIsStalling())
     {
         std::cout<<"TD : the plane is stalling"<<std::endl;
     }
@@ -175,25 +175,25 @@ void Scene::render()
         std::cout<<"TD : the plane has crashed"<<std::endl;
     }
 
-    parentNode->setRotation(rotation);
-    parentNode->setPosition(position);
+    m_parentNode->setRotation(rotation);
+    m_parentNode->setPosition(position);
 
     //Camera position
-    smgr->addCameraSceneNode(body->getNode(), ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
+    m_smgr->addCameraSceneNode(m_body->getNode(), ic::vector3df(0, 5, -34), m_parentNode->getPosition()); //0,5,-34
 
     //Back color
-    driver->beginScene(true,true,iv::SColor(100,150,200,255));
+    m_driver->beginScene(true,true,iv::SColor(100,150,200,255));
 
     // Draw the scene
-    smgr->drawAll();
-    gui->drawAll();
+    m_smgr->drawAll();
+    m_gui->drawAll();
 
     for(unsigned int i = 0; i < compasses.size(); i++)
     {
         compasses[i]->draw();
     }
 
-    driver->endScene();
+    m_driver->endScene();
 }
 
 

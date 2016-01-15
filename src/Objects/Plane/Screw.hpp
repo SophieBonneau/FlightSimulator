@@ -17,8 +17,8 @@ public:
     ~Screw(){}
 
     // Setters and getters
-    void setRotationStep(const double rotationStep){this->rotationStep = rotationStep; }
-    double getRotationStep() const {return this->rotationStep; }
+    void setRotationStep(const double rotationStep){m_rotationStep = rotationStep; }
+    double getRotationStep() const {return m_rotationStep; }
 
     // To initialize mesh and node
     void initialize();
@@ -27,9 +27,9 @@ public:
     int updateRotation();
 
 private:
-    irr::scene::IMesh* mesh;
+    irr::scene::IMesh* m_mesh;
 
-    double rotationStep;
+    double m_rotationStep;
 
 };
 

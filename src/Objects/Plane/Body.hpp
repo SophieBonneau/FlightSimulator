@@ -17,11 +17,8 @@ public:
     // Destructor
     ~Body(){}
 
-
     // To initialize mesh and node
     void initialize();
-
-private:
 
 };
 

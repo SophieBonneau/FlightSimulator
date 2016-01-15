@@ -12,16 +12,16 @@ namespace is = irr::scene;
 
 //Constructor
 City::City(is::ISceneManager* smgr, irr::io::path meshPath)
-    :smgr(smgr), meshPath(meshPath)
+    :m_smgr(smgr), m_meshPath(meshPath)
 {
-    this->scale = ic::vector3df(10,10,10);
+    m_scale = ic::vector3df(10,10,10);
 }
 
 // To initialize mesh and node
 void City::initialize()
 {
-    this->mesh = smgr->getMesh(this->meshPath);
-    this->node = smgr->addOctreeSceneNode(this->mesh,nullptr,-1,1024);
-    this->node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    this->node->setScale(this->scale);
+    m_mesh = m_smgr->getMesh(m_meshPath);
+    m_node = m_smgr->addOctreeSceneNode(m_mesh,nullptr,-1,1024);
+    m_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    m_node->setScale(m_scale);
 }

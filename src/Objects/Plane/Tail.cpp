@@ -14,17 +14,17 @@ namespace is = irr::scene;
 Tail::Tail(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath):
     PlaneElement(smgr, parentRotationNode, meshPath)
 {
-    this->scale = ic::vector3df(0.05,0.05,0.05);
-    this->position = ic::vector3df(0.0,0.0,0.0);
+    m_scale = ic::vector3df(0.05,0.05,0.05);
+    m_position = ic::vector3df(0.0,0.0,0.0);
 }
 
 // To initialize mesh and node
 void Tail::initialize()
 {
-    is::IAnimatedMesh *tail_mesh = smgr->getMesh(this->meshPath);
-    this->node = smgr->addMeshSceneNode(tail_mesh);
-    this->node->setParent(this->parentRotationNode);
-    this->node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    this->node->setScale(this->scale);
-    this->node->setPosition(this->position);
+    is::IAnimatedMesh *tail_mesh = m_smgr->getMesh(m_meshPath);
+    m_node = m_smgr->addMeshSceneNode(tail_mesh);
+    m_node->setParent(m_parentRotationNode);
+    m_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    m_node->setScale(m_scale);
+    m_node->setPosition(m_position);
 }

@@ -24,7 +24,7 @@ public:
     ~Scene(){}
 
     // Getters and setters
-    IrrlichtDevice * getDevice() const {return this->device; }
+    IrrlichtDevice * getDevice() const {return m_device; }
 
     void initializeIrrlicht();
     void initializeData();
@@ -32,37 +32,6 @@ public:
 
 
 private:
-    // Render objects
-    IrrlichtDevice *device;
-    irr::scene::ISceneManager* smgr;
-    irr::video::IVideoDriver *driver;
-    GUIElements* guiManager;
-
-    // Scene objects
-    irr::scene::ISceneNode *parentNode;
-    irr::scene::ISceneNode *parentRotationNode;
-    Screw* screw;
-    Wing* leftWing;
-    Wing* rightWing;
-    Tail* middleTail;
-    Tail* leftTail;
-    Tail* rightTail;
-    Body* body;
-    irr::gui::IGUIEnvironment *gui;
-
-    // Event objects
-    EventReceiver *receiver;
-
-    // display values
-    int wind_speed;
-    int altitude;
-    int vertical_speed;
-    int gauge_offset;
-    bool stall;
-
-    float planeSpeed;
-    float planeAltitude;
-    float rotAngle;
 
 
     void manageCollisionsWithSurroundings(irr::scene::ISceneManager *smgr,
@@ -70,6 +39,39 @@ private:
                                      irr::scene::ISceneNode* city_node,
                                      irr::scene::IMeshSceneNode *plane,
                                      irr::scene::ISceneNode *parentNode);
+
+
+    // Render objects
+    IrrlichtDevice *m_device;
+    irr::scene::ISceneManager* m_smgr;
+    irr::video::IVideoDriver *m_driver;
+    GUIElements* m_guiManager;
+
+    // Scene objects
+    irr::scene::ISceneNode *m_parentNode;
+    irr::scene::ISceneNode *m_parentRotationNode;
+    Screw* m_screw;
+    Wing* m_leftWing;
+    Wing* m_rightWing;
+    Tail* m_middleTail;
+    Tail* m_leftTail;
+    Tail* m_rightTail;
+    Body* m_body;
+    irr::gui::IGUIEnvironment *m_gui;
+
+    // Event objects
+    EventReceiver *m_receiver;
+
+    // display values
+    int m_wind_speed;
+    int m_altitude;
+    int m_vertical_speed;
+    int m_gauge_offset;
+    bool m_stall;
+
+    float m_planeSpeed;
+    float m_planeAltitude;
+    float m_rotAngle;
 
 
 };

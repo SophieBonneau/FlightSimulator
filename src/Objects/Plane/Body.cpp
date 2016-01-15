@@ -14,21 +14,21 @@ namespace is = irr::scene;
 Body::Body(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath):
     PlaneElement(smgr, parentRotationNode, meshPath)
 {
-    this->smgr = smgr;
-    this->parentRotationNode = parentRotationNode;
-    this->meshPath = meshPath;
+    m_smgr = smgr;
+    m_parentRotationNode = parentRotationNode;
+    m_meshPath = meshPath;
 
-    this->scale = ic::vector3df(0.05,0.05,0.05);
-    this->position = ic::vector3df(0.0,0.0,0.0);
+    m_scale = ic::vector3df(0.05,0.05,0.05);
+    m_position = ic::vector3df(0.0,0.0,0.0);
 }
 
 // To initialize mesh and node
 void Body::initialize()
 {
-    is::IAnimatedMesh *plane_mesh = this->smgr->getMesh(this->meshPath);
-    this->node = this->smgr->addMeshSceneNode(plane_mesh);
-    this->node->setParent(this->parentRotationNode);
-    this->node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    this->node->setScale(this->scale);
-    this->node->setPosition(this->position);
+    is::IAnimatedMesh *plane_mesh = m_smgr->getMesh(m_meshPath);
+    m_node = m_smgr->addMeshSceneNode(plane_mesh);
+    m_node->setParent(m_parentRotationNode);
+    m_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    m_node->setScale(m_scale);
+    m_node->setPosition(m_position);
 }
