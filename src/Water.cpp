@@ -27,7 +27,7 @@ Water::Water(is::ISceneManager* smgr, video::ITexture * textureWater)
 }
 
 // To initialize mesh and node
-int Water::initialize()
+void Water::initialize()
 {
     is::IMesh *mesh_water = this->smgr->addHillPlaneMesh( "myHill",
            this->tileSize,
@@ -39,6 +39,4 @@ int Water::initialize()
     plan_water->setMaterialFlag(iv::EMF_LIGHTING, false);
     plan_water->setMaterialType(video::EMT_REFLECTION_2_LAYER);
     plan_water->setPosition(this->position);
-
-    return 0;
 }

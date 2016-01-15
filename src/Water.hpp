@@ -41,7 +41,7 @@ public:
     const irr::core::dimension2d<f32>& getTextureRepeatCount() const {return this->textureRepeatCount;}
 
     // To initialize mesh and node
-    int initialize();
+    void initialize();
 
 
 private:

@@ -20,7 +20,7 @@ public:
     const irr::core::vector3df& getScale() const {return this->scale; }
 
     // To initialize mesh and node
-    int initialize();
+    void initialize();
 
 
 private:

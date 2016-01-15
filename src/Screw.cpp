@@ -1,7 +1,5 @@
 #include "Screw.hpp"
 
-#include "irrlicht.h"
-
 #include "iostream"
 
 using namespace irr;
@@ -11,9 +9,13 @@ namespace iv = irr::video;
 namespace is = irr::scene;
 
 //Constructor
-Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath)
-    :smgr(smgr), parentRotationNode(parentRotationNode), meshPath(meshPath)
+Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath):
+    PlaneElement(smgr, parentRotationNode, meshPath)
 {
+    this->smgr = smgr;
+    this->parentRotationNode = parentRotationNode;
+    this->meshPath = meshPath;
+
     this->scale = ic::vector3df(0.05,0.05,0.05);
     this->position = ic::vector3df(0.0,0.19,0.58);
 
@@ -22,22 +24,17 @@ Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::i
 
     this->rotationStep = 30.0f;
 
-    this->parentRotationNode = parentRotationNode;
-
 }
 
 // To initialize water mesh and node
-int Screw::initialize()
+void Screw::initialize()
 {
-    is::IMesh *mesh = smgr->getMesh(this->meshPath);
-    this->screw_mesh = mesh;
-    this->screw_node= smgr->addMeshSceneNode(screw_mesh);
-    screw_node->setParent(this->parentRotationNode);
-    screw_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    screw_node->setScale(this->scale);
-    screw_node->setPosition(this->position);
-
-    return 0;
+    this->screw_mesh = this->smgr->getMesh(this->meshPath);
+    this->screw_node= this->smgr->addMeshSceneNode(this->screw_mesh);
+    this->screw_node->setParent(this->parentRotationNode);
+    this->screw_node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    this->screw_node->setScale(this->scale);
+    this->screw_node->setPosition(this->position);
 }
 
 int Screw::updateRotation()

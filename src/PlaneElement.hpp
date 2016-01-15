@@ -1,19 +1,23 @@
 #pragma once
 
-#ifndef PLANE
-#define PLANE
+#ifndef PLANEELEMENT
+#define PLANEELEMENT
 
 #include "irrlicht.h"
 
 using namespace irr;
 
-class Plane
+class PlaneElement
 {
 public:
     // Constructor
-    Plane(irr::scene::ISceneManager*, irr::scene::ISceneNode *parentRotationNode, irr::io::path meshPath);
+    PlaneElement(irr::scene::ISceneManager* smgr,
+                 irr::scene::ISceneNode *parentRotationNode,
+                 irr::io::path meshPath)
+        :smgr(smgr), parentRotationNode(parentRotationNode), meshPath(meshPath){}
+
     // Destructor
-    ~Plane(){}
+    ~PlaneElement(){}
 
     // Setters and getters
     void setScale(const irr::core::vector3df& scale){this->scale = scale; }
@@ -22,19 +26,21 @@ public:
     void setNode(irr::scene::IAnimatedMeshSceneNode* node){this->node = node; }
     irr::scene::IAnimatedMeshSceneNode* getNode() const {return this->node; }
 
-    // To initialize mesh and node
-    int initialize();
-    // To initialize the camera attached to
+    void setPosition(const irr::core::vector3df& position){this->position = position; }
+    const irr::core::vector3df& getPosition() const {return this->position; }
 
-private:
+    // To initialize mesh and node
+    virtual void initialize() = 0;
+
+protected:
     irr::scene::ISceneManager* smgr;
     irr::io::path meshPath;
     irr::scene::ISceneNode *parentRotationNode;
 
     irr::core::vector3df scale;
+    irr::core::vector3df position;
 
     irr::scene::IAnimatedMeshSceneNode* node;
-
 };
 
 #endif
