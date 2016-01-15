@@ -23,8 +23,8 @@ public:
     void setScale(const irr::core::vector3df& scale){this->scale = scale; }
     const irr::core::vector3df& getScale() const {return this->scale; }
 
-    void setNode(irr::scene::IAnimatedMeshSceneNode* node){this->node = node; }
-    irr::scene::IAnimatedMeshSceneNode* getNode() const {return this->node; }
+    void setNode(irr::scene::IMeshSceneNode* node){this->node = node; }
+    irr::scene::IMeshSceneNode* getNode() const {return this->node; }
 
     void setPosition(const irr::core::vector3df& position){this->position = position; }
     const irr::core::vector3df& getPosition() const {return this->position; }
@@ -40,7 +40,7 @@ protected:
     irr::core::vector3df scale;
     irr::core::vector3df position;
 
-    irr::scene::IAnimatedMeshSceneNode* node;
+    irr::scene::IMeshSceneNode* node;
 };
 
 #endif

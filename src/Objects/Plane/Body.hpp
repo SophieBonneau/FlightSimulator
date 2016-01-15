@@ -17,16 +17,11 @@ public:
     // Destructor
     ~Body(){}
 
-    // Setters and getters
-    void setNode(irr::scene::IAnimatedMeshSceneNode* node){this->node = node; }
-    irr::scene::IAnimatedMeshSceneNode* getNode() const {return this->node; }
 
     // To initialize mesh and node
     void initialize();
 
 private:
-
-    irr::scene::IAnimatedMeshSceneNode* node;
 
 };
 

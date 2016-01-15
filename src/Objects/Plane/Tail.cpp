@@ -22,8 +22,9 @@ Tail::Tail(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io:
 void Tail::initialize()
 {
     is::IAnimatedMesh *tail_mesh = smgr->getMesh(this->meshPath);
-    this->node = smgr->addAnimatedMeshSceneNode(tail_mesh);
+    this->node = smgr->addMeshSceneNode(tail_mesh);
     this->node->setParent(this->parentRotationNode);
     this->node->setMaterialFlag(iv::EMF_LIGHTING,false);
     this->node->setScale(this->scale);
+    this->node->setPosition(this->position);
 }

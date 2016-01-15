@@ -217,9 +217,9 @@ struct MyEventReceiver : IEventReceiver
      *                                  (permit only to change the plane direction)
     */
     void planeInFlight(is::ISceneNode *node,
-                       is::IAnimatedMeshSceneNode *leftwing_node, is::IAnimatedMeshSceneNode *rightwing_node,
-                       is::IAnimatedMeshSceneNode *tail_node,
-                       is::IAnimatedMeshSceneNode *lefttail_node, is::IAnimatedMeshSceneNode *righttail_node)
+                       is::IMeshSceneNode *leftwing_node, is::IMeshSceneNode *rightwing_node,
+                       is::IMeshSceneNode *tail_node,
+                       is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node)
     {
         if(stallSpeed < planeSpeed && stallSpeed * 1.1 > planeSpeed)
         {
@@ -457,7 +457,7 @@ struct MyEventReceiver : IEventReceiver
 void manageCollisionsWithSurroundings(is::ISceneManager *smgr,
                                  is::IMesh *city_mesh,
                                  is::ISceneNode* city_node,
-                                 is::IAnimatedMeshSceneNode *plane,
+                                 is::IMeshSceneNode *plane,
                                  is::ISceneNode *parentNode)
 {
     // Création du triangle selector
@@ -502,8 +502,8 @@ int main()
     device->getFileSystem()->addFileArchive("data.zip");
 
     //City
-    City city = City(smgr, "data/city/city_cercles.obj");
-    city.initialize();
+    City* city = new City(smgr, "data/city/city_cercles.obj");
+    city->initialize();
 
     //Init the object plane
     //2 parents: trajectory and rotation
@@ -512,32 +512,31 @@ int main()
     parentRotationNode->setParent(parentNode);
 
     //Init the plane
-
-    Body body = Body(smgr, parentRotationNode, "data/plane/plane.obj"); // "data/plane/plane.obj"
-    body.initialize();
+    Body* body = new Body(smgr, parentRotationNode, "data/plane/plane.obj");
+    body->initialize();
 
     //Init the screw
-    Screw screw = Screw(smgr, parentRotationNode, "data/plane/screw.obj");
-    screw.initialize();
+    Screw* screw = new Screw(smgr, parentRotationNode, "data/plane/screw.obj");
+    screw->initialize();
 
     //Init the two wings
-    Wing* leftWing = new Wing(smgr, parentRotationNode,"data/plane/screw.obj"); // "data/plane/wing.obj"
+    Wing* leftWing = new Wing(smgr, parentRotationNode,"data/plane/leftWing.obj");
     leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));
     leftWing->initialize();
-    Wing* rightWing = new Wing(smgr, parentRotationNode,"data/plane/screw.obj"); // "data/plane/wing.obj"
+    Wing* rightWing = new Wing(smgr, parentRotationNode,"data/plane/rightWing.obj");
     rightWing->setPosition(ic::vector3df(0.667,0.303,0.19));
     rightWing->initialize();
 
     //Init the three tails
-    Tail middleTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
-    middleTail.setPosition(ic::vector3df(0.001,0.355,-0.53));
-    middleTail.initialize();
-    Tail leftTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
-    leftTail.setPosition(ic::vector3df(-0.205,0.23,-0.441));
-    leftTail.initialize();
-    Tail rightTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
-    rightTail.setPosition(ic::vector3df(0.208,0.225,-0.441));
-    rightTail.initialize();
+    Tail* middleTail = new Tail(smgr, parentRotationNode, "data/plane/tail.obj");
+    middleTail->setPosition(ic::vector3df(0.001,0.355,-0.53));
+    middleTail->initialize();
+    Tail* leftTail = new Tail(smgr, parentRotationNode, "data/plane/leftTail.obj");
+    leftTail->setPosition(ic::vector3df(-0.205,0.23,-0.441));
+    leftTail->initialize();
+    Tail* rightTail = new Tail(smgr, parentRotationNode, "data/plane/rightTail.obj");
+    rightTail->setPosition(ic::vector3df(0.208,0.225,-0.441));
+    rightTail->initialize();
 
     //Water
     Water* water = new Water(smgr, driver->getTexture("data/water/water.jpg"));
@@ -547,7 +546,7 @@ int main()
     guiManager->initialize2DElements();
 
     // Collision management with surroundings
-    //manageCollisionsWithSurroundings(smgr, city_mesh, city_node, plane_node, parentNode);
+    manageCollisionsWithSurroundings(smgr, city->getMesh(), city->getNode(), body->getNode(), parentNode);
 
     float planeWeigth = 1000.0f;
     receiver.setPlaneWeight(planeWeigth);
@@ -585,11 +584,12 @@ int main()
         else if(receiver.inFlight)
         {
             // Update screw rotation
-            screw.updateRotation();
+            screw->updateRotation();
 
             //receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
 
-            //receiver.planeInFlight(parentRotationNode, leftWing->getNode(), rightWing->getNode(), middleTail.getNode(), leftTail.getNode(), rightTail.getNode());
+            receiver.planeInFlight(parentRotationNode, leftWing->getNode(), rightWing->getNode(), middleTail->getNode(), leftTail->getNode(), rightTail->getNode());
+
 
             rotation.Y      = receiver.getRotation();
             planeSpeed      = receiver.getSpeed();
@@ -616,8 +616,7 @@ int main()
         parentNode->setPosition(position);
 
         //Camera position
-        smgr->addCameraSceneNode(body.getNode(), ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
-        //smgr->addCameraSceneNodeFPS();
+        smgr->addCameraSceneNode(body->getNode(), ic::vector3df(0, 5, -34), parentNode->getPosition()); //0,5,-34
 
         //Back color
         driver->beginScene(true,true,iv::SColor(100,150,200,255));
