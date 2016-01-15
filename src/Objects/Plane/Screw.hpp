@@ -27,8 +27,7 @@ public:
     int updateRotation();
 
 private:
-    irr::scene::IMesh* screw_mesh;
-    irr::scene::IMeshSceneNode* screw_node;
+    irr::scene::IMesh* mesh;
 
     double rotationStep;
 

@@ -22,9 +22,9 @@ Wing::Wing(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io:
 void Wing::initialize()
 {
     is::IAnimatedMesh *wing_mesh = smgr->getMesh(meshPath);
-    is::IAnimatedMeshSceneNode *wing_node = smgr->addAnimatedMeshSceneNode(wing_mesh);
-    wing_node->setParent(parentRotationNode);
-    wing_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    wing_node->setScale(this->scale);
-    wing_node->setPosition(this->position);
+    this->node = smgr->addMeshSceneNode(wing_mesh);
+    this->node->setParent(parentRotationNode);
+    this->node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    this->node->setScale(this->scale);
+    this->node->setPosition(this->position);
 }

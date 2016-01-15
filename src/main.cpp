@@ -517,7 +517,7 @@ int main()
     parentRotationNode->setParent(parentNode);
 
     //Init the plane
-    Body body = Body(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/plane.obj"
+    Body body = Body(smgr, parentRotationNode, "data/plane/plane.obj");
     body.initialize();
 
     //Init the screw
@@ -525,21 +525,21 @@ int main()
     screw.initialize();
 
     //Init the two wings
-    Wing* leftWing = new Wing(smgr, parentRotationNode,"data/plane/screw.obj"); // "data/plane/wing.obj"
+    Wing* leftWing = new Wing(smgr, parentRotationNode,"data/plane/leftWing.obj");
     leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));
     leftWing->initialize();
-    Wing* rightWing = new Wing(smgr, parentRotationNode,"data/plane/screw.obj"); // "data/plane/wing.obj"
+    Wing* rightWing = new Wing(smgr, parentRotationNode,"data/plane/rightWing.obj");
     rightWing->setPosition(ic::vector3df(0.667,0.303,0.19));
     rightWing->initialize();
 
     //Init the three tails
-    Tail middleTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
+    Tail middleTail = Tail(smgr, parentRotationNode, "data/plane/tail.obj");
     middleTail.setPosition(ic::vector3df(0.001,0.355,-0.53));
     middleTail.initialize();
-    Tail leftTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
+    Tail leftTail = Tail(smgr, parentRotationNode, "data/plane/leftTail.obj");
     leftTail.setPosition(ic::vector3df(-0.205,0.23,-0.441));
     leftTail.initialize();
-    Tail rightTail = Tail(smgr, parentRotationNode, "data/plane/screw.obj"); // "data/plane/tail.obj"
+    Tail rightTail = Tail(smgr, parentRotationNode, "data/plane/rightTail.obj");
     rightTail.setPosition(ic::vector3df(0.208,0.225,-0.441));
     rightTail.initialize();
 

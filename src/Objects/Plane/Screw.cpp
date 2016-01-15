@@ -19,8 +19,7 @@ Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::i
     this->scale = ic::vector3df(0.05,0.05,0.05);
     this->position = ic::vector3df(0.0,0.19,0.58);
 
-    this->screw_mesh = nullptr;
-    this->screw_node = nullptr;
+    this->mesh = nullptr;
 
     this->rotationStep = 30.0f;
 
@@ -29,26 +28,26 @@ Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::i
 // To initialize water mesh and node
 void Screw::initialize()
 {
-    this->screw_mesh = this->smgr->getMesh(this->meshPath);
-    this->screw_node= this->smgr->addMeshSceneNode(this->screw_mesh);
-    this->screw_node->setParent(this->parentRotationNode);
-    this->screw_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    this->screw_node->setScale(this->scale);
-    this->screw_node->setPosition(this->position);
+    this->mesh = this->smgr->getMesh(this->meshPath);
+    this->node= this->smgr->addMeshSceneNode(this->mesh);
+    this->node->setParent(this->parentRotationNode);
+    this->node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    this->node->setScale(this->scale);
+    this->node->setPosition(this->position);
 }
 
 int Screw::updateRotation()
 {
-    if(this->screw_mesh == nullptr)
+    if(this->mesh == nullptr)
     {
         std::cout<<"Error: to update the rotation, you must have initialized the node first."<<std::endl;
         return -1;
     }
 
-    ic::vector3df rotation_screw = screw_node->getRotation();
+    ic::vector3df rotation_screw = this->node->getRotation();
     rotation_screw.Z += this->rotationStep;
 
-    this->screw_node->setRotation(rotation_screw);
+    this->node->setRotation(rotation_screw);
 
     return 0;
 }
