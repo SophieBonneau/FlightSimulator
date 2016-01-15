@@ -225,29 +225,26 @@ struct MyEventReceiver : IEventReceiver
         if(stallSpeed >= planeSpeed)
         {
         }
-        //Increase or decrease the plane speed
-        ic::vector3df childRotation = node->getRotation();
-        ic::vector3df leftwingRotation = leftwing_node->getRotation();
+
+        ic::vector3df childRotation     = node->getRotation();
+        ic::vector3df leftwingRotation  = leftwing_node->getRotation();
         ic::vector3df rightwingRotation = rightwing_node->getRotation();
-        ic::vector3df tailRotation = tail_node->getRotation();
-        ic::vector3df lefttailRotation = lefttail_node->getRotation();
+        ic::vector3df tailRotation      = tail_node->getRotation();
+        ic::vector3df lefttailRotation  = lefttail_node->getRotation();
         ic::vector3df righttailRotation = righttail_node->getRotation();
 
+        //Increase or decrease the plane speed
         if(keyIsDown[KEY_UP] == true)
         {
             //plane speed = valeur de vitesse absolue de l'avion
             // A mettre en paralèlle avec la puissance du moteur, le poids ...
             if(motorPower < maxMotorPower)
-            {
                 motorPower += motorStep;
-            }
         }
         if(keyIsDown[KEY_DOWN] == true)
         {
             if(motorPower > minMotorPower)
-            {
                 motorPower -= motorStep;
-            }
         }
 
         //Get the plane up or down
@@ -271,38 +268,38 @@ struct MyEventReceiver : IEventReceiver
             //If the plane is flat (not in the wrong inclinaison)
             if(childRotation.Z <= 0)
             {
-                childRotation.Z -= rotationAngleStep;
-                leftwingRotation.X -= 0.1;
+                childRotation.Z     -= rotationAngleStep;
+                leftwingRotation.X  -= 0.1;
                 rightwingRotation.X += 0.1;
-                tailRotation.Y -= 0.1;
-                tailRotation.Z += 0.05;
+                tailRotation.Y      -= 0.1;
+                tailRotation.Z      += 0.05;
             }
             else
             {
-                childRotation.Z -= 2 * rotationAngleStep;
-                leftwingRotation.X -= 2 * 0.1;
+                childRotation.Z     -= 2 * rotationAngleStep;
+                leftwingRotation.X  -= 2 * 0.1;
                 rightwingRotation.X += 2 * 0.1;
-                tailRotation.Y -= 2 * 0.1;
-                tailRotation.Z += 2 * 0.05;
+                tailRotation.Y      -= 2 * 0.1;
+                tailRotation.Z      += 2 * 0.05;
             }
         }
         if(keyIsDown[KEY_KEY_Q] == true)
         {
             if(childRotation.Z >= 0)
             {
-                childRotation.Z += rotationAngleStep;
-                leftwingRotation.X += 0.1;
+                childRotation.Z     += rotationAngleStep;
+                leftwingRotation.X  += 0.1;
                 rightwingRotation.X -= 0.1;
-                tailRotation.Y += 0.1;
-                tailRotation.Z -= 0.05;
+                tailRotation.Y      += 0.1;
+                tailRotation.Z      -= 0.05;
             }
             else
             {
-                childRotation.Z += 2 * rotationAngleStep;
-                leftwingRotation.X += 2 * 0.1;
+                childRotation.Z     += 2 * rotationAngleStep;
+                leftwingRotation.X  += 2 * 0.1;
                 rightwingRotation.X -= 2* 0.1;
-                tailRotation.Y += 2 * 0.1;
-                tailRotation.Z -= 2 * 0.05;
+                tailRotation.Y      += 2 * 0.1;
+                tailRotation.Z      -= 2 * 0.05;
             }
         }
 
@@ -313,6 +310,7 @@ struct MyEventReceiver : IEventReceiver
         if(planeSpeed > motorPower)
             planeSpeed -= 1/planeWeight * motorPower;
 
+        std::cout<<"factor : "<<childRotation.X<<std::endl;
 
         if(childRotation.X > 0)
         {
@@ -329,16 +327,6 @@ struct MyEventReceiver : IEventReceiver
         }
         planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
 
-        node->setRotation(childRotation);
-        leftwing_node->setRotation(leftwingRotation);
-        rightwing_node->setRotation(rightwingRotation);
-        tail_node->setRotation(tailRotation);
-        lefttail_node->setRotation(lefttailRotation);
-        righttail_node->setRotation(righttailRotation);
-
-        //planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
-        //planeAltitude -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
-
         std::cout<<"plane speed : "<<planeSpeed<<std::endl;
         std::cout<<"plane altitude : "<<planeSpeed<<std::endl;
 
@@ -350,6 +338,13 @@ struct MyEventReceiver : IEventReceiver
         //Compute the stall speed
         loadFactor = (1/cos(-childRotation.Z*core::DEGTORAD));
         stallSpeed = sqrt(loadFactor) * flatStallSpeed;
+
+        node->setRotation(childRotation);
+        leftwing_node->setRotation(leftwingRotation);
+        rightwing_node->setRotation(rightwingRotation);
+        tail_node->setRotation(tailRotation);
+        lefttail_node->setRotation(lefttailRotation);
+        righttail_node->setRotation(righttailRotation);
     }
 
     /* void planeInLanding:  Calculate the position of the plane and change it direction during the critical pahse of the landing.
@@ -515,7 +510,7 @@ int main()
     parentRotationNode->setParent(parentNode);
 
     //Init the plane
-    Plane plane = Plane(smgr, parentRotationNode, "data/plane/screw.obj");
+    Plane plane = Plane(smgr, parentRotationNode, "data/plane/plane.obj");
     plane.initialize();
 
     //Init the screw
@@ -523,7 +518,7 @@ int main()
     screw.initialize();
 
     //Init the two wings
-    /*is::IAnimatedMesh *leftwing_mesh = smgr->getMesh("data/plane/leftWing.obj");
+    is::IAnimatedMesh *leftwing_mesh = smgr->getMesh("data/plane/leftWing.obj");
     is::IAnimatedMesh *rightwing_mesh = smgr->getMesh("data/plane/rightWing.obj");
     is::IAnimatedMeshSceneNode *leftwing_node = smgr->addAnimatedMeshSceneNode(leftwing_mesh);
     is::IAnimatedMeshSceneNode *rightwing_node = smgr->addAnimatedMeshSceneNode(rightwing_mesh);
@@ -556,7 +551,7 @@ int main()
     rightttail_node->setParent(parentRotationNode);
     rightttail_node->setMaterialFlag(iv::EMF_LIGHTING,false);
     rightttail_node->setScale(ic::vector3df(0.05,0.05,0.05));
-    rightttail_node->setPosition(ic::vector3df(0.208,0.225,-0.441));*/
+    rightttail_node->setPosition(ic::vector3df(0.208,0.225,-0.441));
 
     //Water
     Water* water = new Water(smgr, driver->getTexture("data/water/water.jpg"));
@@ -606,7 +601,7 @@ int main()
             // Update screw rotation
             screw.updateRotation();
 
-            //receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
+            receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
 
             rotation.Y      = receiver.getRotation();
             planeSpeed      = receiver.getSpeed();
