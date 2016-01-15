@@ -336,8 +336,8 @@ struct MyEventReceiver : IEventReceiver
         lefttail_node->setRotation(lefttailRotation);
         righttail_node->setRotation(righttailRotation);
 
-        planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
-        planeAltitude -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
+        //planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * planeSpeed;
+        //planeAltitude -= sin(childRotation.X * core::DEGTORAD) * planeSpeed;
 
         std::cout<<"plane speed : "<<planeSpeed<<std::endl;
         std::cout<<"plane altitude : "<<planeSpeed<<std::endl;
