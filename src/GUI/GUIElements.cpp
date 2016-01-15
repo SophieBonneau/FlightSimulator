@@ -152,6 +152,7 @@ void GUIElements::updateDimensions()
     // Compass
     this->compass_length = window_dimension.Height*0.13;
 }
+
 void GUIElements::updatePositions()
 {
     // Background
@@ -497,7 +498,6 @@ void GUIElements::computeVerticalGaugeOffset(int& gauge_offset, double slope, in
         }
     }
 }
-
 
 std::vector<CGUICompass*> GUIElements::update2DElements()
 {

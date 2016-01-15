@@ -79,8 +79,7 @@ public:
                                               m_onFloor = false;
                                               m_inTakeOff = false;
                                               m_inLanding = false;
-                                              m_inFlight = false;
-                                            std::cout<<"bdjhfb"<<std::endl;}
+                                              m_inFlight = false;}
 
     /************************************************************************************/
     /******************************** Functions *****************************************/

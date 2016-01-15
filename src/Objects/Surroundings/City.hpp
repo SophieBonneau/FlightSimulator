@@ -8,26 +8,45 @@
 class City
 {
 public:
-    // Constructor
-    City(irr::scene::ISceneManager*, irr::io::path meshPath);
-    // Destructor
+    /************************************************************************************/
+    /******************************** Constructors **************************************/
+    /************************************************************************************/
+    /* Constructor City: Initialize all global attributes of the classe: scale, mesh
+     * params:   irr::scene::ISceneManager*: the application scene manager
+     *           irr::io::path meshPath: the path to the map mesh
+    */
+    City(irr::scene::ISceneManager*, irr::io::path);
     ~City(){}
 
-    // Setters and getters
-    void setScale(const irr::core::vector3df& scale){m_scale = scale; }
-    const irr::core::vector3df& getScale() const {return m_scale; }
+    /************************************************************************************/
+    /******************************** Getters & setters *********************************/
+    /************************************************************************************/
+    /* void setScale: set the mesh scale
+     * params:  const irr::core::vector3df: the mesh scale
+    */
+    void setScale(const irr::core::vector3df& scale){   m_scale = scale; }
 
-    void setNode(irr::scene::IMeshSceneNode* node){m_node = node; }
-    irr::scene::IMeshSceneNode* getNode() const {return m_node; }
+    /* irr::scene::IMeshSceneNode* getNode: get the scene node of the landscape for irrlicht purpose
+     * return:  const irr::scene::IMeshSceneNode*: the landscape node
+    */
+    irr::scene::IMeshSceneNode* getNode() const     {   return m_node; }
 
-    void setMesh(irr::scene::IMesh* mesh){m_mesh = mesh; }
-    irr::scene::IMesh* getMesh() const {return m_mesh; }
+    /* irr::scene::IMesh* getMesh: get the landscape mesh of the landscape for irrlicht purpose
+     * return:  const irr::scene::IMeshSceneNode*: the landscape mesh
+    */
+    irr::scene::IMesh* getMesh() const      {   return m_mesh; }
 
-    // To initialize mesh and node
+    /************************************************************************************/
+    /******************************** Functions *****************************************/
+    /************************************************************************************/
+    /* void initialize:  Initialization of the landscape for the application node and mesh: size, position.
+    */
     void initialize();
 
-
 private:
+    /************************************************************************************/
+    /******************************** Attributes ****************************************/
+    /************************************************************************************/
     irr::scene::ISceneManager* m_smgr;
     irr::io::path m_meshPath;
 

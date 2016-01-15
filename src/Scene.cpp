@@ -92,6 +92,8 @@ void Scene::initializeObjects()
 }
 void Scene::initializeGui()
 {
+    m_device->getFileSystem()->addFileArchive("data.zip");
+
     // GUI elements mananger
     m_guiManager = new GUIElements();
     m_guiManager->setDevice(m_device);
@@ -172,8 +174,6 @@ void Scene::render()
         position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
         position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
         position.Y  = m_planeAltitude;
-
-        std::cout<<"kbfkdjqs"<<std::endl;
     }
     else if(m_receiver->getInLanding())
     {
