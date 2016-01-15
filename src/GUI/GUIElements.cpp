@@ -1,5 +1,5 @@
 #include "GUIElements.hpp"
-#include "CGUICompass.hpp"
+
 
 #include <iostream>
 
@@ -69,11 +69,6 @@ GUIElements::GUIElements()
     // Timer
     this->timer = 0;
 
-
-}
-
-GUIElements::~GUIElements()
-{
 
 }
 
