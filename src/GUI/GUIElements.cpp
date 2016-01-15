@@ -1,5 +1,5 @@
 #include "GUIElements.hpp"
-#include "CGUICompass.hpp"
+
 
 #include <iostream>
 
