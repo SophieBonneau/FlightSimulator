@@ -88,6 +88,8 @@ void Scene::initializeObjects()
 }
 void Scene::initializeGui()
 {
+    m_device->getFileSystem()->addFileArchive("data.zip");
+
     // GUI elements mananger
     m_guiManager = new GUIElements();
     m_guiManager->setDevice(m_device);

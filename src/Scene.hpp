@@ -17,22 +17,45 @@ class GUIElements;
 class Scene
 {
 public:
-    // Constructor
+    /************************************************************************************/
+    /******************************** Constructors **************************************/
+    /************************************************************************************/
+    /* Constructor Scene: Initialize all global attributes of the classe: display values, plane attributes
+    */
     Scene();
-    // Destructor
     ~Scene(){}
 
-    // Getters and setters
+    /************************************************************************************/
+    /******************************** Getters & setters *********************************/
+    /************************************************************************************/
+    /* irr::IrrlichtDevice getDevice: get the device from irrlicht for the application
+     * return:  irr::IrrlichtDevice: the irrlicht device
+    */
     irr::IrrlichtDevice * getDevice() const {return m_device; }
 
+    /************************************************************************************/
+    /******************************** Functions *****************************************/
+    /************************************************************************************/
+    /* void initializeIrrlicht:  Initialization of the irrlicht parameters: event receiver, device, scene manager, gui.
+    */
     void initializeIrrlicht();
-    void initializeData();
+
+    /* void render:  Global function used to render the application : gui, plane and surrondings
+    */
     void render();
 
 private:
 
+    /* void manageCollisionsWithSurroundings: Manage the collision between the plane and all the surondings
+    */
     void manageCollisionsWithSurroundings(irr::scene::IMesh *city_mesh, irr::scene::ISceneNode* city_node);
+
+    /* void initializeObjects: Initialize all meshs used, except the water: the plane, the landscape
+    */
     void initializeObjects();
+
+    /* void initializeGui: Initialize all object of the gui
+    */
     void initializeGui();
 
     // Render objects

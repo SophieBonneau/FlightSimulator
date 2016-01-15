@@ -13,7 +13,7 @@ class Body : public PlaneElement
 {
 public:
     /************************************************************************************/
-    /******************************** Getters & setters *********************************/
+    /******************************** Constructors **************************************/
     /************************************************************************************/
     /* Constructor Body: Initialize all global attributes of the classe and the specified parameters:
      *                      scale, initial position of the mesh.
