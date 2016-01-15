@@ -10,7 +10,6 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-//Constructor
 Tail::Tail(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath):
     PlaneElement(smgr, parentRotationNode, meshPath)
 {
@@ -18,7 +17,6 @@ Tail::Tail(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io:
     this->position = ic::vector3df(0.0,0.0,0.0);
 }
 
-// To initialize mesh and node
 void Tail::initialize()
 {
     is::IAnimatedMesh *tail_mesh = smgr->getMesh(this->meshPath);

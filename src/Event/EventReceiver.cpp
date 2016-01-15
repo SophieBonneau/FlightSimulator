@@ -1,13 +1,9 @@
 #include "EventReceiver.hpp"
-
 #include "irrlicht.h"
-
 #include "iostream"
 
 using namespace irr;
-namespace ig = irr::gui;
 namespace ic = irr::core;
-namespace iv = irr::video;
 namespace is = irr::scene;
 
 // Constructor

@@ -10,7 +10,6 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-//Constructor
 Wing::Wing(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath):
     PlaneElement(smgr, parentRotationNode, meshPath)
 {
@@ -18,7 +17,6 @@ Wing::Wing(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io:
     this->position = ic::vector3df(0.0,0.0,0.0);
 }
 
-// To initialize mesh and node
 void Wing::initialize()
 {
     is::IAnimatedMesh *wing_mesh = smgr->getMesh(meshPath);

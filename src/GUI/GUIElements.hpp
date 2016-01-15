@@ -2,9 +2,6 @@
 
 #include <vector>
 
-//#include "CGUICompass.hpp"
-
-
 using namespace irr;
 namespace ig = irr::gui;
 namespace ic = irr::core;
@@ -159,6 +156,4 @@ private:
 
     // Timer
     int timer;
-
-
 };

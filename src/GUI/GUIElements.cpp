@@ -72,11 +72,6 @@ GUIElements::GUIElements()
 
 }
 
-GUIElements::~GUIElements()
-{
-
-}
-
 ic::vector2d<s32> GUIElements::getUpperLeftPoint(ig::IGUIImage* image)
 {
     ic::vector2d<s32> point = image->getRelativePosition().getCenter();
