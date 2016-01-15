@@ -8,6 +8,7 @@
 
 /* Class Body: Herit from the PLane element class. Manage the body of the plane has an irrlicht node.
 */
+
 class Body : public PlaneElement
 {
 public:

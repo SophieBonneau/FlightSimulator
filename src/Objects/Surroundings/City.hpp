@@ -5,8 +5,6 @@
 
 #include "irrlicht.h"
 
-using namespace irr;
-
 class City
 {
 public:
@@ -16,27 +14,27 @@ public:
     ~City(){}
 
     // Setters and getters
-    void setScale(const irr::core::vector3df& scale){this->scale = scale; }
-    const irr::core::vector3df& getScale() const {return this->scale; }
+    void setScale(const irr::core::vector3df& scale){m_scale = scale; }
+    const irr::core::vector3df& getScale() const {return m_scale; }
 
-    void setNode(irr::scene::IMeshSceneNode* node){this->node = node; }
-    irr::scene::IMeshSceneNode* getNode() const {return this->node; }
+    void setNode(irr::scene::IMeshSceneNode* node){m_node = node; }
+    irr::scene::IMeshSceneNode* getNode() const {return m_node; }
 
-    void setMesh(irr::scene::IMesh* mesh){this->mesh = mesh; }
-    irr::scene::IMesh* getMesh() const {return this->mesh; }
+    void setMesh(irr::scene::IMesh* mesh){m_mesh = mesh; }
+    irr::scene::IMesh* getMesh() const {return m_mesh; }
 
     // To initialize mesh and node
     void initialize();
 
 
 private:
-    irr::scene::ISceneManager* smgr;
-    irr::io::path meshPath;
+    irr::scene::ISceneManager* m_smgr;
+    irr::io::path m_meshPath;
 
-    irr::core::vector3df scale;
+    irr::core::vector3df m_scale;
 
-    irr::scene::IMeshSceneNode* node;
-    irr::scene::IMesh* mesh;
+    irr::scene::IMeshSceneNode* m_node;
+    irr::scene::IMesh* m_mesh;
 
 };
 

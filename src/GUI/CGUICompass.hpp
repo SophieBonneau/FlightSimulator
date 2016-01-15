@@ -1,3 +1,9 @@
+#pragma once
+
+#ifndef CGUICOMPASS
+#define CGUICOMPASS
+
+
 #include <irrlicht.h>
 
 #include <iostream>
@@ -130,3 +136,5 @@ class CGUICompass : public ig::IGUIElement
     ic::matrix4 Matrix;
     ic::rect<s32> rectangle;
 };
+
+#endif

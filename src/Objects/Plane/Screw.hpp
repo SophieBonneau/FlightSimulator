@@ -6,7 +6,6 @@
 #include "irrlicht.h"
 #include "PlaneElement.hpp"
 
-using namespace irr;
 
 class Screw : public PlaneElement
 {
@@ -23,20 +22,18 @@ public:
     Screw(irr::scene::ISceneManager*, irr::scene::ISceneNode*, irr::io::path);
     ~Screw(){}
 
-
     /************************************************************************************/
     /******************************** Getters & setters *********************************/
     /************************************************************************************/
     /* void setRotationSpeed: Set the screw rotation speed
      * params:  const double rotationStep: the rotation step for the rotation speed calculation
     */
-    void setRotationStep(const double rotationStep){    this->rotationStep = rotationStep;  }
+    void setRotationStep(const double rotationStep){    m_rotationStep = rotationStep;  }
 
     /* float getSpeed: getter for the rotation step used for the speed rotation of the plane screw
      * return:  float: the rotation step
     */
-    float getRotationStep() const {    return this->rotationStep;  }
-
+    float getRotationStep() const {    return m_rotationStep;  }
 
     /************************************************************************************/
     /******************************** Functions *****************************************/
@@ -55,8 +52,7 @@ private:
     /************************************************************************************/
     /******************************** Attributes ****************************************/
     /************************************************************************************/
-    irr::scene::IMesh* screwMesh;
-    float rotationStep;
+    float m_rotationStep;
 };
 
 #endif

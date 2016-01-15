@@ -5,7 +5,6 @@
 
 #include "irrlicht.h"
 
-using namespace irr;
 
 /* Class PlaneElement: Generic classe which is by each element of the plane. Each one of them
  * has the same kind of behaviour, permit to ease the code.
@@ -24,7 +23,7 @@ public:
     PlaneElement(irr::scene::ISceneManager* smgr,
                  irr::scene::ISceneNode *parentRotationNode,
                  irr::io::path meshPath)
-        :smgr(smgr), parentRotationNode(parentRotationNode), meshPath(meshPath){}
+        :m_smgr(smgr), m_parentRotationNode(parentRotationNode), m_meshPath(meshPath){}
 
     ~PlaneElement(){}
 
@@ -34,18 +33,17 @@ public:
     /* void setScale: set the mesh scale
      * params:  const irr::core::vector3df: the mesh scale
     */
-    void setScale(const irr::core::vector3df& scale){   this->scale = scale;    }
+    void setScale(const irr::core::vector3df& scale){   m_scale = scale;    }
 
     /* void setPosition: set the mesh position in the application global referential
      * params:  const irr::core::vector3df &: the mesh position in the global referential
     */
-    void setPosition(const irr::core::vector3df& position){ this->position = position; }
+    void setPosition(const irr::core::vector3df& position){ m_position = position; }
 
     /* irr::scene::IMeshSceneNode* getNode: get the specified object node for irrlicht purpose
      * return:  const irr::scene::IMeshSceneNode*: the current element node
     */
-    irr::scene::IMeshSceneNode* getNode() const     {   return this->node;      }
-
+    irr::scene::IMeshSceneNode* getNode() const     {   return m_node;      }
 
     /************************************************************************************/
     /******************************** Pubilic functions *********************************/
@@ -58,14 +56,14 @@ protected:
     /************************************************************************************/
     /******************************** Attributes ****************************************/
     /************************************************************************************/
-    irr::scene::ISceneManager* smgr;
-    irr::scene::ISceneNode *parentRotationNode;
-    irr::io::path meshPath;
+    irr::scene::ISceneManager* m_smgr;
+    irr::io::path m_meshPath;
+    irr::scene::ISceneNode *m_parentRotationNode;
 
-    irr::core::vector3df scale;
-    irr::core::vector3df position;
+    irr::core::vector3df m_scale = irr::core::vector3df(0.0, 0.0, 0.0);
+    irr::core::vector3df m_position = irr::core::vector3df(0.0, 0.0, 0.0);
 
-    irr::scene::IMeshSceneNode* node;
+    irr::scene::IMeshSceneNode* m_node = nullptr;
 };
 
 #endif
