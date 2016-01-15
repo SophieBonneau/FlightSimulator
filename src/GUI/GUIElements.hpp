@@ -2,7 +2,7 @@
 
 #include <vector>
 
-//#include "CGUICompass.hpp"
+#include "CGUICompass.hpp"
 
 
 using namespace irr;
@@ -11,7 +11,7 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-class CGUICompass;
+
 class GUIElements
 {
 public:
