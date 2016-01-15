@@ -37,10 +37,10 @@ protected:
     irr::io::path m_meshPath;
     irr::scene::ISceneNode *m_parentRotationNode;
 
-    irr::core::vector3df m_scale;
-    irr::core::vector3df m_position;
+    irr::core::vector3df m_scale = irr::core::vector3df(0.0, 0.0, 0.0);
+    irr::core::vector3df m_position = irr::core::vector3df(0.0, 0.0, 0.0);
 
-    irr::scene::IMeshSceneNode* m_node;
+    irr::scene::IMeshSceneNode* m_node = nullptr;
 };
 
 #endif

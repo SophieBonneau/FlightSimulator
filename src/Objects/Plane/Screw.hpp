@@ -27,8 +27,6 @@ public:
     int updateRotation();
 
 private:
-    irr::scene::IMesh* m_mesh;
-
     double m_rotationStep;
 
 };
