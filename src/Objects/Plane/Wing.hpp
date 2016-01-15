@@ -19,8 +19,6 @@ public:
     // To initialize mesh and node
     void initialize();
 
-private:
-
 };
 
 #endif

@@ -29,11 +29,7 @@ Water::Water(is::ISceneManager* smgr, video::ITexture * textureWater)
 // To initialize mesh and node
 void Water::initialize()
 {
-    is::IMesh *mesh_water = m_smgr->addHillPlaneMesh( "myHill",
-           m_tileSize,
-           m_tileCount, 0, 0,
-           m_countHills,
-           m_textureRepeatCount);
+    is::IMesh *mesh_water = m_smgr->addHillPlaneMesh( "myHill", m_tileSize, m_tileCount, 0, 0,m_countHills, m_textureRepeatCount);
     scene::ISceneNode* plan_water = m_smgr->addWaterSurfaceSceneNode(mesh_water, m_waveHeight, m_waveSpeed, m_waveLength);
     plan_water->setMaterialTexture(0, m_textureWater);
     plan_water->setMaterialFlag(iv::EMF_LIGHTING, false);

@@ -41,25 +41,21 @@ void Scene::initializeIrrlicht()
     m_gui = m_device->getGUIEnvironment();
 }
 
-void Scene::manageCollisionsWithSurroundings(is::ISceneManager *smgr,
-                                 is::IMesh *city_mesh,
-                                 is::ISceneNode* city_node,
-                                 is::IMeshSceneNode *plane,
-                                 is::ISceneNode *parentNode)
+
+void Scene::manageCollisionsWithSurroundings(irr::scene::IMesh *city_mesh, irr::scene::ISceneNode* city_node)
 {
     // Création du triangle selector
     scene::ITriangleSelector *selector_city;
-    selector_city = smgr->createOctreeTriangleSelector(city_mesh, city_node);
+    selector_city = m_smgr->createOctreeTriangleSelector(city_mesh, city_node);
     city_node->setTriangleSelector(selector_city);
     // Et l'animateur/collisionneur
     scene::ISceneNodeAnimator *anim_collision_plane_city;
-    anim_collision_plane_city = smgr->createCollisionResponseAnimator(selector_city,
-                                                 parentNode,  // Le noeud que l'on veut gérer
+    anim_collision_plane_city = m_smgr->createCollisionResponseAnimator(selector_city,
+                                                 m_parentNode,  // Le noeud que l'on veut gérer
                                                  ic::vector3df(2.8, 0.5, 0.4), // "rayons" du perso
                                                  ic::vector3df(0, 0, 0),  // gravity
                                                  ic::vector3df(1.0,0,0));  //décalage du centre
-    parentNode->addAnimator(anim_collision_plane_city);
-    //smgr->addSphereSceneNode(5.0,16,0,-1,ic::vector3df(10,0,0),ic::vector3df(0,0,0),ic::vector3df(1.0,1.0,1.0));
+    m_parentNode->addAnimator(anim_collision_plane_city);
 }
 
 void Scene::initializeData()
@@ -115,7 +111,7 @@ void Scene::initializeData()
     m_guiManager->initialize2DElements();
 
     // Collision management with surroundings
-    manageCollisionsWithSurroundings(m_smgr, city->getMesh(), city->getNode(), m_body->getNode(), m_parentNode);
+    manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
 }
 
 void Scene::render()
@@ -142,14 +138,12 @@ void Scene::render()
     }
     else if(m_receiver->getInTakeOff())
     {
-        std::cout<<"TD : plane is taking off"<<std::endl;
+        //std::cout<<"TD : plane is taking off"<<std::endl;
     }
     else if(m_receiver->getInFlight())
     {
         // Update screw rotation
         m_screw->updateRotation();
-
-        //receiver.planeInFlight(parentRotationNode, leftwing_node, rightwing_node, tail_node, lefttail_node, rightttail_node);
 
         m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(), m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
 
@@ -164,15 +158,15 @@ void Scene::render()
     }
     else if(m_receiver->getInLanding())
     {
-        std::cout<<"TD : plane is landing"<<std::endl;
+        //std::cout<<"TD : plane is landing"<<std::endl;
     }
     else if(m_receiver->getIsStalling())
     {
-        std::cout<<"TD : the plane is stalling"<<std::endl;
+        //std::cout<<"TD : the plane is stalling"<<std::endl;
     }
     else
     {
-        std::cout<<"TD : the plane has crashed"<<std::endl;
+        //std::cout<<"TD : the plane has crashed"<<std::endl;
     }
 
     m_parentNode->setRotation(rotation);
