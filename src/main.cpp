@@ -318,7 +318,7 @@ void manageCollisionsWithScenery(is::ISceneManager *smgr,
                                                  ic::vector3df(0, 0, 0));  //décalage du centre
     parentNode->addAnimator(anim_collision_plane_airport);
     anim_collision_plane_airport->drop();
-    parentNode->getTransformedBoundingBox().intersectsWithBox()
+    //parentNode->getTransformedBoundingBox().intersectsWithBox()
 
     //mesh->getTransformedBoundingBox.intersectsWith(mesh2->getTransformedBoundingBox());
 }
