@@ -20,9 +20,8 @@ City::City(is::ISceneManager* smgr, irr::io::path meshPath)
 // To initialize mesh and node
 void City::initialize()
 {
-    is::IMesh *city_mesh = smgr->getMesh(this->meshPath);
-    is::ISceneNode *city_node;
-    city_node = smgr->addOctreeSceneNode(city_mesh,nullptr,-1,1024);
-    city_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    city_node->setScale(this->scale);
+    this->mesh = smgr->getMesh(this->meshPath);
+    this->node = smgr->addOctreeSceneNode(this->mesh,nullptr,-1,1024);
+    this->node->setMaterialFlag(iv::EMF_LIGHTING,false);
+    this->node->setScale(this->scale);
 }
