@@ -5,7 +5,6 @@
 
 #include "irrlicht.h"
 
-using namespace irr;
 
 class PlaneElement
 {

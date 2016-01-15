@@ -6,7 +6,6 @@
 #include "irrlicht.h"
 #include "PlaneElement.hpp"
 
-using namespace irr;
 
 class Screw : public PlaneElement
 {

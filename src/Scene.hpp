@@ -13,7 +13,6 @@
 #include "Objects/Plane/Wing.hpp"
 #include "Objects/Plane/Tail.hpp"
 
-using namespace irr;
 class GUIElements;
 class Scene
 {
@@ -24,7 +23,7 @@ public:
     ~Scene(){}
 
     // Getters and setters
-    IrrlichtDevice * getDevice() const {return m_device; }
+    irr::IrrlichtDevice * getDevice() const {return m_device; }
 
     void initializeIrrlicht();
     void initializeData();
@@ -36,7 +35,7 @@ private:
 
 
     // Render objects
-    IrrlichtDevice *m_device;
+    irr::IrrlichtDevice *m_device;
     irr::scene::ISceneManager* m_smgr;
     irr::video::IVideoDriver *m_driver;
     GUIElements* m_guiManager;

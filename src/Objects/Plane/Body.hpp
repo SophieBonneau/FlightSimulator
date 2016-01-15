@@ -7,7 +7,6 @@
 
 #include "PlaneElement.hpp"
 
-using namespace irr;
 
 class Body : public PlaneElement
 {

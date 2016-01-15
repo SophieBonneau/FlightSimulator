@@ -5,9 +5,7 @@
 #include "iostream"
 
 using namespace irr;
-namespace ig = irr::gui;
 namespace ic = irr::core;
-namespace iv = irr::video;
 namespace is = irr::scene;
 
 // Constructor

@@ -5,9 +5,8 @@
 
 #include "irrlicht.h"
 
-using namespace irr;
 
-class EventReceiver : public IEventReceiver
+class EventReceiver : public irr::IEventReceiver
 {
 public:
     // Constructor
@@ -117,12 +116,12 @@ public:
      *                It also permit to quit the application with the ESCAPE key.
      * params:  const SEvent &event:    Reference to the event which had been previously caught
     */
-    bool OnEvent(const SEvent &event);
+    bool OnEvent(const irr::SEvent &event);
 
 private:
 
     //Table to get the state of the keys
-    bool m_keyIsDown[KEY_KEY_CODES_COUNT];
+    bool m_keyIsDown[irr::KEY_KEY_CODES_COUNT];
 
     //Init steps
     const float m_speedStep         = 0.005f;

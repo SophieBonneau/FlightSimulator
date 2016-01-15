@@ -4,14 +4,13 @@
 
 #include "iostream"
 
-using namespace irr;
-namespace ig = irr::gui;
 namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
+namespace io = irr::io;
 
 //Constructor
-Tail::Tail(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath):
+Tail::Tail(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, io::path meshPath):
     PlaneElement(smgr, parentRotationNode, meshPath)
 {
     m_scale = ic::vector3df(0.05,0.05,0.05);

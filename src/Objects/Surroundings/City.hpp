@@ -5,8 +5,6 @@
 
 #include "irrlicht.h"
 
-using namespace irr;
-
 class City
 {
 public:
