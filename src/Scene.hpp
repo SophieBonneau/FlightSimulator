@@ -40,6 +40,7 @@ public:
     */
     void initializeIrrlicht();
 
+    void initializeData();
     /* void render:  Global function used to render the application : gui, plane and surrondings
     */
     void render();
