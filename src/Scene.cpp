@@ -9,7 +9,6 @@
 namespace ic = irr::core;
 namespace iv = irr::video;
 
-//Constructor
 Scene::Scene()
 {
     // display values
@@ -121,7 +120,6 @@ void Scene::initializeData()
 {
     initializeGui();
     initializeObjects();
-
 }
 
 void Scene::render()
