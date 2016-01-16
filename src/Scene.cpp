@@ -9,7 +9,6 @@
 namespace ic = irr::core;
 namespace iv = irr::video;
 
-//Constructor
 Scene::Scene()
 {
     // display values
@@ -83,7 +82,7 @@ void Scene::initializeObjects()
     Water* water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"));
     water->initialize();
 
-    // Collision management with surroundings
+    //Collision management with surroundings
     manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
 }
 void Scene::initializeGui()
@@ -119,7 +118,6 @@ void Scene::initializeData()
 {
     initializeGui();
     initializeObjects();
-
 }
 
 void Scene::render()

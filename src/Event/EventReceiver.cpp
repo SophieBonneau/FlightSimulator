@@ -57,39 +57,82 @@ void EventReceiver::planeOnFloor(is::ISceneNode *node)
 
         if(m_keyIsDown[KEY_UP] == true)
         {
-            if(m_planeSpeed < m_maxPlaneSpeed)
-            {
-                m_planeSpeed += m_speedStep;
-                m_planeSpeedFloor = m_planeSpeed;
-            }
+            if(m_motorPower < m_maxMotorPower)
+                m_motorPower += m_motorStep;
         }
         if(m_keyIsDown[KEY_DOWN] == true)
         {
-            if(m_planeSpeed > m_minPlaneSpeed)
-            {
-                m_planeSpeed -= m_speedStep;
-                m_planeSpeedFloor = m_planeSpeed;
-            }
+            if(m_motorPower > m_minMotorPower)
+                m_motorPower -= m_motorStep;
         }
 
+        //Get the plane up or down
         if(m_keyIsDown[KEY_KEY_Z] == true)
+        {
+            if(fromGameUnitToKt(m_planeSpeed) >= 55)
+            {
+                m_onFloor   = false;
+                m_inTakeOff = true;
+            }
             childRotation.X -= m_altitudeAngleStep;
+        }
         if(m_keyIsDown[KEY_KEY_S] == true)
         {
-            childRotation.X += m_altitudeAngleStep;
-            if(childRotation.X >=2 )
+            m_onFloor = false;
+            m_isCrashed = true;
+        }
+
+        //Open the side panels of the plane to turn to the right or the left
+        if(m_keyIsDown[KEY_KEY_D] == true)
+        {
+            if(fromGameUnitToKt(m_planeSpeed) < 25)
+            if(childRotation.Z <= 0)
             {
-                m_onFloor = false;
-                m_isCrashed = true;
+                childRotation.Z -= m_rotationAngleStep;
+            }
+            else
+            {
+                childRotation.Z -= 2 * m_rotationAngleStep;
+            }
+        }
+        if(m_keyIsDown[KEY_KEY_Q] == true)
+        {
+            if(childRotation.Z >= 0)
+            {
+                childRotation.Z     += m_rotationAngleStep;
+            }
+            else
+            {
+                childRotation.Z     += 2 * m_rotationAngleStep;
             }
         }
 
-        if(m_keyIsDown[KEY_KEY_D] == true)
-            m_rotationAngle  += m_rotationAngleStep;
-        if(m_keyIsDown[KEY_KEY_Q] == true)
-            m_rotationAngle  -= m_rotationAngleStep;
-
         node->setRotation(childRotation);
+
+        if(m_planeSpeed < m_motorPower)
+            m_planeSpeed += 10/m_planeWeight * m_motorPower;
+        else if(m_planeSpeed > m_motorPower)
+            m_planeSpeed -= 10/m_planeWeight * m_motorPower;
+        else
+            m_planeSpeed  = m_motorPower;
+
+        if(childRotation.X < 0)
+            m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;
+        else if(childRotation.X == 0)
+            m_planeSpeedSlope = m_planeSpeed;
+        else if(childRotation.X > 0)
+            m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;
+
+        m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
+
+        //Compute rotation
+        float planeSpeedMByS = fromGameUnitToKt(m_planeSpeed) * 1.852 * 0.277777777778;
+        if(planeSpeedMByS > 0)
+            m_rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * m_g / planeSpeedMByS) * core::RADTODEG / 20; // for real values /80
+
+        //Compute the stall speed
+        m_loadFactor = (1/cos(-childRotation.Z*core::DEGTORAD));
+        m_stallSpeed = sqrt(m_loadFactor) * m_flatStallSpeed;
     }
 }
 
