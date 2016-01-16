@@ -8,6 +8,7 @@
 #include "Event/EventReceiver.hpp"
 #include "Objects/Plane/Screw.hpp"
 #include "Objects/Surroundings/Water.hpp"
+#include "Objects/Surroundings/Fire.hpp"
 #include "Objects/Surroundings/City.hpp"
 #include "Objects/Plane/Body.hpp"
 #include "Objects/Plane/Wing.hpp"
@@ -46,10 +47,9 @@ public:
     void render();
 
 private:
-
     /* void manageCollisionsWithSurroundings: Manage the collision between the plane and all the surondings
     */
-    void manageCollisionsWithSurroundings(irr::scene::IMesh *city_mesh, irr::scene::ISceneNode* city_node);
+    void manageCollisionsWithSurroundings(irr::scene::IMesh *surroundingMesh, irr::scene::ISceneNode* surroundingNode);
 
     /* void initializeObjects: Initialize all meshs used, except the water: the plane, the landscape
     */
@@ -75,7 +75,11 @@ private:
     Tail* m_leftTail;
     Tail* m_rightTail;
     Body* m_body;
+    Fire* m_fire;
     irr::gui::IGUIEnvironment *m_gui;
+
+    //Collision
+    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollision;
 
     // Event objects
     EventReceiver *m_receiver;

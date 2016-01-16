@@ -26,10 +26,10 @@ Water::Water(is::ISceneManager* smgr, iv::ITexture * textureWater)
 // To initialize mesh and node
 void Water::initialize()
 {
-    is::IMesh *mesh_water = m_smgr->addHillPlaneMesh( "myHill", m_tileSize, m_tileCount, 0, 0,m_countHills, m_textureRepeatCount);
-    is::ISceneNode* plan_water = m_smgr->addWaterSurfaceSceneNode(mesh_water, m_waveHeight, m_waveSpeed, m_waveLength);
-    plan_water->setMaterialTexture(0, m_textureWater);
-    plan_water->setMaterialFlag(iv::EMF_LIGHTING, false);
-    plan_water->setMaterialType(iv::EMT_REFLECTION_2_LAYER);
-    plan_water->setPosition(m_position);
+    is::IMesh *meshWater = m_smgr->addHillPlaneMesh( "myHill", m_tileSize, m_tileCount, 0, 0,m_countHills, m_textureRepeatCount);
+    is::ISceneNode* planWater = m_smgr->addWaterSurfaceSceneNode(meshWater, m_waveHeight, m_waveSpeed, m_waveLength);
+    planWater->setMaterialTexture(0, m_textureWater);
+    planWater->setMaterialFlag(iv::EMF_LIGHTING, false);
+    planWater->setMaterialType(iv::EMT_REFLECTION_2_LAYER);
+    planWater->setPosition(m_position);
 }

@@ -4,6 +4,7 @@
 #define EVENTRECEIVER
 
 #include "irrlicht.h"
+#include <iostream>
 
 
 class EventReceiver : public irr::IEventReceiver
@@ -59,10 +60,26 @@ public:
     */
     bool getIsStalling(){   return m_isStalling;        }
 
+    /* float getIsCrashed: getter for the isCrashed boolean value
+     * return:  isCrashed: the value define if the plane has crashed
+    */
+    bool getIsCrashed(){   return m_isCrashed;        }
+
+
     /* void setPlaneWeight: function used to initialize the planeWeight
      * params:  const float planeWeight:      the plane weight
     */
     void setPlaneWeight(const float planeWeight){     m_planeWeight = planeWeight;    }
+
+    /* void setIsCrashed: function used to initialize the state of the boolean value isCrash
+     * params:  const float isCrashed:      the plane crashed = true
+    */
+    void setIsCrashed(const float isCrashed){ m_isCrashed = isCrashed;
+                                              m_isStalling = false;
+                                              m_onFloor = false;
+                                              m_inTakeOff = false;
+                                              m_inLanding = false;
+                                              m_inFlight = false;}
 
     /************************************************************************************/
     /******************************** Functions *****************************************/
