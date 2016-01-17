@@ -45,9 +45,16 @@ void Scene::initializeObjects()
     City* city = new City(m_smgr, "data/city/city_cercles.obj");
     city->initialize();
 
+    //Airport
+    Airport* airport = new Airport(m_smgr, "data/airport/airport.obj");
+    airport->initialize();
+
+
     //Init the object plane
     //2 parents: trajectory and rotation
     m_parentNode = m_smgr->addEmptySceneNode();
+    m_parentNode->setPosition(ic::vector3df(-100.0, 3.0, -100.0));
+
     m_parentRotationNode = m_smgr->addEmptySceneNode();
     m_parentRotationNode->setParent(m_parentNode);
 
@@ -61,7 +68,7 @@ void Scene::initializeObjects()
 
     //Init the two wings
     m_leftWing = new Wing(m_smgr, m_parentRotationNode,"data/plane/leftWing.obj");
-    m_leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));
+    m_leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));//-0.667,0.303,0.19
     m_leftWing->initialize();
     m_rightWing = new Wing(m_smgr, m_parentRotationNode,"data/plane/rightWing.obj");
     m_rightWing->setPosition(ic::vector3df(0.667,0.303,0.19));
@@ -89,6 +96,7 @@ void Scene::initializeObjects()
     // Collision management with surroundings
     manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
 }
+
 void Scene::initializeGui()
 {
     m_device->getFileSystem()->addFileArchive("data.zip");
