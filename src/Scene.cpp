@@ -16,7 +16,7 @@ Scene::Scene()
     m_altitude        = 1000;
     m_vertical_speed  = -20;
     m_gauge_offset    = 0;
-    m_stall          = true;
+    m_stall           = true;
 
     m_planeSpeed    = 0.0f;
     m_planeAltitude = 0.0f;
@@ -44,17 +44,16 @@ void Scene::initializeObjects()
     //City
     City* city = new City(m_smgr, "data/city/city_cercles.obj");
     city->initialize();
-
-    //Airport
-    Airport* airport = new Airport(m_smgr, "data/airport/airport.obj");
+    City* airport = new City(m_smgr, "data/airport/airport.obj");
     airport->initialize();
-
+    City* runway = new City(m_smgr, "data/airport/runway.obj");
+    runway-> initialize();
 
     //Init the object plane
     //2 parents: trajectory and rotation
     m_parentNode = m_smgr->addEmptySceneNode();
-    m_parentNode->setPosition(ic::vector3df(-100.0, 3.0, -100.0));
-
+    m_parentNode->setPosition(ic::vector3df(-662.0, 0.0, -124.0));
+    m_parentNode->setRotation(ic::vector3df(0.0, 30.0, 0.0));
     m_parentRotationNode = m_smgr->addEmptySceneNode();
     m_parentRotationNode->setParent(m_parentNode);
 
@@ -216,6 +215,7 @@ void Scene::render()
     {
         compasses[i]->draw();
     }
+    std::cout<<"Parent position : "<<m_parentNode->getPosition().X<<"   "<<m_parentNode->getPosition().Y<<" "<<m_parentNode->getPosition().Z<<std::endl;
 
     m_driver->endScene();
 }

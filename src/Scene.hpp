@@ -13,7 +13,6 @@
 #include "Objects/Plane/Body.hpp"
 #include "Objects/Plane/Wing.hpp"
 #include "Objects/Plane/Tail.hpp"
-#include "Objects/Surroundings/Airport.h"
 
 class GUIElements;
 class Scene
