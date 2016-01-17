@@ -199,7 +199,7 @@ void Scene::render()
     m_parentNode->setPosition(position);
 
     //Camera pose
-    m_receiver->changeCameraPose(m_camera, m_parentNode);
+    m_receiver->changeCameraPose(m_camera);
     if(m_camera->getPosition().Z <= 0.0)
         m_camera->setTarget(m_parentNode->getPosition());
     else

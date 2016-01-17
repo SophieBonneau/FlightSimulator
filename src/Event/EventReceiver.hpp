@@ -134,7 +134,7 @@ public:
     /* void changeCameraPose:  Change the position of the camera
      * params:  is::ICameraSceneNode *cameraNode:   Instance of the camera node
     */
-    void changeCameraPose(irr::scene::ICameraSceneNode *cameraNode, irr::scene::ISceneNode *parentNode);
+    void changeCameraPose(irr::scene::ICameraSceneNode *cameraNode);
 
    /************************************************************************************/
    /******************************** Events ********************************************/

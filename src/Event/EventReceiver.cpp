@@ -309,7 +309,7 @@ void EventReceiver::planeInLanding(is::ISceneNode *node)
     }
 }
 
-void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode, scene::ISceneNode *parentNode)
+void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode)
 {
     ic::vector3df cameraPosition = cameraNode->getPosition();
 
@@ -322,7 +322,6 @@ void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode, scene::IS
     {
         cameraPosition = ic::vector3df(0.0,15.0,2.0);
         cameraNode->setPosition(cameraPosition);
-        //cameraNode->setTarget(parentNode->getPosition() + ic::vector3df(0.0,0.0,20.0));
     }
     else if(m_keyIsDown[KEY_KEY_M] == true)
     {
