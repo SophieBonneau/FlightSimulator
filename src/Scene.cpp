@@ -21,6 +21,8 @@ Scene::Scene()
     m_planeSpeed    = 0.0f;
     m_planeAltitude = 0.0f;
     m_rotAngle      = 0.0f;
+
+    m_cameraPose = ic::vector3df(0.0,5.0,-34.0);
 }
 
 void Scene::initializeIrrlicht()
@@ -86,6 +88,9 @@ void Scene::initializeObjects()
     m_fire = new Fire(m_smgr, m_driver->getTexture("data/fire/fire.jpg"));
     m_fire->initialize();
 
+    //Camera position
+    m_camera = m_smgr->addCameraSceneNode(m_body->getNode(), m_cameraPose, m_parentNode->getPosition()); //Behind the plane -> (0,5,-34)
+
     // Collision management with surroundings
     manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
 }
@@ -148,7 +153,7 @@ void Scene::render()
         m_receiver->planeOnFloor(m_parentRotationNode);
 
         rotation.Y      = m_receiver->getRotation();
-        m_planeSpeed      = m_receiver->getSpeed();
+        m_planeSpeed    = m_receiver->getSpeed();
 
         position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
         position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
@@ -163,7 +168,6 @@ void Scene::render()
         m_screw->updateRotation();
 
         m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(), m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
-
 
         rotation.Y      = m_receiver->getRotation();
         m_planeSpeed      = m_receiver->getSpeed();
@@ -194,8 +198,12 @@ void Scene::render()
     m_parentNode->setRotation(rotation);
     m_parentNode->setPosition(position);
 
-    //Camera position
-    m_smgr->addCameraSceneNode(m_body->getNode(), ic::vector3df(0, 5, -34), m_parentNode->getPosition()); //0,5,-34
+    //Camera pose
+    m_receiver->changeCameraPose(m_camera, m_parentNode);
+    if(m_camera->getPosition().Z <= 0.0)
+        m_camera->setTarget(m_parentNode->getPosition());
+    else
+        m_camera->setTarget(m_parentNode->getPosition() + ic::vector3df(0.0,0.0,20.0));
 
     //Back color
     m_driver->beginScene(true,true,iv::SColor(100,150,200,255));

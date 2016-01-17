@@ -35,35 +35,36 @@ public:
     */
     float getRotation(){    return m_rotationAngle;     }
 
-    /* float getOnFloor: getter for the onFloor boolean value
+    /* bool getOnFloor: getter for the onFloor boolean value
      * return:  onFloor: the value define if the plane is on the floor
     */
     bool getOnFloor(){      return m_onFloor;           }
 
-    /* float getInTakeOff: getter for the inTakeOff boolean value
+    /* bool getInTakeOff: getter for the inTakeOff boolean value
      * return:  inTakeOff: the value define if the plane is taking off
     */
     bool getInTakeOff(){    return m_inTakeOff;         }
 
-    /* float getInFlight: getter for the inFlight boolean value
+    /* bool getInFlight: getter for the inFlight boolean value
      * return:  inFlight: the value define if the plane is flying
     */
     bool getInFlight(){     return m_inFlight;          }
 
-    /* float getInLanding: getter for the getLanding boolean value
+    /* bool getInLanding: getter for the getLanding boolean value
      * return:  inLanding: the value define if the plane is landing
     */
     bool getInLanding(){    return m_inLanding;         }
 
-    /* float getIsStalling: getter for the isStalling boolean value
+    /* bool getIsStalling: getter for the isStalling boolean value
      * return:  isStalling: the value define if the plane is stalling
     */
     bool getIsStalling(){   return m_isStalling;        }
 
-    /* float getIsCrashed: getter for the isCrashed boolean value
+    /* bool getIsCrashed: getter for the isCrashed boolean value
      * return:  isCrashed: the value define if the plane has crashed
     */
     bool getIsCrashed(){   return m_isCrashed;        }
+
 
 
     /* void setPlaneWeight: function used to initialize the planeWeight
@@ -80,6 +81,8 @@ public:
                                               m_inTakeOff = false;
                                               m_inLanding = false;
                                               m_inFlight = false;}
+
+
 
     /************************************************************************************/
     /******************************** Functions *****************************************/
@@ -127,6 +130,11 @@ public:
      *                                  (permit only to change the plane direction)
     */
     void planeInLanding(irr::scene::ISceneNode *node);
+
+    /* void changeCameraPose:  Change the position of the camera
+     * params:  is::ICameraSceneNode *cameraNode:   Instance of the camera node
+    */
+    void changeCameraPose(irr::scene::ICameraSceneNode *cameraNode, irr::scene::ISceneNode *parentNode);
 
    /************************************************************************************/
    /******************************** Events ********************************************/
@@ -193,6 +201,9 @@ private:
     bool m_inTakeOff;
     bool m_inFlight;
     bool m_inLanding;
+
+    //Coordinates of the camera
+    irr::core::vector3df m_cameraPose;
 };
 
 #endif

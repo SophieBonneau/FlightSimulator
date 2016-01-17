@@ -77,6 +77,7 @@ private:
     Body* m_body;
     Fire* m_fire;
     irr::gui::IGUIEnvironment *m_gui;
+    irr::scene::ICameraSceneNode *m_camera;
 
     //Collision
     irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollision;
@@ -94,6 +95,8 @@ private:
     float m_planeSpeed;
     float m_planeAltitude;
     float m_rotAngle;
+
+    irr::core::vector3df m_cameraPose;
 };
 
 #endif
