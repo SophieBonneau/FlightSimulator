@@ -235,7 +235,7 @@ void Scene::render()
         m_camera->setTarget(m_screw->getNode()->getAbsolutePosition());
     }
 
-    std::cout<<"Fuel value: "<<m_receiver->getFuelLiter()<<std::endl;
+    m_receiver->getAltitudeSpeed();
 
     //Back color
     m_driver->beginScene(true,true,iv::SColor(100,150,200,255));
