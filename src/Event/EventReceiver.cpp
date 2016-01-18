@@ -23,6 +23,7 @@ EventReceiver::EventReceiver()
     m_planeSpeedSlope = 0.0f;
     m_planeAltitude   = 8.7f;
     m_rotationAngle   = 0.0f;
+    m_rotationAltitude = 0.0f;
 
     m_motorPower = 0.0f;
     m_fuelLiter = 152.0f;
@@ -277,6 +278,8 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
         m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
         m_planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
 
+        m_rotationAltitude = childRotation.X;
+
         if(m_planeSpeedFloor < m_flatStallSpeed)
         {
             m_isStalling = true;
@@ -414,6 +417,8 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
     m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
     if(!m_isStalling)
         m_planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
+
+    m_rotationAltitude = childRotation.X;
 
     //Compute rotation
     float planeSpeedMByS = fromGameUnitToKt(m_planeSpeed) * 1.852 * 0.277777777778;
