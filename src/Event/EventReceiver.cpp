@@ -337,7 +337,7 @@ void EventReceiver::updateCompass(CGUICompass* compass)
     if(m_keyIsDown[KEY_KEY_D] == true)
     {
         compass->setCompassHeading(5.0);
-        compass->setCompassRelativePosition();
+        //compass->setCompassRelativePosition();
     }
     else if(m_keyIsDown[KEY_KEY_Q] == true)
     {

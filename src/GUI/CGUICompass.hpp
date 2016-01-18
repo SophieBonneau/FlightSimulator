@@ -47,8 +47,9 @@ class CGUICompass : public ig::IGUIElement
         Mesh.getMaterial().MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
     }
 
-    void setCompassRelativePosition()
+    void setCompassRelativePosition(ic::rect<s32> rect)
     {
+        this->rectangle = rect;
         Mesh.Vertices.set_used(4);
         Mesh.Indices .set_used(6);
 

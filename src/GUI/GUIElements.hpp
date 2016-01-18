@@ -115,6 +115,9 @@ private:
     ig::IGUIImage *image_gauge_empty_h;
     ig::IGUIImage *image_gauge_empty_v;
 
+    // Compass
+    CGUICompass* m_compass_compass;
+
     // Positions
     int compass_length;
     int compass_offset_x;
