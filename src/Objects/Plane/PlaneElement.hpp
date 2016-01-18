@@ -65,8 +65,8 @@ protected:
     /******************************** Attributes ****************************************/
     /************************************************************************************/
     irr::scene::ISceneManager* m_smgr = nullptr;
-    irr::io::path m_meshPath = "";
     irr::scene::ISceneNode *m_parentRotationNode = nullptr;
+    irr::io::path m_meshPath = "";
 
     irr::core::vector3df m_scale = irr::core::vector3df(0.0, 0.0, 0.0);
     irr::core::vector3df m_position = irr::core::vector3df(0.0, 0.0, 0.0);
