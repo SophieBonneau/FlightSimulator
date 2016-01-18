@@ -50,7 +50,7 @@ public:
 private:
     /* void manageCollisionsWithSurroundings: Manage the collision between the plane and all the surondings
     */
-    void manageCollisionsWithSurroundings(irr::scene::IMesh *surroundingMesh, irr::scene::ISceneNode* surroundingNode);
+    void manageCollisionsWithSurroundings(scene::ITriangleSelector *selectorSurrounding);
 
     /* void initializeObjects: Initialize all meshs used, except the water: the plane, the landscape
     */

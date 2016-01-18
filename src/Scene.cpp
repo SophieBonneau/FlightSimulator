@@ -96,8 +96,12 @@ void Scene::initializeObjects()
     m_camera = m_smgr->addCameraSceneNode(m_body->getNode(), m_cameraPose, m_parentNode->getPosition()); //Behind the plane -> (0,5,-34)
 
     // Collision management with surroundings
-    manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
-    manageCollisionsWithSurroundings(airport->getMesh(), airport->getNode());
+    scene::ITriangleSelector *selectorSurrounding = m_smgr->createOctreeTriangleSelector(city->getMesh(), city->getNode());
+    city->getNode()->setTriangleSelector(selectorSurrounding);
+    manageCollisionsWithSurroundings(selectorSurrounding);
+    selectorSurrounding = m_smgr->createOctreeTriangleSelector(airport->getMesh(), airport->getNode());
+    airport->getNode()->setTriangleSelector(selectorSurrounding);
+    manageCollisionsWithSurroundings(selectorSurrounding);
 }
 
 void Scene::initializeGui()
@@ -118,21 +122,14 @@ void Scene::initializeData()
     initializeObjects();
 }
 
-void Scene::manageCollisionsWithSurroundings(irr::scene::IMesh *surroundingMesh, irr::scene::ISceneNode* surroundingNode)
+void Scene::manageCollisionsWithSurroundings(scene::ITriangleSelector *selectorSurrounding)
 {
-    scene::ITriangleSelector *selectorSurrounding;
-    selectorSurrounding = m_smgr->createOctreeTriangleSelector(surroundingMesh, surroundingNode);
-    surroundingNode->setTriangleSelector(selectorSurrounding);
-
     m_animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
                                                  m_parentNode,  //Node
                                                  ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
-                                                 ic::vector3df(0, 0.0, 0),       // Gravity
+                                                 ic::vector3df(0, 0, 0),       // Gravity
                                                  ic::vector3df(0.0,0.0,0));      // Gap with the center
     m_parentNode->addAnimator(m_animCollision);
-
-    if(m_animCollision->collisionOccurred() == true)
-        m_receiver->setIsCrashed(true);
 
     m_animCollision->drop();
 }
@@ -148,7 +145,17 @@ void Scene::render()
     ic::vector3df rotation = m_parentNode->getRotation();
     ic::vector3df position = m_parentNode->getPosition();
 
-    if(m_receiver->getOnFloor())
+    if(m_animCollision->collisionOccurred() == true)
+        m_receiver->setIsCrashed(true);
+
+    if(m_receiver->getIsCrashed())
+    {
+        firePosition.X = m_animCollision->getCollisionPoint().X;
+        firePosition.Y = m_animCollision->getCollisionPoint().Y;
+        firePosition.Z = m_animCollision->getCollisionPoint().Z;
+        m_fire->getPs()->setEmitter(m_fire->getEm()); // this grabs the emitter of fire particules
+    }
+    else if(m_receiver->getOnFloor())
     {
         m_receiver->planeOnFloor(m_parentRotationNode);
 
@@ -180,8 +187,11 @@ void Scene::render()
         position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
         position.Y  = m_planeAltitude;
     }
-    else if(m_receiver->getInFlight() && !m_receiver->getIsCrashed())
+    else if(m_receiver->getInFlight())
     {
+        m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(),
+                                  m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
+
         // Update screw rotation
         m_screw->setRotationStep(30);
         m_screw->updateRotation();
@@ -198,19 +208,15 @@ void Scene::render()
     {
         m_receiver->planeInLanding(m_parentRotationNode);
     }
-    else if(m_receiver->getIsStalling())
+
+    if(m_receiver->getIsAlmostStalling())
+    {
+        //std::cout<<"TD : the plane is about to stall"<<std::endl;
+    }
+    if(m_receiver->getIsStalling())
     {
         //std::cout<<"TD : the plane is stalling"<<std::endl;
     }
-    else if(m_receiver->getIsCrashed())
-    {
-        firePosition.X = m_animCollision->getCollisionPoint().X;
-        firePosition.Y = m_animCollision->getCollisionPoint().Y;
-        firePosition.Z = m_animCollision->getCollisionPoint().Z;
-        m_fire->getPs()->setEmitter(m_fire->getEm()); // this grabs the emitter of fire particules
-    }
-
-    std::cout<<"Speed: "<<m_receiver->fromGameUnitToKt(m_planeSpeed)<<" Altitude: "<<m_planeAltitude<<std::endl;
 
     m_parentNode->setRotation(rotation);
     m_parentNode->setPosition(position);
@@ -228,6 +234,8 @@ void Scene::render()
     {
         m_camera->setTarget(m_screw->getNode()->getAbsolutePosition());
     }
+
+    std::cout<<"Fuel value: "<<m_receiver->getFuelLiter()<<std::endl;
 
     //Back color
     m_driver->beginScene(true,true,iv::SColor(100,150,200,255));

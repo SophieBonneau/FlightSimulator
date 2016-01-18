@@ -32,6 +32,16 @@ public:
     */
     float getSpeed(){       return m_planeSpeedFloor;   }
 
+    float getSpeedKmH(){    return fromKtToKmH(m_planeSpeedFloor);      }
+
+    float getAltitudeM(){   return fromGameUnitToM(m_planeAltitude);    }
+
+    float getAltitudeSpeed(){   return fromKmToMS((m_rotationAngle/90) * m_planeSpeedFloor); }
+
+    float getSlopePercent() {   return m_rotationAngle / 90;    }
+
+    float getFuelLiter() {   return m_fuelLiter;    }
+
     /* float getRotation: getter for the rotation value (plane go to the left or the right)
      * return:  rotationAngle: the rotation value
     */
@@ -56,6 +66,11 @@ public:
      * return:  inLanding: the value define if the plane is landing
     */
     bool getInLanding(){    return m_inLanding;         }
+
+    /* bool getIsAlmostStalling: getter for the isAlmostStalling boolean value
+     * return:  isAlmostStalling: the value define if the plane is about to stall
+    */
+    bool getIsAlmostStalling(){   return m_isAlmostStalling;        }
 
     /* bool getIsStalling: getter for the isStalling boolean value
      * return:  isStalling: the value define if the plane is stalling
@@ -100,6 +115,18 @@ public:
      * return:  float:  the value converted
     */
     float fromGameUnitToKt(float valueToConvert);
+
+    float fromKtToKmH(float valueToConvert);
+    float fromGameUnitToM(float valueToConvert);
+    float fromKmToMS(float valueToConvert);
+
+    //Faire les commentaire
+    void changePlaneSpeed();
+    void changePlaneRotation(ic::vector3df &childRotation,       ic::vector3df &leftwingRotation,
+                             ic::vector3df &rightwingRotation,   ic::vector3df &tailRotation,
+                             bool isRight, float rotationSpeed);
+    void changePlaneAltitude(ic::vector3df &childRotation);
+    void computeRotation(ic::vector3df &childRotation);
 
     /* void planeOnFloor:  Calculate the position of the plane and change it direction during the "on floor" phase.
      *                      Do all the computation for the first phase of the take off
@@ -162,14 +189,12 @@ private:
     //Init steps
     const float m_speedStep         = 0.005f;
     const float m_motorStep         = 0.01f;
-    const float m_altitudeAngleStep = 0.1;
+    const float m_altitudeAngleStep = 0.05f;
     const float m_rotationAngleStep = 0.1f;
 
     //Init plane constructor parameters
     const float m_voidPlaneWeightKg = 957.0f;     //Fuel included
     const float m_g = 9.81f;  //m.s-2
-
-    const float m_wingLoading = 68.84f; //Charge alaire kg.m-2
 
     const float m_minPlaneSpeedKt  = 0.0f;    //Kt
     const float m_maxPlaneSpeedKt  = 158.0f;  //Kt
@@ -197,10 +222,12 @@ private:
     float m_rotationAngle;
 
     float m_motorPower;
+    float m_fuelLiter;
 
     const float m_weight = m_planeWeight * m_g;
 
     bool m_isBrakes;
+    bool m_isAlmostStalling;
     bool m_isStalling;
     bool m_isCrashed;
 
