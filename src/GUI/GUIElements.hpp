@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "CGUICompass.hpp"
+#include "../Event/EventReceiver.hpp"
 
 using namespace irr;
 namespace ig = irr::gui;
@@ -113,6 +114,9 @@ private:
     ig::IGUIImage *image_fuel;
     ig::IGUIImage *image_gauge_empty_h;
     ig::IGUIImage *image_gauge_empty_v;
+
+    // Compass
+    CGUICompass* m_compass_compass;
 
     // Positions
     int compass_length;

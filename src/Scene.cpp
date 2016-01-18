@@ -1,7 +1,5 @@
 #include "Scene.hpp"
 
-#include "GUI/GUIElements.hpp"
-
 #include "irrlicht.h"
 
 #include <iostream>
@@ -21,6 +19,8 @@ Scene::Scene()
     m_planeSpeed    = 0.0f;
     m_planeAltitude = 0.0f;
     m_rotAngle      = 0.0f;
+
+    m_cameraPose = ic::vector3df(0.0,5.0,-34.0);
 }
 
 void Scene::initializeIrrlicht()
@@ -92,6 +92,9 @@ void Scene::initializeObjects()
     m_fire = new Fire(m_smgr, m_driver->getTexture("data/fire/fire.jpg"));
     m_fire->initialize();
 
+    //Camera position
+    m_camera = m_smgr->addCameraSceneNode(m_body->getNode(), m_cameraPose, m_parentNode->getPosition()); //Behind the plane -> (0,5,-34)
+
     // Collision management with surroundings
     manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
     manageCollisionsWithSurroundings(airport->getMesh(), airport->getNode());
@@ -137,7 +140,7 @@ void Scene::manageCollisionsWithSurroundings(irr::scene::IMesh *surroundingMesh,
 void Scene::render()
 {
     //Update 2D elements
-    std::vector<CGUICompass*> compasses = m_guiManager->update2DElements();
+    m_compasses = m_guiManager->update2DElements();
 
     ic::vector3df firePosition = ic::vector3df(0.0,-0.1,3.);
     m_fire->getPs()->setPosition(m_parentNode->getPosition() + firePosition); //position of the fire particules
@@ -183,10 +186,6 @@ void Scene::render()
         m_screw->setRotationStep(30);
         m_screw->updateRotation();
 
-        m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(),
-                                  m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
-
-
         rotation.Y      = m_receiver->getRotation();
         m_planeSpeed      = m_receiver->getSpeed();
         m_planeAltitude   = m_receiver->getAltitude();
@@ -216,8 +215,19 @@ void Scene::render()
     m_parentNode->setRotation(rotation);
     m_parentNode->setPosition(position);
 
-    //Camera position
-    m_smgr->addCameraSceneNode(m_body->getNode(), ic::vector3df(0, 5, -34), m_parentNode->getPosition()); //0,5,-34
+    //Camera pose
+    m_receiver->changeCameraPose(m_camera);
+    if(m_camera->getPosition().Z < 0.0)
+    {
+        m_camera->setTarget(m_parentNode->getPosition());
+
+        // Update screw rotation
+        m_screw->updateRotation();
+    }
+    else
+    {
+        m_camera->setTarget(m_screw->getNode()->getAbsolutePosition());
+    }
 
     //Back color
     m_driver->beginScene(true,true,iv::SColor(100,150,200,255));
@@ -226,9 +236,11 @@ void Scene::render()
     m_smgr->drawAll();
     m_gui->drawAll();
 
-    for(unsigned int i = 0; i < compasses.size(); i++)
+    //Gui
+    m_receiver->updateCompass(m_compasses[0]);
+    for(unsigned int i = 0; i < m_compasses.size(); i++)
     {
-        compasses[i]->draw();
+        m_compasses[i]->draw();
     }
 
     m_driver->endScene();

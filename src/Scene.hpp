@@ -6,6 +6,7 @@
 #include "irrlicht.h"
 
 #include "Event/EventReceiver.hpp"
+#include "GUI/GUIElements.hpp"
 #include "Objects/Plane/Screw.hpp"
 #include "Objects/Surroundings/Water.hpp"
 #include "Objects/Surroundings/Fire.hpp"
@@ -77,6 +78,11 @@ private:
     Body* m_body;
     Fire* m_fire;
     irr::gui::IGUIEnvironment *m_gui;
+    irr::scene::ICameraSceneNode *m_camera;
+    irr::scene::ISceneNode *m_cameraTarget;
+
+    //Gui
+    std::vector<CGUICompass*> m_compasses;
 
     //Collision
     irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollision;
@@ -94,6 +100,8 @@ private:
     float m_planeSpeed;
     float m_planeAltitude;
     float m_rotAngle;
+
+    irr::core::vector3df m_cameraPose;
 };
 
 #endif

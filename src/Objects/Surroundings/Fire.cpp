@@ -39,6 +39,7 @@ void Fire::initialize()
     ps->addAffector(paf); // same goes for the affector
     paf->drop();
     ps->setScale(m_scale);
+    ps->setMaterialTexture(0, m_textureFire);
     ps->setMaterialFlag(iv::EMF_LIGHTING, false);
     ps->setMaterialFlag(iv::EMF_ZWRITE_ENABLE, false);
     ps->setMaterialType(iv::EMT_TRANSPARENT_ADD_COLOR);

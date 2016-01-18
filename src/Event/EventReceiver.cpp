@@ -5,6 +5,7 @@
 using namespace irr;
 namespace ic = irr::core;
 namespace is = irr::scene;
+namespace ig = irr::gui;
 
 // Constructor
 EventReceiver::EventReceiver()
@@ -33,6 +34,8 @@ EventReceiver::EventReceiver()
     m_inTakeOff  = false;
     m_inFlight   = false;
     m_inLanding  = false;
+
+    m_cameraPose = ic::vector3df(0.0,0.0,0.0);
 }
 
 float EventReceiver::fromKtToGameUnit(float valueToConvert)
@@ -381,6 +384,40 @@ void EventReceiver::planeInLanding(is::ISceneNode *node)
     }
 }
 
+void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode)
+{
+    ic::vector3df cameraPosition = cameraNode->getPosition();
+
+    if(m_keyIsDown[KEY_KEY_K] == true)
+    {
+        cameraPosition = ic::vector3df(0.0,5.0,-34.0);
+        cameraNode->setPosition(cameraPosition);
+    }
+    else if(m_keyIsDown[KEY_KEY_L] == true)
+    {
+        cameraPosition = ic::vector3df(0.0,5.0,8.0);
+        cameraNode->setPosition(cameraPosition);
+    }
+    else if(m_keyIsDown[KEY_KEY_M] == true)
+    {
+        cameraPosition = ic::vector3df(0.0,18.0,-24.0);
+        cameraNode->setPosition(cameraPosition);
+    }
+}
+
+void EventReceiver::updateCompass(CGUICompass* compass)
+{
+
+    if(m_keyIsDown[KEY_KEY_D] == true)
+    {
+        compass->setCompassHeading(5.0);
+        //compass->setCompassRelativePosition();
+    }
+    else if(m_keyIsDown[KEY_KEY_Q] == true)
+    {
+    }
+}
+
 bool EventReceiver::OnEvent(const SEvent &event)
 {
     if (event.EventType == EET_KEY_INPUT_EVENT)
@@ -440,6 +477,30 @@ bool EventReceiver::OnEvent(const SEvent &event)
         if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P && !m_keyIsDown[KEY_KEY_P]) // Unlock or lock brakes
         {
             m_isBrakes = !m_isBrakes;
+        }
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_K && !m_keyIsDown[KEY_KEY_K]) // Behind camera
+        {
+            m_keyIsDown[KEY_KEY_K] = true;
+        }
+        if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_K)
+        {
+            m_keyIsDown[KEY_KEY_K] = false;
+        }
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_L && !m_keyIsDown[KEY_KEY_L]) // Front camera
+        {
+            m_keyIsDown[KEY_KEY_L] = true;
+        }
+        if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_L)
+        {
+            m_keyIsDown[KEY_KEY_L] = false;
+        }
+        if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_M && !m_keyIsDown[KEY_KEY_M]) // Top camera
+        {
+            m_keyIsDown[KEY_KEY_M] = true;
+        }
+        if(!event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_M)
+        {
+            m_keyIsDown[KEY_KEY_M] = false;
         }
     }
     return false;
