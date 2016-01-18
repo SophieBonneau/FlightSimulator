@@ -162,8 +162,7 @@ void Scene::render()
     }
     else if(m_receiver->getInFlight() && !m_receiver->getIsCrashed())
     {
-        // Update screw rotation
-        m_screw->updateRotation();
+
 
         m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(),
                                   m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
@@ -199,10 +198,17 @@ void Scene::render()
 
     //Camera pose
     m_receiver->changeCameraPose(m_camera);
-    if(m_camera->getPosition().Z <= 0.0)
+    if(m_camera->getPosition().Z < 0.0)
+    {
         m_camera->setTarget(m_parentNode->getPosition());
+
+        // Update screw rotation
+        m_screw->updateRotation();
+    }
     else
-        m_camera->setTarget(m_parentNode->getPosition() + ic::vector3df(0.0,0.0,20.0));
+    {
+        m_camera->setTarget(m_screw->getNode()->getAbsolutePosition());
+    }
 
     //Back color
     m_driver->beginScene(true,true,iv::SColor(100,150,200,255));

@@ -321,7 +321,7 @@ void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode)
     }
     else if(m_keyIsDown[KEY_KEY_L] == true)
     {
-        cameraPosition = ic::vector3df(0.0,15.0,2.0);
+        cameraPosition = ic::vector3df(0.0,5.0,8.0);
         cameraNode->setPosition(cameraPosition);
     }
     else if(m_keyIsDown[KEY_KEY_M] == true)
