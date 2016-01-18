@@ -82,6 +82,7 @@ private:
     iv::ITexture *m_textureAltitude = nullptr;
     iv::ITexture *m_textureVerticalSpeed = nullptr;
     iv::ITexture *m_texturePlane = nullptr;
+    iv::ITexture *m_texturePlaneOrange = nullptr;
     iv::ITexture *m_texturePlaneRed = nullptr;
     iv::ITexture *m_numbers[10];
     iv::ITexture *m_texturePlus = nullptr;
@@ -172,6 +173,7 @@ private:
 
     // Elements blinking
     bool m_planeRed;
+    bool m_planeOrange;
 
     // Timer
     int m_timer;

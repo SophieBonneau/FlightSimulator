@@ -17,7 +17,7 @@ GUIElements::GUIElements()
     m_verticalSpeed = -20;
     m_gaugeHOffset = 0;
     m_gaugeVOffset = 0;
-    m_stall = true;
+    m_stall = false;
     m_almostStall = false;
     m_gaugeHPercentage = 60;
     m_gaugeVSlope = 0.5;
@@ -65,7 +65,8 @@ GUIElements::GUIElements()
 
 
     // Blinking elements
-    m_planeRed = true;
+    m_planeRed = false;
+    m_planeOrange = false;
 
     // Timer
     m_timer = 0;
@@ -324,6 +325,8 @@ bool GUIElements::initialize2DElements()
     m_texturePlane = m_driver->getTexture("data/2d/plane-up.png");
     // Red plane
     m_texturePlaneRed = m_driver->getTexture("data/2d/plane-up-red.png");
+    // Orange plane
+    m_texturePlaneOrange = m_driver->getTexture("data/2d/plane-up-orange.png");
     //Numbers
     m_numbers[0] = m_driver->getTexture("data/2d/numbers/0.png");
     m_numbers[1] = m_driver->getTexture("data/2d/numbers/1.png");
@@ -561,6 +564,8 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                               m_planeOffsetY + m_planeHeight));
     if(m_planeRed == true)
         m_compassPlane->setCompassTexture(m_texturePlaneRed);
+    else if(m_planeOrange == true)
+        m_compassPlane->setCompassTexture(m_texturePlaneOrange);
     else
         m_compassPlane->setCompassTexture(m_texturePlane);
     if(m_verticalSpeed <0)
@@ -691,6 +696,10 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
         if(m_stall == true && m_timer%10==0)
         {
             m_planeRed = !m_planeRed;
+        }
+        else if(m_almostStall == true && m_timer%10==0)
+        {
+            m_planeOrange = !m_planeOrange;
         }
 
 
