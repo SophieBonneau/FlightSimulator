@@ -36,11 +36,19 @@ public:
 
     float getAltitudeM(){   return fromGameUnitToM(m_planeAltitude);    }
 
+<<<<<<< HEAD
     float getAltitudeSpeed(){   return fromKmToMS((m_rotationAltitude / 90) * fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor))); }
 
     float getSlopePercent() {   return m_rotationAngle / 90;    }
 
     float getFuelLiter() {   return m_fuelLiter / 150.0f;    }
+=======
+    float getAltitudeSpeed(){   return fromKmToMS((m_rotationAngle/90) * fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor))); }
+
+    float getSlopePercent() {   return m_rotationAngle / 90;    }
+
+    float getFuelLiter() {   return m_fuelLiter/152.0f;    }
+>>>>>>> 4cdb4b00492547d58165e1a4e3dafd5dd3bcfea7
 
     /* float getRotation: getter for the rotation value (plane go to the left or the right)
      * return:  rotationAngle: the rotation value

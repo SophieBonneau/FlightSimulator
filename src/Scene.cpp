@@ -137,6 +137,23 @@ void Scene::manageCollisionsWithSurroundings(scene::ITriangleSelector *selectorS
 void Scene::render()
 {
     //Update 2D elements
+    m_guiManager->setAltitude(m_receiver->getAltitude());
+    //std::cout<<"Almost stalling = "<<m_receiver->getIsAlmostStalling()<<std::endl;
+    m_guiManager->setAlmostStall(m_receiver->getIsAlmostStalling());
+    //std::cout<<"Is stalling = "<<m_receiver->getIsStalling()<<std::endl;
+    m_guiManager->setStall(m_receiver->getIsStalling());
+
+    //std::cout<<"Fuel = "<<m_receiver->getFuelLiter()<<std::endl;
+    m_guiManager->setGaugeHPercentage(m_receiver->getFuelLiter());
+
+    std::cout<<"slope percent = "<<m_receiver->getSlopePercent()<<std::endl;
+    m_guiManager->setGaugeVSlope(m_receiver->getSlopePercent());
+
+    //std::cout<<"speed = "<<m_receiver->getSpeedKmH()<<std::endl;
+    m_guiManager->setSpeed(m_receiver->getSpeedKmH());
+
+    //std::cout<<"vertical speed = "<<m_receiver->getAltitudeSpeed()<<std::endl;
+    m_guiManager->setVerticalSpeed(m_receiver->getAltitudeSpeed());
     m_compasses = m_guiManager->update2DElements();
 
     ic::vector3df firePosition = ic::vector3df(0.0,-0.1,3.);
@@ -235,7 +252,11 @@ void Scene::render()
         m_camera->setTarget(m_screw->getNode()->getAbsolutePosition());
     }
 
+<<<<<<< HEAD
     m_receiver->getAltitudeSpeed();
+=======
+    //std::cout<<"Fuel value: "<<m_receiver->getFuelLiter()<<std::endl;
+>>>>>>> 4cdb4b00492547d58165e1a4e3dafd5dd3bcfea7
 
     //Back color
     m_driver->beginScene(true,true,iv::SColor(100,150,200,255));
