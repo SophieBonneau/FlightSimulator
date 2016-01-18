@@ -4,7 +4,9 @@
 #define EVENTRECEIVER
 
 #include "irrlicht.h"
+#include "../GUI/CGUICompass.hpp"
 #include <iostream>
+#include <vector>
 
 
 class EventReceiver : public irr::IEventReceiver
@@ -135,6 +137,10 @@ public:
      * params:  is::ICameraSceneNode *cameraNode:   Instance of the camera node
     */
     void changeCameraPose(irr::scene::ICameraSceneNode *cameraNode);
+
+    /*
+    */
+    void updateCompass(CGUICompass* compass);
 
    /************************************************************************************/
    /******************************** Events ********************************************/

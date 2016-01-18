@@ -74,7 +74,6 @@ class CGUICompass : public ig::IGUIElement
         Mesh.getMaterial().MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
     }
 
-    //
     void setCompassTexture(iv::ITexture* texture)
     {
         Mesh.getMaterial().setTexture(0,texture);
@@ -135,6 +134,7 @@ class CGUICompass : public ig::IGUIElement
     is::SMeshBuffer Mesh;
     ic::matrix4 Matrix;
     ic::rect<s32> rectangle;
+
 };
 
 #endif

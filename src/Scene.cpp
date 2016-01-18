@@ -1,7 +1,5 @@
 #include "Scene.hpp"
 
-#include "GUI/GUIElements.hpp"
-
 #include "irrlicht.h"
 
 #include <iostream>
@@ -130,7 +128,7 @@ void Scene::initializeData()
 void Scene::render()
 {
     //Update 2D elements
-    std::vector<CGUICompass*> compasses = m_guiManager->update2DElements();
+    m_compasses = m_guiManager->update2DElements();
 
     //Detection of collisions
     ic::vector3df firePosition = ic::vector3df(0.0,-0.1,3.);
@@ -167,7 +165,8 @@ void Scene::render()
         // Update screw rotation
         m_screw->updateRotation();
 
-        m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(), m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
+        m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(),
+                                  m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
 
         rotation.Y      = m_receiver->getRotation();
         m_planeSpeed      = m_receiver->getSpeed();
@@ -212,9 +211,11 @@ void Scene::render()
     m_smgr->drawAll();
     m_gui->drawAll();
 
-    for(unsigned int i = 0; i < compasses.size(); i++)
+    //Gui
+    m_receiver->updateCompass(m_compasses[0]);
+    for(unsigned int i = 0; i < m_compasses.size(); i++)
     {
-        compasses[i]->draw();
+        m_compasses[i]->draw();
     }
 
     m_driver->endScene();

@@ -69,7 +69,6 @@ GUIElements::GUIElements()
     // Timer
     this->timer = 0;
 
-
 }
 
 ic::vector2d<s32> GUIElements::getUpperLeftPoint(ig::IGUIImage* image)
@@ -89,6 +88,7 @@ ic::vector2d<s32> GUIElements::getLowerRightPoint(ig::IGUIImage* image)
 
     return point;
 }
+
 
 void GUIElements::setDevice(IrrlichtDevice* device)
 {
@@ -620,7 +620,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
 
 
         compass_plane->setCompassHeading(-55);
-
 
     }
 

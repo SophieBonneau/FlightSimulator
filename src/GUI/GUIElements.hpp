@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "CGUICompass.hpp"
+#include "../Event/EventReceiver.hpp"
 
 using namespace irr;
 namespace ig = irr::gui;
