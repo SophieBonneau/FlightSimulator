@@ -49,30 +49,10 @@ class CGUICompass : public ig::IGUIElement
 
     void setCompassRelativePosition(ic::rect<s32> rect)
     {
-        this->rectangle = rect;
-        Mesh.Vertices.set_used(4);
-        Mesh.Indices .set_used(6);
-
-        video::SColor white(255, 255, 255, 255);
-
-        Mesh.Vertices[0] = video::S3DVertex(-1.f, -1.f, 0.f, 0.f, 0.f, 1.f, white, 0.f, 1.f);
-        Mesh.Vertices[1] = video::S3DVertex(-1.f, 1.f, 0.f, 0.f, 0.f, 1.f, white, 0.f, 0.f);
-        Mesh.Vertices[2] = video::S3DVertex( 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, white, 1.f, 0.f);
-        Mesh.Vertices[3] = video::S3DVertex( 1.f, -1.f, 0.f, 0.f, 0.f, 1.f, white, 1.f, 1.f);
-
-        Mesh.Indices[0] = 0;
-        Mesh.Indices[1] = 1;
-        Mesh.Indices[2] = 2;
-        Mesh.Indices[3] = 2;
-        Mesh.Indices[4] = 3;
-        Mesh.Indices[5] = 0;
-
-        Mesh.getMaterial().Lighting = false;
-        //Mesh.getMaterial().BackfaceCulling = false;
-        //Mesh.getMaterial().Wireframe = true;
-        //Mesh.getMaterial().MaterialType = video::EMT_TRANSPARENT_ADD_COLOR;
-
-        Mesh.getMaterial().MaterialType = video::EMT_TRANSPARENT_ALPHA_CHANNEL;
+        this->RelativeRect = rect;
+        this->AbsoluteRect = rect;
+        this->AbsoluteClippingRect = rect;
+        this->DesiredRect = rect;
     }
 
     void setCompassTexture(iv::ITexture* texture)
@@ -117,7 +97,6 @@ class CGUICompass : public ig::IGUIElement
             driver->drawMeshBuffer(&Mesh);
 
             //driver->makeColorKeyTexture(Mesh.getMaterial().getTexture(0),video::SColor(255,255,255,1));
-
 
             // restore view matrix
             driver->setTransform(iv::ETS_VIEW, oldViewMat);
