@@ -67,7 +67,7 @@ void Scene::initializeObjects()
 
     //Init the two wings
     m_leftWing = new Wing(m_smgr, m_parentRotationNode,"data/plane/leftWing.obj");
-    m_leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));//-0.667,0.303,0.19
+    m_leftWing->setPosition(ic::vector3df(-0.667,0.303,0.19));
     m_leftWing->initialize();
     m_rightWing = new Wing(m_smgr, m_parentRotationNode,"data/plane/rightWing.obj");
     m_rightWing->setPosition(ic::vector3df(0.667,0.303,0.19));
@@ -94,6 +94,7 @@ void Scene::initializeObjects()
 
     // Collision management with surroundings
     manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
+    manageCollisionsWithSurroundings(airport->getMesh(), airport->getNode());
 }
 
 void Scene::initializeGui()
@@ -108,6 +109,12 @@ void Scene::initializeGui()
     m_guiManager->initialize2DElements();
 }
 
+void Scene::initializeData()
+{
+    initializeGui();
+    initializeObjects();
+}
+
 void Scene::manageCollisionsWithSurroundings(irr::scene::IMesh *surroundingMesh, irr::scene::ISceneNode* surroundingNode)
 {
     scene::ITriangleSelector *selectorSurrounding;
@@ -116,17 +123,15 @@ void Scene::manageCollisionsWithSurroundings(irr::scene::IMesh *surroundingMesh,
 
     m_animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
                                                  m_parentNode,  //Node
-                                                 ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions
-                                                 ic::vector3df(0, 0, 0),       // Gravity
-                                                 ic::vector3df(1.0,0,0));      // Gap with the center
+                                                 ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
+                                                 ic::vector3df(0, 0.0, 0),       // Gravity
+                                                 ic::vector3df(0.0,0.0,0));      // Gap with the center
     m_parentNode->addAnimator(m_animCollision);
-    m_animCollision->drop();
-}
 
-void Scene::initializeData()
-{
-    initializeGui();
-    initializeObjects();
+    if(m_animCollision->collisionOccurred() == true)
+        m_receiver->setIsCrashed(true);
+
+    m_animCollision->drop();
 }
 
 void Scene::render()
@@ -134,21 +139,11 @@ void Scene::render()
     //Update 2D elements
     std::vector<CGUICompass*> compasses = m_guiManager->update2DElements();
 
-    //Detection of collisions
     ic::vector3df firePosition = ic::vector3df(0.0,-0.1,3.);
     m_fire->getPs()->setPosition(m_parentNode->getPosition() + firePosition); //position of the fire particules
 
-    //If the plane is flying then
-    //  inFlight = true
-    //Else, ie. plane on the ground, in take-off position and in landing position
-    //  inFlight = false
     ic::vector3df rotation = m_parentNode->getRotation();
     ic::vector3df position = m_parentNode->getPosition();
-
-    if(m_animCollision->collisionOccurred() == true)
-    {
-        m_receiver->setIsCrashed(true);
-    }
 
     if(m_receiver->getOnFloor())
     {
@@ -156,20 +151,40 @@ void Scene::render()
 
         rotation.Y      = m_receiver->getRotation();
         m_planeSpeed      = m_receiver->getSpeed();
+        m_planeAltitude   = m_receiver->getAltitude();
 
         position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
         position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
+        position.Y = m_planeAltitude;
+
+        if (m_planeSpeed > -0.1 && m_planeSpeed < 50)
+            m_screw->setRotationStep(10);
+        else if (m_planeSpeed > 50)
+            m_screw->setRotationStep(30);
+        m_screw->updateRotation();
     }
     else if(m_receiver->getInTakeOff())
     {
-        //std::cout<<"TD : plane is taking off"<<std::endl;
+        m_receiver->planeInTakeOff(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(),
+                                   m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
+
+        m_screw->updateRotation();
+
+        m_planeSpeed      = m_receiver->getSpeed();
+        m_planeAltitude   = m_receiver->getAltitude();
+
+        position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
+        position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
+        position.Y  = m_planeAltitude;
     }
     else if(m_receiver->getInFlight() && !m_receiver->getIsCrashed())
     {
         // Update screw rotation
+        m_screw->setRotationStep(30);
         m_screw->updateRotation();
 
-        m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(), m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
+        m_receiver->planeInFlight(m_parentRotationNode, m_leftWing->getNode(), m_rightWing->getNode(),
+                                  m_middleTail->getNode(), m_leftTail->getNode(), m_rightTail->getNode());
 
 
         rotation.Y      = m_receiver->getRotation();
@@ -182,7 +197,7 @@ void Scene::render()
     }
     else if(m_receiver->getInLanding())
     {
-        //std::cout<<"TD : plane is landing"<<std::endl;
+        m_receiver->planeInLanding(m_parentRotationNode);
     }
     else if(m_receiver->getIsStalling())
     {
@@ -194,9 +209,9 @@ void Scene::render()
         firePosition.Y = m_animCollision->getCollisionPoint().Y;
         firePosition.Z = m_animCollision->getCollisionPoint().Z;
         m_fire->getPs()->setEmitter(m_fire->getEm()); // this grabs the emitter of fire particules
-
-        //std::cout<<"TD : the plane has crashed"<<std::endl;
     }
+
+    std::cout<<"Speed: "<<m_receiver->fromGameUnitToKt(m_planeSpeed)<<" Altitude: "<<m_planeAltitude<<std::endl;
 
     m_parentNode->setRotation(rotation);
     m_parentNode->setPosition(position);
@@ -215,7 +230,6 @@ void Scene::render()
     {
         compasses[i]->draw();
     }
-    std::cout<<"Parent position : "<<m_parentNode->getPosition().X<<"   "<<m_parentNode->getPosition().Y<<" "<<m_parentNode->getPosition().Z<<std::endl;
 
     m_driver->endScene();
 }

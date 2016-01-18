@@ -74,12 +74,12 @@ public:
     /* void setIsCrashed: function used to initialize the state of the boolean value isCrash
      * params:  const float isCrashed:      the plane crashed = true
     */
-    void setIsCrashed(const float isCrashed){ m_isCrashed = isCrashed;
-                                              m_isStalling = false;
-                                              m_onFloor = false;
-                                              m_inTakeOff = false;
-                                              m_inLanding = false;
-                                              m_inFlight = false;}
+    void setIsCrashed(const float isCrashed){ m_isCrashed   = isCrashed;
+                                              m_isStalling  = false;
+                                              m_onFloor     = false;
+                                              m_inTakeOff   = false;
+                                              m_inLanding   = false;
+                                              m_inFlight    = false;}
 
     /************************************************************************************/
     /******************************** Functions *****************************************/
@@ -108,7 +108,7 @@ public:
      * params:  is::ISceneNode *node:   Instance of the global plane node
      *                                  (permit only to change the plane direction)
     */
-    void planeInTakeOff(irr::scene::ISceneNode *node);
+    void planeInTakeOff(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *leftwing_node, irr::scene::IMeshSceneNode *rightwing_node, irr::scene::IMeshSceneNode *tail_node, irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node);
 
     /* void planeInFlight:  Calculate the position of the plane and change it direction.
      *                  All changed data s will be called by the main when nedded
@@ -172,6 +172,7 @@ private:
     //Init plane limits values
     float m_loadFactor = 1.0f;    //No unit
     float m_stallSpeed = -100.0f; //Irrlicht unit
+    float m_stallStep = 0.1f;
 
     //Moving plane values
     float m_planeWeight;
