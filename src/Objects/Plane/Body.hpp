@@ -23,14 +23,6 @@ public:
     */
     Body(irr::scene::ISceneManager*, irr::scene::ISceneNode*, irr::io::path);
 
-    ~Body(){}
-
-    /************************************************************************************/
-    /******************************** Functions *****************************************/
-    /************************************************************************************/
-    /* void initialize:  Initialization of the body of the plane node and mesh: size, parent, initial position.
-    */
-    void initialize();
 };
 
 #endif

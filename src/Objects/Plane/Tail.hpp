@@ -21,14 +21,6 @@ public:
     */
     Tail(irr::scene::ISceneManager*, irr::scene::ISceneNode *parentRotationNode, irr::io::path meshPath);
 
-    ~Tail(){}
-
-    /************************************************************************************/
-    /******************************** Functions *****************************************/
-    /************************************************************************************/
-    /* void initialize:  Initialization of the tail of the plane, node and mesh: size, parent, initial position.
-    */
-    void initialize();
 };
 
 #endif

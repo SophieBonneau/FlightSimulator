@@ -17,12 +17,3 @@ Tail::Tail(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, io::path
     m_position = ic::vector3df(0.0,0.0,0.0);
 }
 
-void Tail::initialize()
-{
-    is::IMesh *tail_mesh = m_smgr->getMesh(m_meshPath);
-    m_node = m_smgr->addMeshSceneNode(tail_mesh);
-    m_node->setParent(m_parentRotationNode);
-    m_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    m_node->setScale(m_scale);
-    m_node->setPosition(m_position);
-}

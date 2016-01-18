@@ -20,7 +20,6 @@ public:
                  irr::io::path: the path to the tail mesh
     */
     Screw(irr::scene::ISceneManager*, irr::scene::ISceneNode*, irr::io::path);
-    ~Screw(){}
 
     /************************************************************************************/
     /******************************** Getters & setters *********************************/
@@ -38,9 +37,6 @@ public:
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
-    /* void initialize:  Initialization of the screw of the plane, node and mesh: size, parent, initial position.
-    */
-    void initialize();
 
     /* int updateRotation: update the screw rotation while rendering
      * return:  int:  if ok (screw mesh exist)

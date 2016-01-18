@@ -85,8 +85,8 @@ void Scene::initializeObjects()
     m_rightTail->initialize();
 
     //Water
-    Water* water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"));
-    water->initialize();
+    m_water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"));
+    m_water->initialize();
 
     //Fire
     m_fire = new Fire(m_smgr, m_driver->getTexture("data/fire/fire.jpg"));
@@ -248,7 +248,7 @@ void Scene::render()
     m_receiver->updateCompass(m_compasses[0]);
     for(unsigned int i = 0; i < m_compasses.size(); i++)
     {
-        m_compasses[i]->draw();
+         m_compasses[i]->draw();
     }
 
     m_driver->endScene();

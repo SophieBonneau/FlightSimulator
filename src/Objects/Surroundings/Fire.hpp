@@ -26,8 +26,8 @@ public:
 
 
 private:
-    irr::scene::ISceneManager* m_smgr;
-    irr::video::ITexture *m_textureFire;
+    irr::scene::ISceneManager* m_smgr = nullptr;
+    irr::video::ITexture *m_textureFire = nullptr;
     irr::core::vector3df m_position;
     irr::core::vector3df m_scale;
 

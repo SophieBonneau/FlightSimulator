@@ -47,13 +47,13 @@ private:
     /************************************************************************************/
     /******************************** Attributes ****************************************/
     /************************************************************************************/
-    irr::scene::ISceneManager* m_smgr;
-    irr::io::path m_meshPath;
+    irr::scene::ISceneManager* m_smgr = nullptr;
+    irr::io::path m_meshPath = "";
 
     irr::core::vector3df m_scale;
 
-    irr::scene::IMeshSceneNode* m_node;
-    irr::scene::IMesh* m_mesh;
+    irr::scene::IMeshSceneNode* m_node = nullptr;
+    irr::scene::IMesh* m_mesh = nullptr;
 
 };
 

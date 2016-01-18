@@ -25,7 +25,7 @@ public:
                  irr::io::path meshPath)
         :m_smgr(smgr), m_parentRotationNode(parentRotationNode), m_meshPath(meshPath){}
 
-    ~PlaneElement(){}
+    virtual ~PlaneElement(){}
 
     /************************************************************************************/
     /******************************** Getters & setters *********************************/
@@ -46,19 +46,27 @@ public:
     irr::scene::IMeshSceneNode* getNode() const     {   return m_node;      }
 
     /************************************************************************************/
-    /******************************** Pubilic functions *********************************/
+    /******************************** Public functions *********************************/
     /************************************************************************************/
     /* virtual void initialize:  Initialization of the node and mesh of the child classe.
     */
-    virtual void initialize() = 0;
+    void initialize()
+    {
+        irr::scene::IMesh* mesh = m_smgr->getMesh(m_meshPath);
+        m_node= m_smgr->addMeshSceneNode(mesh);
+        m_node->setParent(m_parentRotationNode);
+        m_node->setMaterialFlag(irr::video::EMF_LIGHTING,false);
+        m_node->setScale(m_scale);
+        m_node->setPosition(m_position);
+    }
 
 protected:
     /************************************************************************************/
     /******************************** Attributes ****************************************/
     /************************************************************************************/
-    irr::scene::ISceneManager* m_smgr;
-    irr::scene::ISceneNode *m_parentRotationNode;
-    irr::io::path m_meshPath;
+    irr::scene::ISceneManager* m_smgr = nullptr;
+    irr::io::path m_meshPath = "";
+    irr::scene::ISceneNode *m_parentRotationNode = nullptr;
 
     irr::core::vector3df m_scale = irr::core::vector3df(0.0, 0.0, 0.0);
     irr::core::vector3df m_position = irr::core::vector3df(0.0, 0.0, 0.0);
