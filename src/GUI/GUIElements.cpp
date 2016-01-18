@@ -19,8 +19,8 @@ GUIElements::GUIElements()
     m_gaugeVOffset = 0;
     m_stall = false;
     m_almostStall = false;
-    m_gaugeHPercentage = 60;
-    m_gaugeVSlope = 0.5;
+    m_gaugeHPercentage = 0;
+    m_gaugeVSlope = 0.1;
 
     // Positions
     m_compassLength = 55;

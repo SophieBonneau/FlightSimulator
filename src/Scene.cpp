@@ -138,15 +138,15 @@ void Scene::render()
 {
     //Update 2D elements
     m_guiManager->setAltitude(m_receiver->getAltitude());
-    //std::cout<<"Almost stalling = "<<m_receiver->getIsAlmostStalling()<<std::endl;
+    std::cout<<"Almost stalling = "<<m_receiver->getIsAlmostStalling()<<std::endl;
     m_guiManager->setAlmostStall(m_receiver->getIsAlmostStalling());
-    //std::cout<<"Is stalling = "<<m_receiver->getIsStalling()<<std::endl;
+    std::cout<<"Is stalling = "<<m_receiver->getIsStalling()<<std::endl;
     m_guiManager->setStall(m_receiver->getIsStalling());
 
     //std::cout<<"Fuel = "<<m_receiver->getFuelLiter()<<std::endl;
     m_guiManager->setGaugeHPercentage(m_receiver->getFuelLiter());
 
-    std::cout<<"slope percent = "<<m_receiver->getSlopePercent()<<std::endl;
+    //std::cout<<"slope percent = "<<m_receiver->getSlopePercent()<<std::endl;
     m_guiManager->setGaugeVSlope(m_receiver->getSlopePercent());
 
     //std::cout<<"speed = "<<m_receiver->getSpeedKmH()<<std::endl;
