@@ -32,15 +32,15 @@ public:
     */
     float getSpeed(){       return m_planeSpeedFloor;   }
 
-    float getSpeedKmH(){    return fromKtToKmH(m_planeSpeedFloor);      }
+    float getSpeedKmH(){    return fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor));      }
 
     float getAltitudeM(){   return fromGameUnitToM(m_planeAltitude);    }
 
-    float getAltitudeSpeed(){   return fromKmToMS((m_rotationAngle/90) * m_planeSpeedFloor); }
+    float getAltitudeSpeed(){   return fromKmToMS((m_rotationAngle/90) * fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor))); }
 
     float getSlopePercent() {   return m_rotationAngle / 90;    }
 
-    float getFuelLiter() {   return m_fuelLiter;    }
+    float getFuelLiter() {   return m_fuelLiter/152.0f;    }
 
     /* float getRotation: getter for the rotation value (plane go to the left or the right)
      * return:  rotationAngle: the rotation value
