@@ -1,6 +1,5 @@
 #include "Scene.hpp"
 
-
 int main()
 {
     Scene* scene = new Scene();
