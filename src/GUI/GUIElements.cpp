@@ -568,9 +568,17 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
         m_compassPlane->setCompassTexture(m_texturePlaneOrange);
     else
         m_compassPlane->setCompassTexture(m_texturePlane);
+
     if(m_verticalSpeed <0)
     {
-        m_compassPlane->setCompassHeading(90);
+        m_compassPlane->setCompassHeading(-55);
+        m_sign->setImage(m_textureMinus);
+    }
+    else
+    {
+        m_sign->setImage(m_texturePlus);
+        m_compassPlane->setCompassHeading(0);
+        m_planeRed = false;
     }
 
 
@@ -683,29 +691,18 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     m_vs100->setImage(m_numbers[(abs(m_verticalSpeed) / 100) % 10]);
     m_vs10->setImage(m_numbers[(abs(m_verticalSpeed) / 10) % 10]);
     m_vs1->setImage(m_numbers[(abs(m_verticalSpeed) / 1) % 10]);
-    // Update the 2d plane orientation, color and the vertical speed sign
-    if(m_verticalSpeed >= 0)
+
+    // Update blinking elements
+    if(m_stall == true && m_timer%10==0)
     {
-        m_sign->setImage(m_texturePlus);
-        m_compassPlane->setCompassHeading(0);
-        m_planeRed = false;
+        m_planeRed = !m_planeRed;
     }
-    else
+    else if(m_almostStall == true && m_timer%10==0)
     {
-        m_sign->setImage(m_textureMinus);
-        if(m_stall == true && m_timer%10==0)
-        {
-            m_planeRed = !m_planeRed;
-        }
-        else if(m_almostStall == true && m_timer%10==0)
-        {
-            m_planeOrange = !m_planeOrange;
-        }
-
-
-        m_compassPlane->setCompassHeading(-55);
-
+        m_planeOrange = !m_planeOrange;
     }
+
+
 
 
     //compasses.push_back(compassLevel);
