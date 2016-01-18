@@ -31,6 +31,15 @@ public:
     // ! We must have called setDevice first !
     std::vector<CGUICompass*> update2DElements();
 
+    // Setters and getters
+    void setSpeed(const float speed){     m_speed = speed;    }
+    void setAltitude(const float altitude){     m_altitude = altitude;    }
+    void setVerticalSpeed(const float verticalSpeed){     m_verticalSpeed = verticalSpeed;    }
+    void setStall(const float stall){     m_stall = stall;    }
+    void setAlmostStall(const float almostStall){     m_almostStall = almostStall;    }
+    void setGaugeHPercentage(const float gaugeHPercentage){     m_gaugeHPercentage = gaugeHPercentage;    }
+    void setGaugeVSlope(const float gaugeVSlope){     m_gaugeVSlope = gaugeVSlope;    }
+
 private:
 
     // To compute the horzontal and vertical gaugue offset to fill them
@@ -40,86 +49,87 @@ private:
     ic::vector2d<s32> getUpperLeftPoint(ig::IGUIImage* image);
     // To get the upper right point of an image
     ic::vector2d<s32> getLowerRightPoint(ig::IGUIImage* image);
-    // To update element dimensions when the window is resized
+    // To update element dimensions when the ow is resized
     void updateDimensions();
     // To update element positions when the window has been resized and the dimensions recomputed
     void updatePositions();
 
 
-    is::ISceneManager *m_smgr;
-    iv::IVideoDriver *m_driver;
-    ig::IGUIEnvironment *m_gui;
-    IrrlichtDevice *m_device;
+    is::ISceneManager *m_smgr = nullptr;
+    iv::IVideoDriver *m_driver = nullptr;
+    ig::IGUIEnvironment *m_gui = nullptr;
+    IrrlichtDevice *m_device = nullptr;
 
     // display values
-    int m_windSpeed;
+    int m_speed;
     int m_altitude;
     int m_verticalSpeed;
     int m_gaugeHOffset;
     int m_gaugeVOffset;
     bool m_stall;
+    bool m_almostStall;
     int m_gaugeHPercentage;
     double m_gaugeVSlope;
 
     // Window size
-    ic::dimension2d<u32> m_precedentWindowSize;
+    ic::dimension2d<u32> m_precedentWindowSize = ic::dimension2d<u32>(0.0, 0.0);
 
     // Display elements
     // Textures
-    iv::ITexture *m_textureCompass;
-    iv::ITexture *m_textureLevel;
-    iv::ITexture *m_textureWindSpeed;
-    iv::ITexture *m_textureAltitude;
-    iv::ITexture *m_textureVerticalSpeed;
-    iv::ITexture *m_texturePlane;
-    iv::ITexture *m_texturePlaneRed;
+    iv::ITexture *m_textureCompass = nullptr;
+    iv::ITexture *m_textureLevel = nullptr;
+    iv::ITexture *m_textureSpeed = nullptr;
+    iv::ITexture *m_textureAltitude = nullptr;
+    iv::ITexture *m_textureVerticalSpeed = nullptr;
+    iv::ITexture *m_texturePlane = nullptr;
+    iv::ITexture *m_texturePlaneRed = nullptr;
     iv::ITexture *m_numbers[10];
-    iv::ITexture *m_texturePlus;
-    iv::ITexture *m_textureMinus;
-    iv::ITexture *m_textureWindSpeedU;
-    iv::ITexture *m_textureAltitudeU;
-    iv::ITexture *m_textureVerticalSpeedU;
-    iv::ITexture *m_textureFuel;
-    iv::ITexture *m_textureGaugeEmptyH;
-    iv::ITexture *m_textureGaugeFullGreenH;
-    iv::ITexture *m_textureGaugeFullRedH;
-    iv::ITexture *m_textureGaugeFullOrangeH;
-    iv::ITexture *m_textureGaugeEmptyV;
-    iv::ITexture *m_textureBackground;
+    iv::ITexture *m_texturePlus = nullptr;
+    iv::ITexture *m_textureMinus = nullptr;
+    iv::ITexture *m_textureSpeedU = nullptr;
+    iv::ITexture *m_textureAltitudeU = nullptr;
+    iv::ITexture *m_textureVerticalSpeedU = nullptr;
+    iv::ITexture *m_textureFuel = nullptr;
+    iv::ITexture *m_textureGaugeEmptyH = nullptr;
+    iv::ITexture *m_textureGaugeFullGreenH = nullptr;
+    iv::ITexture *m_textureGaugeFullRedH = nullptr;
+    iv::ITexture *m_textureGaugeFullOrangeH = nullptr;
+    iv::ITexture *m_textureGaugeEmptyV = nullptr;
+    iv::ITexture *m_textureBackground = nullptr;
 
     // Images
-    ig::IGUIImage *m_imageWindSpeed;
-    ig::IGUIImage *m_imageAltitude;
-    ig::IGUIImage *m_imageVerticalSpeed;
-    ig::IGUIImage *m_ws10000;
-    ig::IGUIImage *m_ws1000;
-    ig::IGUIImage *m_ws100;
-    ig::IGUIImage *m_ws10;
-    ig::IGUIImage *m_ws1;
-    ig::IGUIImage *m_a10000;
-    ig::IGUIImage *m_a1000;
-    ig::IGUIImage *m_a100;
-    ig::IGUIImage *m_a10;
-    ig::IGUIImage *m_a1;
-    ig::IGUIImage *m_sign;
-    ig::IGUIImage *m_vs10000;
-    ig::IGUIImage *m_vs1000;
-    ig::IGUIImage *m_vs100;
-    ig::IGUIImage *m_vs10;
-    ig::IGUIImage *m_vs1;
-    ig::IGUIImage *m_imageWindSpeedU;
-    ig::IGUIImage *m_imageAltitudeU;
-    ig::IGUIImage *m_imageVerticalSpeedU;
-    ig::IGUIImage *m_imageBackground;
-    ig::IGUIImage *m_imageFuel;
-    ig::IGUIImage *m_imageGaugeEmptyH;
-    ig::IGUIImage *m_imageGaugeEmptyV;
+    ig::IGUIImage *m_imageSpeed = nullptr;
+    ig::IGUIImage *m_imageAltitude = nullptr;
+    ig::IGUIImage *m_imageVerticalSpeed = nullptr;
+    ig::IGUIImage *m_s10000 = nullptr;
+    ig::IGUIImage *m_s1000 = nullptr;
+    ig::IGUIImage *m_s100 = nullptr;
+    ig::IGUIImage *m_s10 = nullptr;
+    ig::IGUIImage *m_s1 = nullptr;
+    ig::IGUIImage *m_a10000 = nullptr;
+    ig::IGUIImage *m_a1000 = nullptr;
+    ig::IGUIImage *m_a100 = nullptr;
+    ig::IGUIImage *m_a10 = nullptr;
+    ig::IGUIImage *m_a1 = nullptr;
+    ig::IGUIImage *m_sign = nullptr;
+    ig::IGUIImage *m_vs10000 = nullptr;
+    ig::IGUIImage *m_vs1000 = nullptr;
+    ig::IGUIImage *m_vs100 = nullptr;
+    ig::IGUIImage *m_vs10 = nullptr;
+    ig::IGUIImage *m_vs1 = nullptr;
+    ig::IGUIImage *m_imageSpeedU = nullptr;
+    ig::IGUIImage *m_imageAltitudeU = nullptr;
+    ig::IGUIImage *m_imageVerticalSpeedU = nullptr;
+    ig::IGUIImage *m_imageBackground = nullptr;
+    ig::IGUIImage *m_imageFuel = nullptr;
+    ig::IGUIImage *m_imageGaugeEmptyH = nullptr;
+    ig::IGUIImage *m_imageGaugeEmptyV = nullptr;
 
     // Compass
-    CGUICompass* m_compassCompass;
-    CGUICompass* m_compassVGaugeFull;
-    CGUICompass* m_compassPlane;
-    CGUICompass* m_compassHGaugeFull;
+    CGUICompass* m_compassCompass = nullptr;
+    CGUICompass* m_compassVGaugeFull = nullptr;
+    CGUICompass* m_compassPlane = nullptr;
+    CGUICompass* m_compassHGaugeFull = nullptr;
 
     // Positions
     int m_compassLength;
@@ -131,9 +141,9 @@ private:
     int m_backgroundOffsetY;
     int m_textOffsetX;
     int m_textOffsetY;
-    int m_textWsLength;
-    int m_textWsULength;
-    int m_textWsHeight;
+    int m_textSpeedLength;
+    int m_textSpeedULength;
+    int m_textSpeedHeight;
     int m_textAltitudeLength;
     int m_textAltitudeULength;
     int m_textAltitudeHeight;

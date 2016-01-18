@@ -25,7 +25,21 @@ public:
     /* Constructor Scene: Initialize all global attributes of the classe: display values, plane attributes
     */
     Scene();
-    ~Scene(){}
+    ~Scene()
+    {
+        delete m_screw;
+        delete m_leftWing;
+        delete m_rightWing;
+        delete m_middleTail;
+        delete m_leftTail;
+        delete m_rightTail;
+        delete m_body;
+        delete m_fire;
+        delete m_city;
+        delete m_water;
+        delete m_fire;
+        delete m_receiver;
+    }
 
     /************************************************************************************/
     /******************************** Getters & setters *********************************/
@@ -38,11 +52,14 @@ public:
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
-    /* void initializeIrrlicht:  Initialization of the irrlicht parameters: event receiver, device, scene manager, gui.
+    /* void initializeIrrlicht: function to initilize Irrlicht object
     */
     void initializeIrrlicht();
 
+    /* void initializeData: function to initialize objects
+    */
     void initializeData();
+
     /* void render:  Global function used to render the application : gui, plane and surrondings
     */
     void render();
@@ -61,34 +78,36 @@ private:
     void initializeGui();
 
     // Render objects
-    irr::IrrlichtDevice *m_device;
-    irr::scene::ISceneManager* m_smgr;
-    irr::video::IVideoDriver *m_driver;
-    GUIElements* m_guiManager;
+    irr::IrrlichtDevice *m_device = nullptr;
+    irr::scene::ISceneManager* m_smgr = nullptr;
+    irr::video::IVideoDriver *m_driver = nullptr;
+    GUIElements* m_guiManager = nullptr;
 
     // Scene objects
-    irr::scene::ISceneNode *m_parentNode;
-    irr::scene::ISceneNode *m_parentRotationNode;
-    Screw* m_screw;
-    Wing* m_leftWing;
-    Wing* m_rightWing;
-    Tail* m_middleTail;
-    Tail* m_leftTail;
-    Tail* m_rightTail;
-    Body* m_body;
-    Fire* m_fire;
-    irr::gui::IGUIEnvironment *m_gui;
-    irr::scene::ICameraSceneNode *m_camera;
-    irr::scene::ISceneNode *m_cameraTarget;
+    irr::scene::ISceneNode *m_parentNode = nullptr;
+    irr::scene::ISceneNode *m_parentRotationNode = nullptr;
+    Screw* m_screw = nullptr;
+    Wing* m_leftWing = nullptr;
+    Wing* m_rightWing = nullptr;
+    Tail* m_middleTail = nullptr;
+    Tail* m_leftTail = nullptr;
+    Tail* m_rightTail = nullptr;
+    Body* m_body = nullptr;
+    Fire* m_fire = nullptr;
+    City* m_city = nullptr;
+    Water* m_water = nullptr;
+    irr::gui::IGUIEnvironment *m_gui = nullptr;
+    irr::scene::ICameraSceneNode *m_camera = nullptr;
+    irr::scene::ISceneNode *m_cameraTarget = nullptr;
 
     //Gui
     std::vector<CGUICompass*> m_compasses;
 
     //Collision
-    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollision;
+    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollision = nullptr;
 
     // Event objects
-    EventReceiver *m_receiver;
+    EventReceiver *m_receiver = nullptr;
 
     // display values
     int m_wind_speed;

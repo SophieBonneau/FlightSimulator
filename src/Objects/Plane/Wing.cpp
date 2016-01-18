@@ -15,12 +15,3 @@ Wing::Wing(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io:
     m_position = ic::vector3df(0.0,0.0,0.0);
 }
 
-void Wing::initialize()
-{
-    is::IMesh *wing_mesh = m_smgr->getMesh(m_meshPath);
-    m_node = m_smgr->addMeshSceneNode(wing_mesh);
-    m_node->setParent(m_parentRotationNode);
-    m_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    m_node->setScale(m_scale);
-    m_node->setPosition(m_position);
-}

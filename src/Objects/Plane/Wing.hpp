@@ -20,14 +20,7 @@ public:
                  irr::io::path meshPath: the path to the wing mesh
     */
     Wing(irr::scene::ISceneManager*, irr::scene::ISceneNode *parentRotationNode, irr::io::path meshPath);
-    ~Wing(){}
 
-    /************************************************************************************/
-    /******************************** Functions *****************************************/
-    /************************************************************************************/
-    /* void initialize:  Initialization of the wings of the plane, node and mesh: size, parent, initial position.
-    */
-    void initialize();
 };
 
 #endif

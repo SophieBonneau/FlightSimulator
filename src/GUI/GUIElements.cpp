@@ -12,12 +12,13 @@ GUIElements::GUIElements()
     m_device = nullptr;
 
     // Display values
-    m_windSpeed = 20;
+    m_speed = 20;
     m_altitude = 1000;
     m_verticalSpeed = -20;
     m_gaugeHOffset = 0;
     m_gaugeVOffset = 0;
     m_stall = true;
+    m_almostStall = false;
     m_gaugeHPercentage = 60;
     m_gaugeVSlope = 0.5;
 
@@ -31,9 +32,9 @@ GUIElements::GUIElements()
     m_backgroundOffsetY = 10;
     m_textOffsetX = 10;
     m_textOffsetY = 10;
-    m_textWsLength = 100;
-    m_textWsULength = 37;
-    m_textWsHeight = 15;
+    m_textSpeedLength = 100;
+    m_textSpeedULength = 37;
+    m_textSpeedHeight = 15;
     m_textAltitudeLength = 70;
     m_textAltitudeULength = 13;
     m_textAltitudeHeight = 13;
@@ -117,13 +118,13 @@ void GUIElements::updateDimensions()
     // Text
     m_textOffsetY = m_backgroundHeight*0.15;
 
-    // Wind speed text
-    m_textWsLength = m_backgroundWidth*0.41;
-    m_textWsHeight = m_backgroundHeight*0.25;
+    // Speed text
+    m_textSpeedLength = m_backgroundWidth*0.45;
+    m_textSpeedHeight = m_backgroundHeight*0.21;
 
     // Altitude text
-    m_textAltitudeLength = m_backgroundWidth*0.30;
-    m_textAltitudeHeight = m_backgroundHeight*0.196;
+    m_textAltitudeLength = m_backgroundWidth*0.35;
+    m_textAltitudeHeight = m_backgroundHeight*0.194;
 
     // Vertical speed text
     m_textVsLength = m_backgroundWidth*0.47;
@@ -133,8 +134,8 @@ void GUIElements::updateDimensions()
     m_textNumberLength = m_backgroundWidth*0.043;
     m_textNumberHeight = m_backgroundHeight*0.17;
 
-    // Wind speed unity text
-    m_textWsULength = windowDimension.Width*0.068;
+    // Speed unity text
+    m_textSpeedULength = windowDimension.Width*0.060;
     // Altitude unity text
     m_textAltitudeULength = windowDimension.Width*0.023;
     // Vertical speed unity text
@@ -170,12 +171,12 @@ void GUIElements::updatePositions()
                                                                      gaugeUlp.Y,
                                                                      gaugeUlp.X - m_fuelOffsetX,
                                                                      gaugeUlp.Y + m_fuelHeight));
-    //Wind speed text
+    //Speed text
     ic::vector2d<s32> backgroundUlp = getUpperLeftPoint(m_imageBackground);
-    m_imageWindSpeed->setRelativePosition(ic::rect<s32>(backgroundUlp.X + m_textOffsetX,
+    m_imageSpeed->setRelativePosition(ic::rect<s32>(backgroundUlp.X + m_textOffsetX,
                                                                    backgroundUlp.Y + m_textOffsetY,
-                                                                   backgroundUlp.X + m_textOffsetX + m_textWsLength,
-                                                                   backgroundUlp.Y + m_textOffsetY + m_textWsHeight));
+                                                                   backgroundUlp.X + m_textOffsetX + m_textSpeedLength,
+                                                                   backgroundUlp.Y + m_textOffsetY + m_textSpeedHeight));
     //Altitude text
     m_imageAltitude->setRelativePosition(ic::rect<s32>(backgroundUlp.X + m_textOffsetX,
                                                                  backgroundUlp.Y + 3*m_textOffsetY,
@@ -187,24 +188,24 @@ void GUIElements::updatePositions()
                                                                        backgroundUlp.X + m_textOffsetX + m_textVsLength,
                                                                        backgroundUlp.Y + 5*m_textOffsetY + m_textVsHeight));
     // Numbers
-    ic::vector2d<s32> wsLrp = getLowerRightPoint(m_imageWindSpeed);
-    m_ws10000->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
+    ic::vector2d<s32> wsLrp = getLowerRightPoint(m_imageSpeed);
+    m_s10000->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
                                                        wsLrp.Y +1,
                                                        wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y + m_textNumberHeight +1));
-    m_ws1000->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
+    m_s1000->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y +1,
                                                        wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y + m_textNumberHeight +1));
-    m_ws100->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
+    m_s100->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y +1,
                                                        wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y + m_textNumberHeight +1));
-    m_ws10->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
+    m_s10->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y +1,
                                                        wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y + m_textNumberHeight +1));
-    m_ws1->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
+    m_s1->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y +1,
                                                        wsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y + m_textNumberHeight +1));
@@ -255,10 +256,10 @@ void GUIElements::updatePositions()
                                                        vsLrp.X + m_textNumberOffsetX + 6*m_textNumberLength + 3*m_textSpaceLength/2,
                                                        vsLrp.Y + m_textNumberHeight +1));
     // Unities
-    ic::vector2d<s32> wsLastNumberLrp = getLowerRightPoint(m_ws1);
-    m_imageWindSpeedU->setRelativePosition(ic::rect<s32>(wsLastNumberLrp.X + m_textNumberOffsetX + m_textSpaceLength,
+    ic::vector2d<s32> wsLastNumberLrp = getLowerRightPoint(m_s1);
+    m_imageSpeedU->setRelativePosition(ic::rect<s32>(wsLastNumberLrp.X + m_textNumberOffsetX + m_textSpaceLength,
                                                                  wsLastNumberLrp.Y ,
-                                                                 wsLastNumberLrp.X + m_textNumberOffsetX + m_textWsULength + m_textSpaceLength,
+                                                                 wsLastNumberLrp.X + m_textNumberOffsetX + m_textSpeedULength + m_textSpaceLength,
                                                                  wsLastNumberLrp.Y + m_textNumberHeight));
     ic::vector2d<s32> altitudeLastNumberLrp = getLowerRightPoint(m_a1);
     m_imageAltitudeU->setRelativePosition(ic::rect<s32>(altitudeLastNumberLrp.X + m_textNumberOffsetX + m_textSpaceLength,
@@ -293,16 +294,16 @@ bool GUIElements::initialize2DElements()
     m_textureCompass = m_driver->getTexture("data/2d/compass.png");
     // Level and arrows textures
     m_textureLevel = m_driver->getTexture("data/2d/level.png");
-    // Wind speed
-    m_textureWindSpeed = m_driver->getTexture("data/2d/wind-speed.png");
+    // Speed
+    m_textureSpeed = m_driver->getTexture("data/2d/speed.png");
 
     ic::vector2d<s32> backgroundUlp = getUpperLeftPoint(m_imageBackground);
-    m_imageWindSpeed = m_gui->addImage(ic::rect<s32>(backgroundUlp.X + m_textOffsetX,
+    m_imageSpeed = m_gui->addImage(ic::rect<s32>(backgroundUlp.X + m_textOffsetX,
                                                                backgroundUlp.Y + m_textOffsetY,
-                                                               backgroundUlp.X + m_textOffsetX + m_textWsLength,
-                                                               backgroundUlp.Y + m_textOffsetY + m_textWsHeight));
-    m_imageWindSpeed->setImage(m_textureWindSpeed);
-    m_imageWindSpeed->setScaleImage(true);
+                                                               backgroundUlp.X + m_textOffsetX + m_textSpeedLength,
+                                                               backgroundUlp.Y + m_textOffsetY + m_textSpeedHeight));
+    m_imageSpeed->setImage(m_textureSpeed);
+    m_imageSpeed->setScaleImage(true);
     // Altitude
     m_textureAltitude = m_driver->getTexture("data/2d/altitude.png");
     m_imageAltitude = m_gui->addImage(ic::rect<s32>(backgroundUlp.X + m_textOffsetX,
@@ -334,28 +335,28 @@ bool GUIElements::initialize2DElements()
     m_numbers[7] = m_driver->getTexture("data/2d/numbers/7.png");
     m_numbers[8] = m_driver->getTexture("data/2d/numbers/8.png");
     m_numbers[9] = m_driver->getTexture("data/2d/numbers/9.png");
-    // Places for the wind speed
-    ic::vector2d<s32> wsLrp = getLowerRightPoint(m_imageWindSpeed);
-    m_ws10000 = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
+    // Places for the speed
+    ic::vector2d<s32> wsLrp = getLowerRightPoint(m_imageSpeed);
+    m_s10000 = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
                                                        wsLrp.Y ,
                                                        wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_ws10000->setScaleImage(true);
-    m_ws1000  = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
+                                                       wsLrp.Y + m_textNumberHeight)); m_s10000->setScaleImage(true);
+    m_s1000  = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y ,
                                                        wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_ws1000->setScaleImage(true);
-    m_ws100   = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
+                                                       wsLrp.Y + m_textNumberHeight)); m_s1000->setScaleImage(true);
+    m_s100   = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y ,
                                                        wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_ws100->setScaleImage(true);
-    m_ws10    = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
+                                                       wsLrp.Y + m_textNumberHeight)); m_s100->setScaleImage(true);
+    m_s10    = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y ,
                                                        wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_ws10->setScaleImage(true);
-    m_ws1     = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
+                                                       wsLrp.Y + m_textNumberHeight)); m_s10->setScaleImage(true);
+    m_s1     = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
                                                        wsLrp.Y ,
                                                        wsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_ws1->setScaleImage(true);
+                                                       wsLrp.Y + m_textNumberHeight)); m_s1->setScaleImage(true);
     // Places for the altitude
     ic::vector2d<s32> altitudeLrp = getLowerRightPoint(m_imageAltitude);
     m_a10000 = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX,
@@ -407,15 +408,15 @@ bool GUIElements::initialize2DElements()
                                                        vsLrp.Y ,
                                                        vsLrp.X + m_textNumberOffsetX + 6*m_textNumberLength,
                                                        vsLrp.Y + m_textNumberHeight)); m_vs1->setScaleImage(true);
-    // Wind speed unity
-    ic::vector2d<s32> wsLastNumberLrp = getLowerRightPoint(m_ws1);
-    m_textureWindSpeedU = m_driver->getTexture("data/2d/kmh.png");
-    m_imageWindSpeedU = m_gui->addImage(ic::rect<s32>(wsLastNumberLrp.X + m_textNumberOffsetX + m_textSpaceLength,
+    // Speed unity
+    ic::vector2d<s32> wsLastNumberLrp = getLowerRightPoint(m_s1);
+    m_textureSpeedU = m_driver->getTexture("data/2d/kmh.png");
+    m_imageSpeedU = m_gui->addImage(ic::rect<s32>(wsLastNumberLrp.X + m_textNumberOffsetX + m_textSpaceLength,
                                                                  wsLastNumberLrp.Y ,
-                                                                 wsLastNumberLrp.X + m_textNumberOffsetX + m_textWsULength + m_textSpaceLength,
+                                                                 wsLastNumberLrp.X + m_textNumberOffsetX + m_textSpeedULength + m_textSpaceLength,
                                                                  wsLastNumberLrp.Y + m_textNumberHeight));
-    m_imageWindSpeedU->setImage(m_textureWindSpeedU);
-    m_imageWindSpeedU->setScaleImage(true);
+    m_imageSpeedU->setImage(m_textureSpeedU);
+    m_imageSpeedU->setScaleImage(true);
     // Altitude unity
     ic::vector2d<s32> altitudeLastNumberLrp = getLowerRightPoint(m_a1);
     m_textureAltitudeU = m_driver->getTexture("data/2d/m.png");
@@ -567,6 +568,36 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
         m_compassPlane->setCompassHeading(90);
     }
 
+
+
+
+
+
+/*
+    CGUICompass* compassHGaugeFull = new CGUICompass(ic::rect<s32>(m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHWidth - m_gaugeHOffsetX + m_gaugeHOffset + 4,
+                                                                    m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHHeight - m_gaugeHOffsetY + 4,
+                                                                    m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHOffsetX - 4,
+                                                                    m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHOffsetY -4), m_gui, nullptr);
+
+    if(m_gaugeHPercentage > 63)
+        compassHGaugeFull->setCompassTexture(m_textureGaugeFullGreenH);
+    else if (m_gaugeHPercentage<63 && m_gaugeHPercentage>33)
+        compassHGaugeFull->setCompassTexture(m_textureGaugeFullOrangeH);
+    else
+    compassHGaugeFull->setCompassTexture(m_textureGaugeFullRedH);
+    computeHorizontalGaugeOffset(m_gaugeHOffset, m_gaugeHPercentage, m_gaugeHWidth);*/
+
+
+
+
+
+
+
+    m_compassHGaugeFull->setCompassRelativePosition(ic::rect<s32>(m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHWidth - m_gaugeHOffsetX + m_gaugeHOffset + 4,
+                                                                    m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHHeight - m_gaugeHOffsetY + 4,
+                                                                    m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHOffsetX - 4,
+                                                                    m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHOffsetY -4));
+
     if(m_gaugeHPercentage > 63)
         m_compassHGaugeFull->setCompassTexture(m_textureGaugeFullGreenH);
     else if (m_gaugeHPercentage<63 && m_gaugeHPercentage>33)
@@ -575,10 +606,26 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     m_compassHGaugeFull->setCompassTexture(m_textureGaugeFullRedH);
     computeHorizontalGaugeOffset(m_gaugeHOffset, m_gaugeHPercentage, m_gaugeHWidth);
 
-    m_compassHGaugeFull->setCompassRelativePosition(ic::rect<s32>(m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHWidth - m_gaugeHOffsetX + m_gaugeHOffset + 4,
-                                                                    m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHHeight - m_gaugeHOffsetY + 4,
-                                                                    m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHOffsetX - 4,
-                                                                    m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHOffsetY -4));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // Vertical gauge full
     computeVerticalGaugeOffset(m_gaugeVOffset, m_gaugeVSlope, m_gaugeVHeight);
@@ -595,8 +642,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                                      y1,
                                                                      m_gaugeVOffsetX + m_gaugeVWidth - m_gaugeVWidth/4,
                                                                      y2));
-
-
     if(m_gaugeVSlope > 0)
         m_compassVGaugeFull->setCompassTexture(m_textureGaugeFullGreenH);
     else
@@ -613,12 +658,14 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
                                                                      m_gaugeVOffsetX + m_gaugeVWidth,
                                                                      m_gaugeVOffsetY + m_gaugeVHeight));
 
-    // Wind speed number update
-    m_ws10000->setImage(m_numbers[(m_windSpeed / 10000) % 10]);
-    m_ws1000->setImage(m_numbers[(m_windSpeed / 1000) % 10]);
-    m_ws100->setImage(m_numbers[(m_windSpeed / 100) % 10]);
-    m_ws10->setImage(m_numbers[(m_windSpeed / 10) % 10]);
-    m_ws1->setImage(m_numbers[(m_windSpeed / 1) % 10]);
+
+
+    // Speed number update
+    m_s10000->setImage(m_numbers[(m_speed / 10000) % 10]);
+    m_s1000->setImage(m_numbers[(m_speed / 1000) % 10]);
+    m_s100->setImage(m_numbers[(m_speed / 100) % 10]);
+    m_s10->setImage(m_numbers[(m_speed / 10) % 10]);
+    m_s1->setImage(m_numbers[(m_speed / 1) % 10]);
     // altitude number update
     m_a10000->setImage(m_numbers[(m_altitude / 10000) % 10]);
     m_a1000->setImage(m_numbers[(m_altitude / 1000) % 10]);
@@ -651,11 +698,13 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
 
     }
 
+
     //compasses.push_back(compassLevel);
+    //compasses.push_back(compassHGaugeFull);
     compasses.push_back(m_compassCompass);
     compasses.push_back(m_compassPlane);
-    compasses.push_back(m_compassHGaugeFull);
     compasses.push_back(m_compassVGaugeFull);
+    compasses.push_back(m_compassHGaugeFull);
 
     // Update the window size
     m_precedentWindowSize = m_device->getVideoDriver()->getScreenSize();

@@ -42,8 +42,8 @@ void Scene::initializeIrrlicht()
 void Scene::initializeObjects()
 {
     //City
-    City* city = new City(m_smgr, "data/city/city_cercles.obj");
-    city->initialize();
+    m_city = new City(m_smgr, "data/city/city_cercles.obj");
+    m_city->initialize();
 
     //Init the object plane
     //2 parents: trajectory and rotation
@@ -79,8 +79,8 @@ void Scene::initializeObjects()
     m_rightTail->initialize();
 
     //Water
-    Water* water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"));
-    water->initialize();
+    m_water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"));
+    m_water->initialize();
 
     //Fire
     m_fire = new Fire(m_smgr, m_driver->getTexture("data/fire/fire.jpg"));
@@ -90,7 +90,7 @@ void Scene::initializeObjects()
     m_camera = m_smgr->addCameraSceneNode(m_body->getNode(), m_cameraPose, m_parentNode->getPosition()); //Behind the plane -> (0,5,-34)
 
     // Collision management with surroundings
-    manageCollisionsWithSurroundings(city->getMesh(), city->getNode());
+    manageCollisionsWithSurroundings(m_city->getMesh(), m_city->getNode());
 }
 void Scene::initializeGui()
 {
@@ -103,6 +103,7 @@ void Scene::initializeGui()
     // 2D elements initialization
     m_guiManager->initialize2DElements();
 }
+
 
 void Scene::manageCollisionsWithSurroundings(irr::scene::IMesh *surroundingMesh, irr::scene::ISceneNode* surroundingNode)
 {

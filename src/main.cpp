@@ -13,6 +13,7 @@ int main()
     }
 
     scene->getDevice()->drop();
+    delete scene;
 
     return 0;
 }

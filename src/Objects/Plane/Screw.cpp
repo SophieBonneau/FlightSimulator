@@ -16,16 +16,6 @@ Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::i
     m_rotationStep = 30.0f;
 }
 
-void Screw::initialize()
-{
-    is::IMesh* mesh = m_smgr->getMesh(m_meshPath);
-    m_node= m_smgr->addMeshSceneNode(mesh);
-    m_node->setParent(m_parentRotationNode);
-    m_node->setMaterialFlag(iv::EMF_LIGHTING,false);
-    m_node->setScale(m_scale);
-    m_node->setPosition(m_position);
-}
-
 int Screw::updateRotation()
 {
     if(m_node == nullptr)
