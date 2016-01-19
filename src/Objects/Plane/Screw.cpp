@@ -11,7 +11,7 @@ Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::i
     PlaneElement(smgr, parentRotationNode, meshPath)
 {
     m_scale = ic::vector3df(0.05,0.05,0.05);
-    m_position = ic::vector3df(0.0,0.19,0.58);
+    m_position = ic::vector3df(0.0,0.0,0.0);
 
     m_rotationStep = 30.0f;
 }
