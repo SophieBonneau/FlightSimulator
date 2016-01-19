@@ -67,7 +67,7 @@ public:
 private:
     /* void manageCollisionsWithSurroundings: Manage the collision between the plane and all the surondings
     */
-    void manageCollisionsWithSurroundings(scene::ITriangleSelector *selectorSurrounding);
+    irr::scene::ISceneNodeAnimatorCollisionResponse* manageCollisionsWithSurroundings(City *building);
 
     /* void initializeObjects: Initialize all meshs used, except the water: the plane, the landscape
     */
@@ -105,6 +105,8 @@ private:
 
     //Collision
     irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollision = nullptr;
+    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollisionAirport = nullptr;
+    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollisionCity = nullptr;
 
     // Event objects
     EventReceiver *m_receiver = nullptr;

@@ -20,10 +20,6 @@ public:
     // Destructor
     ~GUIElements();
 
-    // Setters and getters
-    void setDevice(IrrlichtDevice*);
-    void setStall(const bool&);
-
     // Initialize 2D elements
     // ! We must have called setDevice first !
     bool initialize2DElements();
@@ -32,13 +28,28 @@ public:
     std::vector<CGUICompass*> update2DElements();
 
     // Setters and getters
+    void setDevice(IrrlichtDevice*);
     void setSpeed(const float speed){     m_speed = speed;    }
     void setAltitude(const float altitude){     m_altitude = altitude;    }
     void setVerticalSpeed(const float verticalSpeed){     m_verticalSpeed = verticalSpeed;    }
-    void setStall(const float stall){     m_stall = stall;    }
-    void setAlmostStall(const float almostStall){     m_almostStall = almostStall;    }
+    void setStall(const bool stall)
+    {
+        m_stall = stall;
+        if(m_stall == true && m_almostStall == true )
+        {
+            m_almostStall = false;
+        }
+    }
+    void setAlmostStall(const bool almostStall){
+        m_almostStall = almostStall;
+        if(m_almostStall == true && m_stall == true)
+        {
+            m_stall = false;
+        }
+    }
     void setGaugeHPercentage(const float gaugeHPercentage){     m_gaugeHPercentage = gaugeHPercentage;    }
     void setGaugeVSlope(const float gaugeVSlope){     m_gaugeVSlope = gaugeVSlope;    }
+    void setOrientation(const int orientation){     m_orientation = orientation;    }
 
 private:
 
@@ -70,6 +81,7 @@ private:
     bool m_almostStall;
     int m_gaugeHPercentage;
     double m_gaugeVSlope;
+    int m_orientation;
 
     // Window size
     ic::dimension2d<u32> m_precedentWindowSize = ic::dimension2d<u32>(0.0, 0.0);

@@ -37,10 +37,9 @@ public:
     float getAltitudeM(){   return fromGameUnitToM(m_planeAltitude);    }
 
     float getAltitudeSpeed(){   if(!m_isStalling)
-                                return -fromKmToMS((m_rotationAltitude / 90) * fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor))); }
+                                    return -fromKmToMS((m_rotationAltitude / 90) * fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor))); }
 
     float getSlopePercent() {   return -m_rotationAltitude / 90;    }
-
 
     float getFuelLiter() {   return m_fuelLiter / 152.0f * 100;    }
 
