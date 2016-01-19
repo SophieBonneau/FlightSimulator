@@ -81,7 +81,8 @@ void EventReceiver::changePlaneSpeed()
 void EventReceiver::changePlaneRotation(ic::vector3df &childRotation,       ic::vector3df &leftwingRotation,
                                         ic::vector3df &rightwingRotation,   ic::vector3df &tailRotation,
                                         bool isRight,                       float rotationSpeed)
-{
+{    //std::cout<<"Almost stalling = "<<m_receiver->getIsAlmostStalling()<<std::endl;
+
     if(isRight)
     {
         childRotation.Z     -= rotationSpeed * m_rotationAngleStep;
@@ -261,13 +262,12 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
 
         node->setRotation(childRotation);
 
-        /*if(m_planeSpeed < m_motorPower / 10.0)
+        if(m_planeSpeed < m_motorPower / 10.0)
             m_planeSpeed += 0.5/m_planeWeight * m_motorPower;
         else if(m_planeSpeed > m_motorPower / 10.0)
             m_planeSpeed -= 0.5/m_planeWeight * m_motorPower;
         else
-            m_planeSpeed  = m_motorPower;*/
-        changePlaneSpeed();
+            m_planeSpeed  = m_motorPower;
 
         if(childRotation.X < 0)
             m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;

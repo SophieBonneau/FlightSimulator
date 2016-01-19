@@ -44,10 +44,12 @@ void Scene::initializeObjects()
     //City
     City* city = new City(m_smgr, "data/city/city_cercles.obj");
     city->initialize();
-    City* airport = new City(m_smgr, "data/airport/airport.obj");
+    City* airport = new City(m_smgr, "data/airport/buildings.obj");
     airport->initialize();
     City* runway = new City(m_smgr, "data/airport/runway.obj");
     runway-> initialize();
+    City* runway2 = new City(m_smgr, "data/airport/runway2.obj");
+    runway2-> initialize();
 
     //Init the object plane
     //2 parents: trajectory and rotation
@@ -138,9 +140,13 @@ void Scene::render()
 {
     //Update 2D elements
     m_guiManager->setAltitude(m_receiver->getAltitude());
+
+    std::cout<<"Almost stalling = "<<m_receiver->getIsAlmostStalling()<<std::endl;
     m_guiManager->setAlmostStall(m_receiver->getIsAlmostStalling());
+    std::cout<<"Is stalling = "<<m_receiver->getIsStalling()<<std::endl;
     m_guiManager->setStall(m_receiver->getIsStalling());
     m_guiManager->setGaugeHPercentage(m_receiver->getFuelLiter());
+
     m_guiManager->setGaugeVSlope(m_receiver->getSlopePercent());
     m_guiManager->setSpeed(m_receiver->getSpeedKmH());
     m_guiManager->setVerticalSpeed(m_receiver->getAltitudeSpeed());

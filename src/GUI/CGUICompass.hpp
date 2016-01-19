@@ -72,7 +72,7 @@ class CGUICompass : public ig::IGUIElement
     //! render the compass
     virtual void draw()
     {
-        if(this->rectangle.getHeight() >0 && this->rectangle.getWidth() >0)
+        if(this->RelativeRect.getHeight() >1 && this->RelativeRect.getWidth() >1)
         {
             //position.X
             iv::IVideoDriver* driver = Environment->getVideoDriver();
