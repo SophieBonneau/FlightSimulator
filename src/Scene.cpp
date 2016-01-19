@@ -59,12 +59,14 @@ void Scene::initializeObjects()
     m_parentRotationNode = m_smgr->addEmptySceneNode();
     m_parentRotationNode->setParent(m_parentNode);
 
+
     //Init the plane
     m_body = new Body(m_smgr, m_parentRotationNode, "data/plane/plane.obj");
     m_body->initialize();
 
     //Init the screw
     m_screw = new Screw(m_smgr, m_parentRotationNode, "data/plane/screw.obj");
+    m_screw->setPosition(ic::vector3df(0.0,0.19,0.58));
     m_screw->initialize();
 
     //Init the two wings
@@ -247,8 +249,11 @@ void Scene::render()
 
     //Camera pose
     m_receiver->changeCameraPose(m_camera);
-    if(m_camera->getPosition().Z < 0.0)
+    if(m_camera->getPosition().Z < -10.0)
     {
+        m_body->getNode()->setVisible(true);
+        m_screw->getNode()->setVisible(true);
+        m_camera->setParent(m_body->getNode());
         m_camera->setTarget(m_parentNode->getPosition());
 
         // Update screw rotation
@@ -256,11 +261,15 @@ void Scene::render()
     }
     else
     {
-        m_camera->setTarget(m_screw->getNode()->getAbsolutePosition());
+        m_camera->setParent(m_parentRotationNode);
+        m_camera->setTarget(m_parentNode->getPosition());
+        m_body->getNode()->setVisible(false);
+        m_screw->getNode()->setVisible(false);
     }
 
     //Back color
     m_driver->beginScene(true,true,iv::SColor(100,150,200,255));
+    //_driver->
 
     // Draw the scene
     m_smgr->drawAll();
