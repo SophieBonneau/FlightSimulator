@@ -19,8 +19,9 @@ GUIElements::GUIElements()
     m_gaugeVOffset = 0;
     m_stall = false;
     m_almostStall = false;
-    m_gaugeHPercentage = 0;
+    m_gaugeHPercentage = 80;
     m_gaugeVSlope = 0.1;
+    m_orientation = 0;
 
     // Positions
     m_compassLength = 55;
@@ -100,10 +101,6 @@ void GUIElements::setDevice(IrrlichtDevice* device)
     m_gui = m_device->getGUIEnvironment();
 }
 
-void GUIElements::setStall(const bool& stall)
-{
-    m_stall = stall;
-}
 
 void GUIElements::updateDimensions()
 {
@@ -497,7 +494,7 @@ bool GUIElements::initialize2DElements()
                                                                       y2), m_gui, nullptr);
 
 
-
+    computeHorizontalGaugeOffset(m_gaugeHOffset, m_gaugeHPercentage, m_gaugeHWidth);
     m_compassHGaugeFull = new CGUICompass(ic::rect<s32>(m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHWidth - m_gaugeHOffsetX + m_gaugeHOffset + 4,
                                                                     m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHHeight - m_gaugeHOffsetY + 4,
                                                                     m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHOffsetX - 4,
@@ -582,30 +579,7 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     }
 
 
-
-
-
-
-/*
-    CGUICompass* compassHGaugeFull = new CGUICompass(ic::rect<s32>(m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHWidth - m_gaugeHOffsetX + m_gaugeHOffset + 4,
-                                                                    m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHHeight - m_gaugeHOffsetY + 4,
-                                                                    m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHOffsetX - 4,
-                                                                    m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHOffsetY -4), m_gui, nullptr);
-
-    if(m_gaugeHPercentage > 63)
-        compassHGaugeFull->setCompassTexture(m_textureGaugeFullGreenH);
-    else if (m_gaugeHPercentage<63 && m_gaugeHPercentage>33)
-        compassHGaugeFull->setCompassTexture(m_textureGaugeFullOrangeH);
-    else
-    compassHGaugeFull->setCompassTexture(m_textureGaugeFullRedH);
-    computeHorizontalGaugeOffset(m_gaugeHOffset, m_gaugeHPercentage, m_gaugeHWidth);*/
-
-
-
-
-
-
-
+    computeHorizontalGaugeOffset(m_gaugeHOffset, m_gaugeHPercentage, m_gaugeHWidth);
     m_compassHGaugeFull->setCompassRelativePosition(ic::rect<s32>(m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHWidth - m_gaugeHOffsetX + m_gaugeHOffset + 4,
                                                                     m_device->getVideoDriver()->getScreenSize().Height - m_gaugeHHeight - m_gaugeHOffsetY + 4,
                                                                     m_device->getVideoDriver()->getScreenSize().Width - m_gaugeHOffsetX - 4,
@@ -617,7 +591,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
         m_compassHGaugeFull->setCompassTexture(m_textureGaugeFullOrangeH);
     else
     m_compassHGaugeFull->setCompassTexture(m_textureGaugeFullRedH);
-    computeHorizontalGaugeOffset(m_gaugeHOffset, m_gaugeHPercentage, m_gaugeHWidth);
 
 
 
@@ -693,20 +666,18 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     m_vs1->setImage(m_numbers[(abs(m_verticalSpeed) / 1) % 10]);
 
     // Update blinking elements
-    if(m_stall == true && m_timer%10==0)
+    if(m_stall == true && m_timer%20==0)
     {
         m_planeRed = !m_planeRed;
     }
-    else if(m_almostStall == true && m_timer%10==0)
+    if(m_almostStall == true && m_timer%20==0)
     {
         m_planeOrange = !m_planeOrange;
     }
 
 
 
-
     //compasses.push_back(compassLevel);
-    //compasses.push_back(compassHGaugeFull);
     compasses.push_back(m_compassCompass);
     compasses.push_back(m_compassPlane);
     compasses.push_back(m_compassVGaugeFull);
