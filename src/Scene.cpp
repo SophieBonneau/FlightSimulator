@@ -129,15 +129,15 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
     selectorSurrounding = m_smgr->createOctreeTriangleSelector(building->getMesh(), building->getNode());
     building->getNode()->setTriangleSelector(selectorSurrounding);
 
-    is::ISceneNodeAnimatorCollisionResponse* m_animCollision;
-    m_animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
+    is::ISceneNodeAnimatorCollisionResponse* animCollision;
+    animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
                                                  m_parentNode,  //Node
                                                  ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
                                                  ic::vector3df(0, 0, 0),       // Gravity
                                                  ic::vector3df(0.0,0.0,0));      // Gap with the center
-    m_parentNode->addAnimator(m_animCollision);
+    m_parentNode->addAnimator(animCollision);
 
-    return m_animCollision;
+    return animCollision;
 }
 
 void Scene::render()
