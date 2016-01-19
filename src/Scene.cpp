@@ -148,7 +148,8 @@ void Scene::render()
     m_guiManager->setGaugeVSlope(m_receiver->getSlopePercent());
     m_guiManager->setSpeed(m_receiver->getSpeedKmH());
     m_guiManager->setVerticalSpeed(m_receiver->getAltitudeSpeed());
-    m_guiManager->setOrientation(m_body->getNode()->getRotation().Z);
+    std::cout<<"Rotation Y = " << m_parentNode->getRotation().Y<<std::endl;
+    m_guiManager->setOrientation(m_parentNode->getRotation().Y);
 
     //Update GUI elements
     m_compasses = m_guiManager->update2DElements();
