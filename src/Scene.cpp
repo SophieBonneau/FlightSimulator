@@ -85,12 +85,16 @@ void Scene::initializeObjects()
     m_rightTail->initialize();
 
     //Water
-    m_water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"));
+    m_water = new Water(m_smgr, m_driver->getTexture("data/water/water.jpg"), m_driver->getTexture("data/water/waterPool.jpg"));
     m_water->initialize();
 
     //Fire
     m_fire = new Fire(m_smgr, m_driver->getTexture("data/fire/fire.jpg"));
     m_fire->initialize();
+
+    //Sky
+    m_smgr->addSkyDomeSceneNode(m_driver->getTexture("data/sky/sky.jpg"),16,8,0.95f,2.0f);
+    m_driver->setTextureCreationFlag(video::ETCF_CREATE_MIP_MAPS, true);
 
     //Camera position
     m_camera = m_smgr->addCameraSceneNode(m_body->getNode(), m_cameraPose, m_parentNode->getPosition()); //Behind the plane -> (0,5,-34)

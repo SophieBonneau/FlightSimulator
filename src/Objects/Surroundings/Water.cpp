@@ -4,8 +4,8 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-Water::Water(is::ISceneManager* smgr, iv::ITexture * textureWater)
-    :m_smgr(smgr), m_textureWater(textureWater)
+Water::Water(is::ISceneManager* smgr, iv::ITexture * textureWater1, iv::ITexture * textureWater2)
+    :m_smgr(smgr), m_textureWater1(textureWater1),m_textureWater2(textureWater2)
 {
     m_position =ic::vector3df(0,-2, 0);
 
@@ -24,7 +24,8 @@ void Water::initialize()
 {
     is::IMesh *meshWater = m_smgr->addHillPlaneMesh( "myHill", m_tileSize, m_tileCount, 0, 0,m_countHills, m_textureRepeatCount);
     is::ISceneNode* planWater = m_smgr->addWaterSurfaceSceneNode(meshWater, m_waveHeight, m_waveSpeed, m_waveLength);
-    planWater->setMaterialTexture(0, m_textureWater);
+    planWater->setMaterialTexture(0, m_textureWater1);
+    planWater->setMaterialTexture(1, m_textureWater2);
     planWater->setMaterialFlag(iv::EMF_LIGHTING, false);
     planWater->setMaterialType(iv::EMT_REFLECTION_2_LAYER);
     planWater->setPosition(m_position);

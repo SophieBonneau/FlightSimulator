@@ -161,34 +161,20 @@ void EventReceiver::planeOnFloor(is::ISceneNode *node)
 
     float currentRotationAngle = 0.0f;
     //Open the side panels of the plane to turn to the right or the left
-    if(m_keyIsDown[KEY_KEY_D] == true && !m_isBrakes)
+    if(m_planeSpeed != 0)
     {
-        if(fromGameUnitToKt(m_planeSpeedFloor) < 50)
-            currentRotationAngle = 10 * m_rotationAngleStep;
-        else
+        if(m_keyIsDown[KEY_KEY_D] == true && !m_isBrakes)
         {
-            childRotation.Z     += 10 * m_rotationAngleStep;
-            m_onFloor   = false;
-            m_isCrashed = true;
+            m_rotationAngle += 2 * m_rotationAngleStep;
         }
-    }
-    if(m_keyIsDown[KEY_KEY_Q] == true && !m_isBrakes)
-    {
-        if(fromGameUnitToKt(m_planeSpeedFloor) < 50)
-            currentRotationAngle = -10 * m_rotationAngleStep;
-        else
+        if(m_keyIsDown[KEY_KEY_Q] == true && !m_isBrakes)
         {
-            childRotation.Z     += 10 * m_rotationAngleStep;
-            m_onFloor   = false;
-            m_isCrashed = true;
+            m_rotationAngle -= 2 * m_rotationAngleStep;
         }
     }
 
     node->setRotation(childRotation);
-
-    float planeSpeedMByS = fromKmToMS(fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor)));
-    if(m_planeSpeedFloor > 0)
-        m_rotationAngle += tan(currentRotationAngle * core::DEGTORAD) / planeSpeedMByS * core::RADTODEG;
+;
 
     if(!m_isBrakes)
     {
@@ -333,6 +319,7 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
     ic::vector3df lefttailRotation  = lefttail_node ->getRotation();
     ic::vector3df righttailRotation = righttail_node->getRotation();
 
+    //If there is stall speed
     if((m_stallSpeed < m_planeSpeed && m_stallSpeed * 1.1 > m_planeSpeed
             && (childRotation.X < -0.1 || childRotation.X > 0.1))
             || m_planeSpeedFloor > 1.1 * m_flatStallSpeed)
@@ -344,7 +331,7 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         || m_flatStallSpeed >= m_planeSpeedFloor)
     {
         m_isStalling = true;
-        m_planeAltitude -= m_stallStep;
+        m_planeAltitude -= m_stallStep * 3;
     }
 
     //Increase or decrease the plane speed
