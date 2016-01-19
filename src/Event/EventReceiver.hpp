@@ -42,6 +42,7 @@ public:
 
     float getFuelLiter() {   return 100*m_fuelLiter/152.0f;    }
 
+
     /* float getRotation: getter for the rotation value (plane go to the left or the right)
      * return:  rotationAngle: the rotation value
     */

@@ -81,7 +81,8 @@ void EventReceiver::changePlaneSpeed()
 void EventReceiver::changePlaneRotation(ic::vector3df &childRotation,       ic::vector3df &leftwingRotation,
                                         ic::vector3df &rightwingRotation,   ic::vector3df &tailRotation,
                                         bool isRight,                       float rotationSpeed)
-{
+{    //std::cout<<"Almost stalling = "<<m_receiver->getIsAlmostStalling()<<std::endl;
+
     if(isRight)
     {
         childRotation.Z     -= rotationSpeed * m_rotationAngleStep;
