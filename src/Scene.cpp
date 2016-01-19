@@ -140,17 +140,17 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
 
 void Scene::render()
 {
-    //Update 2D elements
+    // Link simulation values to GUI
     m_guiManager->setAltitude(m_receiver->getAltitude());
-    std::cout<<"Almost stalling = "<<m_receiver->getIsAlmostStalling()<<std::endl;
     m_guiManager->setAlmostStall(m_receiver->getIsAlmostStalling());
     m_guiManager->setStall(m_receiver->getIsStalling());
     m_guiManager->setGaugeHPercentage(m_receiver->getFuelLiter());
     m_guiManager->setGaugeVSlope(m_receiver->getSlopePercent());
     m_guiManager->setSpeed(m_receiver->getSpeedKmH());
     m_guiManager->setVerticalSpeed(m_receiver->getAltitudeSpeed());
-    std::cout<<"Rotation = "<< m_body->getNode()->getRotation().Z<<std::endl;
     m_guiManager->setOrientation(m_body->getNode()->getRotation().Z);
+
+    //Update GUI elements
     m_compasses = m_guiManager->update2DElements();
 
     ic::vector3df firePosition = ic::vector3df(0.0,-0.1,3.);
@@ -265,7 +265,7 @@ void Scene::render()
     m_smgr->drawAll();
     m_gui->drawAll();
 
-    //Gui
+    // Draw GUI compasses
     m_receiver->updateCompass(m_compasses[0]);
     for(unsigned int i = 0; i < m_compasses.size(); i++)
     {
