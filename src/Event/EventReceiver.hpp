@@ -166,9 +166,6 @@ public:
     */
     void changeCameraPose(irr::scene::ICameraSceneNode *cameraNode);
 
-    /*
-    */
-    void updateCompass(CGUICompass* compass);
 
    /************************************************************************************/
    /******************************** Events ********************************************/

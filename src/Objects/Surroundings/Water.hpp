@@ -4,6 +4,7 @@
 #define WATER
 
 #include "irrlicht.h"
+#include "iostream"
 
 
 class Water

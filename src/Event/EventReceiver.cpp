@@ -1,6 +1,4 @@
 #include "EventReceiver.hpp"
-#include "irrlicht.h"
-#include "iostream"
 
 using namespace irr;
 namespace ic = irr::core;
@@ -480,19 +478,6 @@ void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode)
     {
         cameraPosition = ic::vector3df(0.0,18.0,-24.0);
         cameraNode->setPosition(cameraPosition);
-    }
-}
-
-void EventReceiver::updateCompass(CGUICompass* compass)
-{
-
-    if(m_keyIsDown[KEY_KEY_D] == true)
-    {
-        compass->setCompassHeading(5.0);
-        //compass->setCompassRelativePosition();
-    }
-    else if(m_keyIsDown[KEY_KEY_Q] == true)
-    {
     }
 }
 

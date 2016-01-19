@@ -4,6 +4,7 @@
 #define CITY
 
 #include "irrlicht.h"
+#include "iostream"
 
 class City
 {

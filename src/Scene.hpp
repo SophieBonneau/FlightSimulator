@@ -4,6 +4,7 @@
 #define SCENE
 
 #include "irrlicht.h"
+#include "iostream"
 
 #include "Event/EventReceiver.hpp"
 #include "GUI/GUIElements.hpp"

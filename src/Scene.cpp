@@ -1,9 +1,5 @@
 #include "Scene.hpp"
 
-#include "irrlicht.h"
-
-#include <iostream>
-
 namespace ic = irr::core;
 namespace iv = irr::video;
 
@@ -276,7 +272,6 @@ void Scene::render()
     m_gui->drawAll();
 
     // Draw GUI compasses
-    m_receiver->updateCompass(m_compasses[0]);
     for(unsigned int i = 0; i < m_compasses.size(); i++)
     {
          m_compasses[i]->draw();

@@ -1,9 +1,5 @@
 #include "Fire.hpp"
 
-#include "irrlicht.h"
-
-#include "iostream"
-
 namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;

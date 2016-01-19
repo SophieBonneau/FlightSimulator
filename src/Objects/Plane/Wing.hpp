@@ -5,6 +5,7 @@
 
 #include "irrlicht.h"
 #include "PlaneElement.hpp"
+#include "iostream"
 
 
 class Wing : public PlaneElement

@@ -4,6 +4,7 @@
 #define FIRE
 
 #include "irrlicht.h"
+#include "iostream"
 
 
 class Fire
