@@ -598,7 +598,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
 
 
     // Update the compass orientation
-    std::cout<<"Orientation = "<< m_orientation <<std::endl;
     m_compassCompass->setCompassHeading(m_orientation);
 
     // Update 2D plane texture

@@ -37,7 +37,8 @@ public:
     float getAltitudeM(){   return fromGameUnitToM(m_planeAltitude);    }
 
     float getAltitudeSpeed(){   if(!m_isStalling)
-                                    return -fromKmToMS((m_rotationAltitude / 90) * fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor))); }
+                                    return -fromKmToMS((m_rotationAltitude / 90) * fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor)));
+                                return -1.0f;}
 
     float getSlopePercent() {   return -m_rotationAltitude / 90;    }
 
@@ -121,13 +122,9 @@ public:
     float fromGameUnitToM(float valueToConvert);
     float fromKmToMS(float valueToConvert);
 
-    //Faire les commentaire
-    void changePlaneSpeed();
-    void changePlaneRotation(ic::vector3df &childRotation,       ic::vector3df &leftwingRotation,
-                             ic::vector3df &rightwingRotation,   ic::vector3df &tailRotation,
-                             bool isRight, float rotationSpeed);
-    void changePlaneAltitude(ic::vector3df &childRotation);
-    void computeRotation(ic::vector3df &childRotation);
+    void computeTemperatureFromTheAltitude();
+    void computeAirDensity();
+    void computeLiftForce(float rotAngle);
 
     /* void planeOnFloor:  Calculate the position of the plane and change it direction during the "on floor" phase.
      *                      Do all the computation for the first phase of the take off
@@ -194,7 +191,7 @@ private:
     const float m_rotationAngleStep = 0.1f;
 
     //Init plane constructor parameters
-    const float m_voidPlaneWeightKg = 957.0f;     //Fuel included
+    const float m_voidPlaneWeightKg = 953.0f;     //Fuel included
     const float m_g = 9.81f;  //m.s-2
 
     const float m_minPlaneSpeedKt  = 0.0f;    //Kt
@@ -202,12 +199,39 @@ private:
     const float m_flatStallSpeedKt = 44.0f;   //Kt
 
     //Init motor const
+    const float m_speedMotorMax = 2700.0;  //tours/min
+    const float m_motorPowerMax = 180.0 * 735.398; //180ch in W at 2700tr/min
+    const float m_coupleMotorMax = m_motorPowerMax / m_speedMotorMax;   //N.m
+
     const float m_minMotorPower = 0.0f;
-    const float m_maxMotorPower = 16.0f;
+    const float m_maxMotorPower = 2.0f;
 
     const float m_minPlaneSpeed   = fromKtToGameUnit(m_minPlaneSpeedKt);    //Irrlicht unit
     const float m_maxPlaneSpeed   = fromKtToGameUnit(m_maxPlaneSpeedKt);    //Irrlicht unit
     const float m_flatStallSpeed  = fromKtToGameUnit(m_flatStallSpeedKt);   //Irrlicht unit
+
+    //Init air density (depend of the altitude)
+    //At 0m on Y, we take the temperature at 25 °C
+    //At 3000 m, we take the temperature at 0 °C
+    const float m_tempAt0Y = 25.0f;
+    const float m_tempAt3000Y = 0.0f;
+
+    const float m_tempAt0YInK = m_tempAt0Y + 273.15f;
+    const float m_tempAt3000YInK = m_tempAt3000Y + 273.15f;
+
+    float m_currentTemperature = m_tempAt0Y;
+
+    const float m_raynoldsNumber = 8.31f;   //J/molK
+    const float m_airMolarMasse = 28.965f;  //g/mol
+
+    const float m_densityAt0 = 1.292f;   //kg/m3
+    float m_currentDensity = m_densityAt0;
+
+    const float m_sizeWings = 16.16f;   //m^2
+
+    float m_liftForce = 0.0f;   //N
+    float m_weightForce = m_planeWeight * m_g;
+
 
     //Init plane limits values
     float m_loadFactor = 1.0f;    //No unit

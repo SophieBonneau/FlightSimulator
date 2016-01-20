@@ -100,8 +100,10 @@ void Scene::initializeObjects()
     m_camera = m_smgr->addCameraSceneNode(m_body->getNode(), m_cameraPose, m_parentNode->getPosition()); //Behind the plane -> (0,5,-34)
 
     // Collision management with surroundings
-    m_animCollisionAirport = manageCollisionsWithSurroundings(airport);
-    m_animCollisionCity = manageCollisionsWithSurroundings(city);
+    m_animCollisionAirport  = manageCollisionsWithSurroundings(airport, false);
+    m_animCollisionCity     = manageCollisionsWithSurroundings(city, false);
+    m_animCollisionRunway   = manageCollisionsWithSurroundings(runway, false);
+    m_animCollisionRunway2  = manageCollisionsWithSurroundings(runway2, false);
 }
 
 void Scene::initializeGui()
@@ -122,7 +124,7 @@ void Scene::initializeData()
     initializeObjects();
 }
 
-is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings(City* building)
+is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings(City* building, bool gravity)
 {
     // Collision management with surroundings
     is::ITriangleSelector *selectorSurrounding;
@@ -130,11 +132,22 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
     building->getNode()->setTriangleSelector(selectorSurrounding);
 
     is::ISceneNodeAnimatorCollisionResponse* animCollision;
-    animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
-                                                 m_parentNode,  //Node
-                                                 ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
-                                                 ic::vector3df(0, 0, 0),       // Gravity
-                                                 ic::vector3df(0.0,0.0,0));      // Gap with the center
+    if(gravity)
+    {
+        animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
+                                                     m_parentNode,  //Node
+                                                     ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
+                                                     ic::vector3df(0, -1.0, 0),       // Gravity
+                                                     ic::vector3df(0.0,0.5,0));      // Gap with the center
+    }
+    else
+    {
+        animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
+                                                     m_parentNode,  //Node
+                                                     ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
+                                                     ic::vector3df(0, 0, 0),       // Gravity
+                                                     ic::vector3df(0.0,0.0,0));      // Gap with the center
+    }
     m_parentNode->addAnimator(animCollision);
 
     return animCollision;
@@ -150,7 +163,6 @@ void Scene::render()
     m_guiManager->setGaugeVSlope(m_receiver->getSlopePercent());
     m_guiManager->setSpeed(m_receiver->getSpeedKmH());
     m_guiManager->setVerticalSpeed(m_receiver->getAltitudeSpeed());
-    std::cout<<"Rotation Y = " << m_parentNode->getRotation().Y<<std::endl;
     m_guiManager->setOrientation(m_parentNode->getRotation().Y);
 
     //Update GUI elements
@@ -172,7 +184,6 @@ void Scene::render()
         m_receiver->setIsCrashed(true);
         m_animCollision = m_animCollisionCity;
     }
-
     if(m_receiver->getIsCrashed())
     {
         firePosition.X = m_animCollision->getCollisionPoint().X;

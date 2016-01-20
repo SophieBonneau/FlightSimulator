@@ -67,7 +67,7 @@ public:
 private:
     /* void manageCollisionsWithSurroundings: Manage the collision between the plane and all the surondings
     */
-    irr::scene::ISceneNodeAnimatorCollisionResponse* manageCollisionsWithSurroundings(City *building);
+    irr::scene::ISceneNodeAnimatorCollisionResponse* manageCollisionsWithSurroundings(City *building, bool gravity);
 
     /* void initializeObjects: Initialize all meshs used, except the water: the plane, the landscape
     */
@@ -104,9 +104,11 @@ private:
     std::vector<CGUICompass*> m_compasses;
 
     //Collision
-    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollision = nullptr;
+    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollision        = nullptr;
     irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollisionAirport = nullptr;
-    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollisionCity = nullptr;
+    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollisionCity    = nullptr;
+    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollisionRunway  = nullptr;
+    irr::scene::ISceneNodeAnimatorCollisionResponse *m_animCollisionRunway2 = nullptr;
 
     // Event objects
     EventReceiver *m_receiver = nullptr;
