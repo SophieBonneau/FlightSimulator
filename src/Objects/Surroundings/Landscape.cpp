@@ -1,16 +1,16 @@
-#include "City.hpp"
+#include "Landscape.hpp"
 
 namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-City::City(is::ISceneManager* smgr, irr::io::path meshPath)
+Landscape::Landscape(is::ISceneManager* smgr, irr::io::path meshPath)
     :m_smgr(smgr), m_meshPath(meshPath)
 {
     m_scale = ic::vector3df(10,10,10);
 }
 
-void City::initialize()
+void Landscape::initialize()
 {
     m_mesh = m_smgr->getMesh(m_meshPath);
     m_node = m_smgr->addOctreeSceneNode(m_mesh,nullptr,-1,1024);
