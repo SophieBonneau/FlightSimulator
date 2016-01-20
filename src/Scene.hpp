@@ -11,7 +11,7 @@
 #include "Objects/Plane/Screw.hpp"
 #include "Objects/Surroundings/Water.hpp"
 #include "Objects/Surroundings/Fire.hpp"
-#include "Objects/Surroundings/City.hpp"
+#include "Objects/Surroundings/Landscape.hpp"
 #include "Objects/Plane/Body.hpp"
 #include "Objects/Plane/Wing.hpp"
 #include "Objects/Plane/Tail.hpp"
@@ -68,7 +68,7 @@ public:
 private:
     /* void manageCollisionsWithSurroundings: Manage the collision between the plane and all the surondings
     */
-    irr::scene::ISceneNodeAnimatorCollisionResponse* manageCollisionsWithSurroundings(City *building, bool gravity);
+    irr::scene::ISceneNodeAnimatorCollisionResponse* manageCollisionsWithSurroundings(Landscape *building, bool gravity);
 
     /* void initializeObjects: Initialize all meshs used, except the water: the plane, the landscape
     */
@@ -95,7 +95,7 @@ private:
     Tail* m_rightTail = nullptr;
     Body* m_body = nullptr;
     Fire* m_fire = nullptr;
-    City* m_city = nullptr;
+    Landscape* m_city = nullptr;
     Water* m_water = nullptr;
     irr::gui::IGUIEnvironment *m_gui = nullptr;
     irr::scene::ICameraSceneNode *m_camera = nullptr;

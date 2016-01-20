@@ -38,13 +38,13 @@ void Scene::initializeIrrlicht()
 void Scene::initializeObjects()
 {
     //City
-    City* city = new City(m_smgr, "data/city/city_cercles.obj");
+    Landscape* city = new Landscape(m_smgr, "data/city/city_cercles.obj");
     city->initialize();
-    City* airport = new City(m_smgr, "data/airport/buildings.obj");
+    Landscape* airport = new Landscape(m_smgr, "data/airport/buildings.obj");
     airport->initialize();
-    City* runway = new City(m_smgr, "data/airport/runway.obj");
+    Landscape* runway = new Landscape(m_smgr, "data/airport/runway.obj");
     runway-> initialize();
-    City* runway2 = new City(m_smgr, "data/airport/runway2.obj");
+    Landscape* runway2 = new Landscape(m_smgr, "data/airport/runway2.obj");
     runway2-> initialize();
 
     //Init the object plane
@@ -124,7 +124,7 @@ void Scene::initializeData()
     initializeObjects();
 }
 
-is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings(City* building, bool gravity)
+is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings(Landscape* building, bool gravity)
 {
     // Collision management with surroundings
     is::ITriangleSelector *selectorSurrounding;
@@ -156,7 +156,7 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
 void Scene::render()
 {
     // Link simulation values to GUI
-    m_guiManager->setAltitude(m_receiver->getAltitude());
+    m_guiManager->setAltitude(m_receiver->getAltitudeM());
     m_guiManager->setAlmostStall(m_receiver->getIsAlmostStalling());
     m_guiManager->setStall(m_receiver->getIsStalling());
     m_guiManager->setGaugeHPercentage(m_receiver->getFuelLiter());
@@ -184,14 +184,18 @@ void Scene::render()
         m_receiver->setIsCrashed(true);
         m_animCollision = m_animCollisionCity;
     }
-    if(m_receiver->getIsCrashed())
+    if(m_receiver->getIsCrashed() && m_animCollisionCity->collisionOccurred())
     {
         firePosition.X = m_animCollision->getCollisionPoint().X;
         firePosition.Y = m_animCollision->getCollisionPoint().Y;
         firePosition.Z = m_animCollision->getCollisionPoint().Z;
         m_fire->getPs()->setEmitter(m_fire->getEm()); // this grabs the emitter of fire particules
     }
-
+    else if(m_receiver->getIsCrashed())
+    {
+        firePosition = m_parentNode->getPosition();
+        m_fire->getPs()->setEmitter(m_fire->getEm());
+    }
     else if(m_receiver->getOnFloor())
     {
         m_receiver->planeOnFloor(m_parentRotationNode);
