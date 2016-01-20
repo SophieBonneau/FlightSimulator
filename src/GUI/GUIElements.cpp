@@ -1,6 +1,5 @@
 #include "GUIElements.hpp"
 
-
 #include <iostream>
 
 
@@ -187,72 +186,60 @@ void GUIElements::updatePositions()
                                                                        backgroundUlp.Y + 5*m_textOffsetY + m_textVsHeight));
     // Numbers
     ic::vector2d<s32> wsLrp = getLowerRightPoint(m_imageSpeed);
-    m_s10000->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
-                                                       wsLrp.Y +1,
-                                                       wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight +1));
-    m_s1000->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y +1,
-                                                       wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight +1));
-    m_s100->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y +1,
-                                                       wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight +1));
-    m_s10->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y +1,
-                                                       wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight +1));
-    m_s1->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y +1,
-                                                       wsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight +1));
+    m_s1000->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
+                                               wsLrp.Y +1,
+                                               wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
+                                               wsLrp.Y + m_textNumberHeight +1));
+    m_s100->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
+                                              wsLrp.Y +1,
+                                              wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
+                                              wsLrp.Y + m_textNumberHeight +1));
+    m_s10->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y +1,
+                                             wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y + m_textNumberHeight +1));
+    m_s1->setRelativePosition(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
+                                            wsLrp.Y +1,
+                                            wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
+                                            wsLrp.Y + m_textNumberHeight +1));
     ic::vector2d<s32> altitudeLrp = getLowerRightPoint(m_imageAltitude);
-    m_a10000->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + m_textSpaceLength,
-                                                      altitudeLrp.Y +1,
-                                                      altitudeLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y + m_textNumberHeight +1));
-    m_a1000->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y +1,
-                                                      altitudeLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y + m_textNumberHeight +1));
-    m_a100->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y +1,
-                                                      altitudeLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y + m_textNumberHeight +1));
-    m_a10->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y +1,
-                                                      altitudeLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y + m_textNumberHeight +1));
-    m_a1->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y +1,
-                                                      altitudeLrp.X + m_textNumberOffsetX + 5*m_textNumberLength + m_textSpaceLength,
-                                                      altitudeLrp.Y + m_textNumberHeight +1));
+    m_a1000->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + m_textSpaceLength,
+                                               altitudeLrp.Y +1,
+                                               altitudeLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
+                                               altitudeLrp.Y + m_textNumberHeight +1));
+    m_a100->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
+                                              altitudeLrp.Y +1,
+                                              altitudeLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
+                                              altitudeLrp.Y + m_textNumberHeight +1));
+    m_a10->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
+                                             altitudeLrp.Y +1,
+                                             altitudeLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
+                                             altitudeLrp.Y + m_textNumberHeight +1));
+    m_a1->setRelativePosition(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
+                                            altitudeLrp.Y +1,
+                                            altitudeLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
+                                            altitudeLrp.Y + m_textNumberHeight +1));
     ic::vector2d<s32> vsLrp = getLowerRightPoint(m_imageVerticalSpeed);
     m_sign->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
                                                    vsLrp.Y +1,
                                                    vsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
                                                    vsLrp.Y + m_textNumberHeight +1));
-    m_vs10000->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y +1,
-                                                       vsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y + m_textNumberHeight +1));
-    m_vs1000->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y +1,
-                                                       vsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y + m_textNumberHeight +1));
-    m_vs100->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y +1,
-                                                       vsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y + m_textNumberHeight +1));
-    m_vs10->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y +1,
-                                                       vsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y + m_textNumberHeight +1));
-    m_vs1->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y +1,
-                                                       vsLrp.X + m_textNumberOffsetX + 6*m_textNumberLength + 3*m_textSpaceLength/2,
-                                                       vsLrp.Y + m_textNumberHeight +1));
+    m_vs1000->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + m_textNumberLength + 3*m_textSpaceLength/2,
+                                                vsLrp.Y +1,
+                                                vsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + 3*m_textSpaceLength/2,
+                                                vsLrp.Y + m_textNumberHeight +1));
+    m_vs100->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + 3*m_textSpaceLength/2,
+                                                vsLrp.Y +1,
+                                                vsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + 3*m_textSpaceLength/2,
+                                                vsLrp.Y + m_textNumberHeight +1));
+    m_vs10->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + 3*m_textSpaceLength/2,
+                                                vsLrp.Y +1,
+                                                vsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + 3*m_textSpaceLength/2,
+                                                vsLrp.Y + m_textNumberHeight +1));
+    m_vs1->setRelativePosition(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + 3*m_textSpaceLength/2,
+                                                vsLrp.Y +1,
+                                                vsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength + 3*m_textSpaceLength/2,
+                                                vsLrp.Y + m_textNumberHeight +1));
     // Unities
     ic::vector2d<s32> wsLastNumberLrp = getLowerRightPoint(m_s1);
     m_imageSpeedU->setRelativePosition(ic::rect<s32>(wsLastNumberLrp.X + m_textNumberOffsetX + m_textSpaceLength,
@@ -381,48 +368,40 @@ bool GUIElements::initialize2DElements()
     m_numbers[9] = m_driver->getTexture("data/2d/numbers/9.png");
     // Places for the speed
     ic::vector2d<s32> wsLrp = getLowerRightPoint(m_imageSpeed);
-    m_s10000 = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
-                                                       wsLrp.Y ,
-                                                       wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_s10000->setScaleImage(true);
-    m_s1000  = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y ,
-                                                       wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_s1000->setScaleImage(true);
-    m_s100   = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y ,
-                                                       wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_s100->setScaleImage(true);
-    m_s10    = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y ,
-                                                       wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_s10->setScaleImage(true);
-    m_s1     = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y ,
-                                                       wsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength + m_textSpaceLength,
-                                                       wsLrp.Y + m_textNumberHeight)); m_s1->setScaleImage(true);
+    m_s1000  = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textSpaceLength,
+                                             wsLrp.Y ,
+                                             wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y + m_textNumberHeight)); m_s1000->setScaleImage(true);
+    m_s100   = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y ,
+                                             wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y + m_textNumberHeight)); m_s100->setScaleImage(true);
+    m_s10    = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y ,
+                                             wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y + m_textNumberHeight)); m_s10->setScaleImage(true);
+    m_s1     = m_gui->addImage(ic::rect<s32>(wsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y ,
+                                             wsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength + m_textSpaceLength,
+                                             wsLrp.Y + m_textNumberHeight)); m_s1->setScaleImage(true);
     // Places for the altitude
     ic::vector2d<s32> altitudeLrp = getLowerRightPoint(m_imageAltitude);
-    m_a10000 = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX,
-                                                      altitudeLrp.Y ,
-                                                      altitudeLrp.X + m_textNumberOffsetX + m_textNumberLength,
-                                                      altitudeLrp.Y + m_textNumberHeight)); m_a10000->setScaleImage(true);
-    m_a1000  = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + m_textNumberLength,
-                                                      altitudeLrp.Y ,
-                                                      altitudeLrp.X + m_textNumberOffsetX + 2*m_textNumberLength,
-                                                      altitudeLrp.Y + m_textNumberHeight)); m_a1000->setScaleImage(true);
-    m_a100   = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 2*m_textNumberLength,
-                                                      altitudeLrp.Y ,
-                                                      altitudeLrp.X + m_textNumberOffsetX + 3*m_textNumberLength,
-                                                      altitudeLrp.Y + m_textNumberHeight)); m_a100->setScaleImage(true);
-    m_a10    = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 3*m_textNumberLength,
-                                                      altitudeLrp.Y ,
-                                                      altitudeLrp.X + m_textNumberOffsetX + 4*m_textNumberLength,
-                                                      altitudeLrp.Y + m_textNumberHeight)); m_a10->setScaleImage(true);
-    m_a1     = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 4*m_textNumberLength,
-                                                      altitudeLrp.Y ,
-                                                      altitudeLrp.X + m_textNumberOffsetX + 5*m_textNumberLength,
-                                                      altitudeLrp.Y + m_textNumberHeight)); m_a1->setScaleImage(true);
+    m_a1000  = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX,
+                                             altitudeLrp.Y ,
+                                             altitudeLrp.X + m_textNumberOffsetX + m_textNumberLength,
+                                             altitudeLrp.Y + m_textNumberHeight)); m_a1000->setScaleImage(true);
+    m_a100   = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + m_textNumberLength,
+                                             altitudeLrp.Y ,
+                                             altitudeLrp.X + m_textNumberOffsetX + 2*m_textNumberLength,
+                                             altitudeLrp.Y + m_textNumberHeight)); m_a100->setScaleImage(true);
+    m_a10    = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 2*m_textNumberLength,
+                                             altitudeLrp.Y ,
+                                             altitudeLrp.X + m_textNumberOffsetX + 3*m_textNumberLength,
+                                             altitudeLrp.Y + m_textNumberHeight)); m_a10->setScaleImage(true);
+    m_a1     = m_gui->addImage(ic::rect<s32>(altitudeLrp.X + m_textNumberOffsetX + 3*m_textNumberLength,
+                                             altitudeLrp.Y ,
+                                             altitudeLrp.X + m_textNumberOffsetX + 4*m_textNumberLength,
+                                             altitudeLrp.Y + m_textNumberHeight)); m_a1->setScaleImage(true);
     // Places for vertical speed
     ic::vector2d<s32> vsLrp = getLowerRightPoint(m_imageVerticalSpeed);
     m_sign = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX,
@@ -432,26 +411,22 @@ bool GUIElements::initialize2DElements()
     m_texturePlus = m_driver->getTexture("data/2d/+.png");
     m_textureMinus = m_driver->getTexture("data/2d/-.png");
     m_sign->setImage(m_texturePlus);
-    m_vs10000 = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + m_textNumberLength,
-                                                       vsLrp.Y ,
-                                                       vsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength,
-                                                       vsLrp.Y + m_textNumberHeight)); m_vs10000->setScaleImage(true);
-    m_vs1000  = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength,
-                                                       vsLrp.Y ,
-                                                       vsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength,
-                                                       vsLrp.Y + m_textNumberHeight)); m_vs1000->setScaleImage(true);
-    m_vs100   = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength,
-                                                       vsLrp.Y ,
-                                                       vsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength,
-                                                       vsLrp.Y + m_textNumberHeight)); m_vs100->setScaleImage(true);
-    m_vs10    = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength,
-                                                       vsLrp.Y ,
-                                                       vsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength,
-                                                       vsLrp.Y + m_textNumberHeight)); m_vs10->setScaleImage(true);
-    m_vs1     = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength,
-                                                       vsLrp.Y ,
-                                                       vsLrp.X + m_textNumberOffsetX + 6*m_textNumberLength,
-                                                       vsLrp.Y + m_textNumberHeight)); m_vs1->setScaleImage(true);
+    m_vs1000  = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + m_textNumberLength,
+                                              vsLrp.Y ,
+                                              vsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength,
+                                              vsLrp.Y + m_textNumberHeight)); m_vs1000->setScaleImage(true);
+    m_vs100   = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 2*m_textNumberLength,
+                                              vsLrp.Y ,
+                                              vsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength,
+                                              vsLrp.Y + m_textNumberHeight)); m_vs100->setScaleImage(true);
+    m_vs10    = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 3*m_textNumberLength,
+                                              vsLrp.Y ,
+                                              vsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength,
+                                              vsLrp.Y + m_textNumberHeight)); m_vs10->setScaleImage(true);
+    m_vs1     = m_gui->addImage(ic::rect<s32>(vsLrp.X + m_textNumberOffsetX + 4*m_textNumberLength,
+                                              vsLrp.Y ,
+                                              vsLrp.X + m_textNumberOffsetX + 5*m_textNumberLength,
+                                              vsLrp.Y + m_textNumberHeight)); m_vs1->setScaleImage(true);
     // Speed unity
     ic::vector2d<s32> wsLastNumberLrp = getLowerRightPoint(m_s1);
     m_textureSpeedU = m_driver->getTexture("data/2d/kmh.png");
@@ -636,19 +611,16 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
         m_compassVGaugeFull->setCompassTexture(m_textureGaugeFullRedH);
 
     // Speed number update
-    m_s10000->setImage(m_numbers[(m_speed / 10000) % 10]);
     m_s1000->setImage(m_numbers[(m_speed / 1000) % 10]);
     m_s100->setImage(m_numbers[(m_speed / 100) % 10]);
     m_s10->setImage(m_numbers[(m_speed / 10) % 10]);
     m_s1->setImage(m_numbers[(m_speed / 1) % 10]);
     // altitude number update
-    m_a10000->setImage(m_numbers[(m_altitude / 10000) % 10]);
     m_a1000->setImage(m_numbers[(m_altitude / 1000) % 10]);
     m_a100->setImage(m_numbers[(m_altitude / 100) % 10]);
     m_a10->setImage(m_numbers[(m_altitude / 10) % 10]);
     m_a1->setImage(m_numbers[(m_altitude / 1) % 10]);
-    // vertical speed number update
-    m_vs10000->setImage(m_numbers[(abs(m_verticalSpeed) / 10000) % 10]);
+    // vertical speed number updateqqqqqqqqqqqqqqq
     m_vs1000->setImage(m_numbers[(abs(m_verticalSpeed) / 1000) % 10]);
     m_vs100->setImage(m_numbers[(abs(m_verticalSpeed) / 100) % 10]);
     m_vs10->setImage(m_numbers[(abs(m_verticalSpeed) / 10) % 10]);

@@ -4,6 +4,7 @@
 #define WATER
 
 #include "irrlicht.h"
+#include "iostream"
 
 
 class Water
@@ -16,7 +17,7 @@ public:
      * params:   irr::scene::ISceneManager*: the application scene manager
      *           irr::video::ITexture: the path to the water texture
     */
-    Water(irr::scene::ISceneManager*, irr::video::ITexture *);
+    Water(irr::scene::ISceneManager*, irr::video::ITexture *textureWater1, irr::video::ITexture *textureWater2);
     ~Water(){}
 
     /************************************************************************************/
@@ -40,7 +41,8 @@ private:
     /******************************** Attributes ****************************************/
     /************************************************************************************/
     irr::scene::ISceneManager* m_smgr;
-    irr::video::ITexture *m_textureWater;
+    irr::video::ITexture *m_textureWater1;
+    irr::video::ITexture *m_textureWater2;
 
     irr::core::vector3df m_position;
     double m_waveLength;
