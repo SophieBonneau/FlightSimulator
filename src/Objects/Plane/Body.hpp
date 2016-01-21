@@ -7,16 +7,15 @@
 #include "PlaneElement.hpp"
 #include "iostream"
 
-/* Class Body: Herit from the PLane element class. Manage the body of the plane has an irrlicht node.
+/* Class Body: inherits from the PLaneElement class. Manage the body of the plane has an irrlicht node.
 */
-
 class Body : public PlaneElement
 {
 public:
     /************************************************************************************/
     /******************************** Constructors **************************************/
     /************************************************************************************/
-    /* Constructor Body: Initialize all global attributes of the classe and the specified parameters:
+    /* Constructor Body: Initialize all global attributes of the class and the specified parameters:
      *                      scale, initial position of the mesh.
      * params:   irr::scene::ISceneManager*: the application scene manager
                  irr::scene::ISceneNode *: the general parent used for the global intern rotation of the plane

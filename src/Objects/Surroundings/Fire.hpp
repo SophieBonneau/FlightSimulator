@@ -6,27 +6,58 @@
 #include "irrlicht.h"
 #include "iostream"
 
-
+/* Class Fire: Manage the fire objects characteristcs
+*/
 class Fire
 {
 public:
-    // Constructor
+    /************************************************************************************/
+    /******************************** Constructors **************************************/
+    /************************************************************************************/
+    /* Constructor Fire: Initialize all global attributes of the class and the particule emmiter characteristics
+     * params:   irr::scene::ISceneManager*: the application scene manager
+                 irr::video::ITexture *: the fire particules texture
+    */
     Fire(irr::scene::ISceneManager*, irr::video::ITexture *textureFire);
-    // Destructor
+
     ~Fire(){}
 
-    // Setters and getters
+    /************************************************************************************/
+    /******************************** Getters & setters *********************************/
+    /************************************************************************************/
+
+
     void setPosition(const irr::core::vector3df& position){m_position = position;}
+
+    /* float getPosition: getter for the emitter box position
+    * return:  irr::core::vector3df: the emitter box position
+    */
     irr::core::vector3df& getPosition() const;
 
+    /* float getPs: getter for the particule system node
+    * return:  irr::scene::IParticleSystemSceneNode*: the particule system node
+    */
     irr::scene::IParticleSystemSceneNode* getPs(){return ps;}
+
+    /* float getEm: getter for the emitter box
+    * return:  irr::scene::IParticleEmitter*: the particule emitter
+    */
     irr::scene::IParticleEmitter* getEm(){return em;}
 
-    // To initialize mesh and node
+    /************************************************************************************/
+    /******************************** Functions *****************************************/
+    /************************************************************************************/
+    /* void initialize: initialize the fire emitter box and the particle system
+    */
     void initialize();
 
 
 private:
+
+    /************************************************************************************/
+    /******************************** Attributes ****************************************/
+    /************************************************************************************/
+
     irr::scene::ISceneManager* m_smgr = nullptr;
     irr::video::ITexture *m_textureFire = nullptr;
     irr::core::vector3df m_position;

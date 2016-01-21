@@ -14,7 +14,7 @@ public:
     /************************************************************************************/
     /******************************** Constructors **************************************/
     /************************************************************************************/
-    /* Constructor City: Initialize all global attributes of the classe: scale, mesh
+    /* Constructor Landscape: Initialize all global attributes of the classe: scale, mesh
      * params:   irr::scene::ISceneManager*: the application scene manager
      *           irr::io::path meshPath: the path to the map mesh
     */
@@ -34,7 +34,7 @@ public:
     */
     irr::scene::IMeshSceneNode* getNode() const     {   return m_node; }
 
-    /* irr::scene::IMesh* getMesh: get the landscape mesh of the landscape for irrlicht purpose
+    /* irr::scene::IMesh* getMesh: get the mesh of the landscape for irrlicht purpose
      * return:  const irr::scene::IMeshSceneNode*: the landscape mesh
     */
     irr::scene::IMesh* getMesh() const      {   return m_mesh; }
