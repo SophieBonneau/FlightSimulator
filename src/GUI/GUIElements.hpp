@@ -11,68 +11,111 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-
+/* Class GUIElements: Class which manages the GUI elements displaying
+*/
 class GUIElements
 {
 public:
-    // Constructor
-    GUIElements();
-    // Destructor
+
+    /************************************************************************************/
+    /******************************** Constructor **************************************/
+    /************************************************************************************/
+    /* Constructor GUIELements: Initialize all global attributes of the class
+     * param:   IrrlichtDevice* device: the scene device
+    */
+    GUIElements(IrrlichtDevice* device);
     ~GUIElements();
 
-    // Initialize 2D elements
-    // ! We must have called setDevice first !
-    bool initialize2DElements();
-    // Update 2D elements
-    // ! We must have called setDevice first !
-    std::vector<CGUICompass*> update2DElements();
 
-    // Setters and getters
-    void setDevice(IrrlichtDevice*);
+    /************************************************************************************/
+    /******************************** Getters & setters *********************************/
+    /************************************************************************************/
+    /* void setSpeed: set the plane speed
+     * param:  const float: the plane speed
+    */
     void setSpeed(const float speed){     m_speed = speed;    }
+    /* void setAltitude: set the plane altitude
+     * param:  const float: the plane altitude
+    */
     void setAltitude(const float altitude){     m_altitude = altitude;    }
+    /* void setVerticalSpeed: set the plane vertical speed
+     * param:  const float: the plane vertical speed
+    */
     void setVerticalSpeed(const float verticalSpeed){     m_verticalSpeed = verticalSpeed;    }
-    void setStall(const bool stall)
-    {
-        m_stall = stall;
-        if(m_stall == true && m_almostStall == true )
-        {
-            m_almostStall = false;
-        }
-        else if (m_stall == false)
-        {
-            m_planeRed = false;
-        }
-    }
-    void setAlmostStall(const bool almostStall){
-        m_almostStall = almostStall;
-        if(m_almostStall == true && m_stall == true)
-        {
-            m_stall = false;
-        }
-        else if (m_almostStall == false)
-        {
-            m_planeOrange = false;
-        }
-    }
-    void setGaugeHPercentage(const float gaugeHPercentage){     m_gaugeHPercentage = gaugeHPercentage;    }
-    void setGaugeVSlope(const float gaugeVSlope){     m_gaugeVSlope = gaugeVSlope;    }
+    /* void setGaugeHPercentage: set the percentage of the fuel gauge (between 0 and 100
+     * param:  const float: percentage of fuel gauge
+    */
+    void setGaugeHPercentage(const float gaugeHPercentage){
+        if(gaugeHPercentage >100 || gaugeHPercentage < 0) { std::cout<<"Error, gaugeHPercentage must be between 0 and 100"<<std::endl;}
+        m_gaugeHPercentage = gaugeHPercentage;    }
+    /* void setGaugeVSlope: set the value between -1 and 1 giving information about the plane vertical slope
+     * param:  const float: vertical slope
+    */
+    void setGaugeVSlope(const float gaugeVSlope){
+        if(gaugeVSlope >1 || gaugeVSlope < -1) { std::cout<<"Error, gaugeVSlope must be between -1 and 1"<<std::endl;}
+        m_gaugeVSlope = gaugeVSlope;    }
+    /* void setOrientation: set plane orientation angle value
+     * param:  const float: orientation angle
+    */
     void setOrientation(const int orientation){     m_orientation = orientation;    }
+    /* void setStall: set the stall state value
+     * param:  const float: stall state
+    */
+    void setStall(const bool stall);
+    /* void setStall: set the stall limit state value
+     * param:  const float: stall limit state
+    */
+    void setAlmostStall(const bool almostStall);
+
+    /************************************************************************************/
+    /******************************** Public functions *********************************/
+    /************************************************************************************/
+    /* void initialize2DElements:  Initialization of GUI elements
+    */
+    void initialize2DElements();
+
+    /* std::vector<CGUICompass*> update2DElements(): update the GUI elements in terms of positioning and scaling
+     * and according to the current simulation parameters
+    */
+    std::vector<CGUICompass*> update2DElements();
 
 private:
 
-    // To compute the horzontal and vertical gaugue offset to fill them
+    /************************************************************************************/
+    /******************************** Private functions *********************************/
+    /************************************************************************************/
+    /* void computeHorizontalGaugeOffset: Compute the horizontal gaugue offset to fill it
+     * */
     void computeHorizontalGaugeOffset(int&, int, int);
+
+    /* void computeVerticalGaugeOffset: Compute the vertical gaugue offset to fill it
+     * */
     void computeVerticalGaugeOffset(int&, double, int);
-    // To get the upper left point of an image
+
+    /* void getUpperLeftPoint: To fetch the upper left point of an image
+     * */
     ic::vector2d<s32> getUpperLeftPoint(ig::IGUIImage* image);
-    // To get the upper right point of an image
+
+    /* void getLowerRightPoint: To fetch the lower right point of an image
+     * */
     ic::vector2d<s32> getLowerRightPoint(ig::IGUIImage* image);
-    // To update element dimensions when the ow is resized
+
+    /* void updateDimensions: To update element dimensions according to the window size
+     * */
     void updateDimensions();
-    // To update element positions when the window has been resized and the dimensions recomputed
+
+    /* void updatePositions: To update element positions when the window has been resized and the dimensions recomputed
+     * */
     void updatePositions();
 
+    /* void updateNumbersDisplayed: To update the numbers displayed according to the simulation parameters values
+     * */
+    void updateNumbersDisplayed();
+
+
+    /************************************************************************************/
+    /******************************** Attributes ****************************************/
+    /************************************************************************************/
 
     is::ISceneManager *m_smgr = nullptr;
     iv::IVideoDriver *m_driver = nullptr;
@@ -91,10 +134,9 @@ private:
     double m_gaugeVSlope;
     int m_orientation;
 
-    // Window size
+    // To register the precedent windiw size in order to know if the 2D elements need to be rescaled
     ic::dimension2d<u32> m_precedentWindowSize = ic::dimension2d<u32>(0.0, 0.0);
 
-    // Display elements
     // Textures
     iv::ITexture *m_textureCompass = nullptr;
     iv::ITexture *m_textureLevel = nullptr;
@@ -188,7 +230,7 @@ private:
     int m_fuelHeight;
     int m_fuelWidth;
 
-    // Elements blinking
+    // Blinking elements
     bool m_planeRed;
     bool m_planeOrange;
 

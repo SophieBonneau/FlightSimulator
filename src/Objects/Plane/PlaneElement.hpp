@@ -6,16 +6,16 @@
 #include "irrlicht.h"
 
 
-/* Class PlaneElement: Generic classe which is by each element of the plane. Each one of them
- * has the same kind of behaviour, permit to ease the code.
+/* Class PlaneElement: Generic class which defines an element of the plane. Each of them
+ * having the same behaviour, this class aims to ease the code.
 */
 class PlaneElement
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor EventReceiver: Initialize all global attributes of the classe
+    /* Constructor EventReceiver: Initialize all global attributes of the class
      * params:   irr::scene::ISceneManager* smgr: the application scene manager
                  irr::scene::ISceneNode *parentRotationNode: the general parent used for the global intern rotation of the plane
                  irr::io::path meshPath: the path to the specified plane element mesh
@@ -48,7 +48,7 @@ public:
     /************************************************************************************/
     /******************************** Public functions *********************************/
     /************************************************************************************/
-    /* virtual void initialize:  Initialization of the node and mesh of the child classe.
+    /* void initialize:  Initialization of the node and mesh
     */
     void initialize()
     {

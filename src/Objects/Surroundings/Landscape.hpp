@@ -6,6 +6,8 @@
 #include "irrlicht.h"
 #include "iostream"
 
+/* Class Landscape: Class which manages the landscape objects
+*/
 class Landscape
 {
 public:
