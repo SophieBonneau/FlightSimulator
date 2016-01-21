@@ -575,13 +575,6 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     // Update the compass orientation
     m_compassCompass->setCompassHeading(m_orientation);
 
-    // Update 2D plane texture
-    if(m_planeRed == true)
-        m_compassPlane->setCompassTexture(m_texturePlaneRed);
-    else if(m_planeOrange == true)
-        m_compassPlane->setCompassTexture(m_texturePlaneOrange);
-    else
-        m_compassPlane->setCompassTexture(m_texturePlane);
 
     // Adapt the rendering if the plane is going up or down
     if(m_verticalSpeed <0)
@@ -627,6 +620,8 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     m_vs1->setImage(m_numbers[(abs(m_verticalSpeed) / 1) % 10]);
 
     // Update blinking elements
+    std::cout<<"Stall = "<<m_stall<<std::endl;
+    std::cout<<"Almost stall = "<<m_almostStall<<std::endl;
     if(m_stall == true && m_timer%20==0)
     {
         m_planeRed = !m_planeRed;
@@ -635,6 +630,17 @@ std::vector<CGUICompass*> GUIElements::update2DElements()
     {
         m_planeOrange = !m_planeOrange;
     }
+
+    std::cout<<"m_planeRed = "<<m_planeRed<<std::endl;
+    std::cout<<"m_planeOrange = "<<m_planeOrange<<std::endl;
+
+    // Update 2D plane texture
+    if(m_planeRed == true)
+        m_compassPlane->setCompassTexture(m_texturePlaneRed);
+    else if(m_planeOrange == true)
+        m_compassPlane->setCompassTexture(m_texturePlaneOrange);
+    else
+        m_compassPlane->setCompassTexture(m_texturePlane);
 
     // return compasses to render them
     //compasses.push_back(compassLevel);

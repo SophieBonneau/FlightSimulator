@@ -39,12 +39,20 @@ public:
         {
             m_almostStall = false;
         }
+        else if (m_stall == false)
+        {
+            m_planeRed = false;
+        }
     }
     void setAlmostStall(const bool almostStall){
         m_almostStall = almostStall;
         if(m_almostStall == true && m_stall == true)
         {
             m_stall = false;
+        }
+        else if (m_almostStall == false)
+        {
+            m_planeOrange = false;
         }
     }
     void setGaugeHPercentage(const float gaugeHPercentage){     m_gaugeHPercentage = gaugeHPercentage;    }
