@@ -15,8 +15,8 @@ EventReceiver::EventReceiver()
     }
 
     //Init moving plane values
-    m_planeWeight     = m_voidPlaneWeightKg;
-    m_planeSpeed      = 0.0f;
+    m_planeWeight     = m_planeWeightKg;
+    //m_planeSpeed      = 0.0f;
     m_planeSpeedFloor = 0.0f;
     m_planeSpeedSlope = 0.0f;
     m_planeAltitude   = 8.7f;
@@ -35,6 +35,9 @@ EventReceiver::EventReceiver()
     m_inTakeOff  = false;
     m_inFlight   = false;
     m_inLanding  = false;
+
+    //Force
+    m_weightForce = m_planeWeight * m_g;    //N
 
     m_cameraPose = ic::vector3df(0.0,0.0,0.0);
 }
@@ -64,107 +67,116 @@ float EventReceiver::fromKmToMS(float valueToConvert)
     return valueToConvert * 0.277778;
 }
 
+float EventReceiver::fromNToGameUnit(float valueToConvert)
+{
+    return valueToConvert / 3000.0f;
+}
+
 void EventReceiver::computeTemperatureFromTheAltitude()
 {
     float currentAltitude = fromGameUnitToM(m_planeAltitude);
     m_currentTemperature = ((m_tempAt0YInK - m_tempAt3000YInK)/(0 - 3000)) * currentAltitude
             + ((0 * m_tempAt0YInK - 3000 * m_tempAt0YInK)/(0 - 3000));
+}
 
-    std::cout<<"temperature: "<<m_currentTemperature<<std::endl;
+void EventReceiver::computeAtmosphericPressure()
+{
+    m_atmosphericPressure = 1013.25 * pow((1 - ((0.0065 * fromGameUnitToM(m_planeAltitude)) / m_currentTemperature)), 5.255);
 }
 
 void EventReceiver::computeAirDensity()
 {
-    float hs = (m_raynoldsNumber * m_currentTemperature) / (m_airMolarMasse * m_g);
-
-    std::cout<<"hs: "<<std::endl;
-    m_currentDensity = m_densityAt0 * exp(-fromGameUnitToM(m_planeAltitude)/hs);
-
-    std::cout<<"density: "<<m_currentDensity<<std::endl;
+    computeAtmosphericPressure();
+    m_currentDensity = (m_atmosphericPressure * m_airMolarMasse) / (m_raynoldsNumber * m_currentTemperature);
 }
 
 void EventReceiver::computeLiftForce(float rotAngle)
 {
+    computeAirDensity();        //If problems: comment
     float cz = - 2 * M_PI * rotAngle;
-    float speed = fromGameUnitToKt(fromKmToMS(m_planeSpeed));
-    m_liftForce = 0.5 * m_currentDensity * m_sizeWings * cz * speed;
-    std::cout<<"Lift Force: "<<m_liftForce<<std::endl;
+    float speed = fromGameUnitToKt(fromKmToMS(m_planeSpeedX));
+    m_liftForce = 0.5 * m_currentDensity * m_sizeWings * cz * speed * speed;
+}
+
+void EventReceiver::computeTractiveForce()
+{
+    computeAirDensity();        //If problems: comment
+    float speed = fromGameUnitToKt(fromKmToMS(m_planeSpeedX));
+    m_tractiveForce = 0.5 * m_currentDensity * m_sizeWings * m_cx * speed * speed;
+}
+
+void EventReceiver::computeSumForce(float rotAngle)
+{
+    computeTemperatureFromTheAltitude();
+    computeLiftForce(rotAngle);
+    computeTractiveForce();
+
+    if(m_onFloor)
+        m_tractiveForce = m_tractiveForce * 100.0f;
+
+    m_sumForceX = m_ledForce - m_tractiveForce + sin(rotAngle * core::DEGTORAD) * m_weightForce;
+    m_sumForceY = m_liftForce - cos(rotAngle * core::DEGTORAD) * m_weightForce;
 }
 
 void EventReceiver::planeOnFloor(is::ISceneNode *node)
 {
     ic::vector3df childRotation = node->getRotation();
 
-    computeTemperatureFromTheAltitude();
-    computeAirDensity();
-    computeLiftForce(childRotation.X);
-    std::cout<<"Weight force : "<<m_weightForce<<std::endl;
-
     if(m_keyIsDown[KEY_UP] == true)
     {
-        if(m_motorPower < m_maxMotorPower)
-            m_motorPower += m_motorStep;
+        if(m_ledForce < m_motorForceMax)
+            m_ledForce += m_motorStep;
     }
     if(m_keyIsDown[KEY_DOWN] == true)
     {
-        if(m_motorPower > m_minMotorPower)
-            m_motorPower -= m_motorStep;
+        if(m_ledForce > m_motorForceMin)
+            m_ledForce -= m_motorStep;
         else
-            m_motorPower = m_minMotorPower;
+            m_ledForce = m_motorForceMin;
     }
 
     //Get the plane up or down
     if(m_keyIsDown[KEY_KEY_Z] == true && !m_isBrakes)
     {
-        if(fromGameUnitToKt(m_planeSpeedFloor) >= 60)
+        if(m_sumForceY > 0)
         {
             m_onFloor   = false;
             m_inTakeOff = true;
         }
-        childRotation.X = 10 * m_altitudeAngleStep;
+        childRotation.X -= 5 * m_altitudeAngleStep;
     }
     if(m_keyIsDown[KEY_KEY_S] == true && !m_isBrakes)
     {
-        if(fromGameUnitToKt(m_planeSpeedFloor) >= 25)
+        if(m_sumForceY < 0)
         {
             m_onFloor   = false;
             m_isCrashed = true;
         }
     }
 
-    float currentRotationAngle = 0.0f;
     //Open the side panels of the plane to turn to the right or the left
-    if(m_planeSpeed != 0)
+    if(m_planeSpeedX != 0)
     {
         if(m_keyIsDown[KEY_KEY_D] == true && !m_isBrakes)
-        {
             m_rotationAngle += 2 * m_rotationAngleStep;
-        }
         if(m_keyIsDown[KEY_KEY_Q] == true && !m_isBrakes)
-        {
             m_rotationAngle -= 2 * m_rotationAngleStep;
-        }
     }
 
     node->setRotation(childRotation);
-;
 
     if(!m_isBrakes)
     {
-        if(m_planeSpeedFloor < m_motorPower / 10.0)
-            m_planeSpeedFloor += 0.2/m_planeWeight * m_motorPower;
-        else if(m_planeSpeedFloor > m_motorPower / 10.0)
-        {
-            if(m_motorPower > m_minMotorPower)
-                m_planeSpeedFloor -= 0.2/m_planeWeight * m_motorPower;
-            else
-                m_planeSpeedFloor -= 0.2/m_planeWeight;
-        }
+        computeSumForce(childRotation.X);
+
+        if(m_ledForce == 0)
+            m_planeSpeedX += 100.0 * fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
         else
-            m_planeSpeedFloor  = m_motorPower;
-        if(m_planeSpeedFloor < 0)
-            m_planeSpeedFloor = 0;
-        m_planeSpeed = m_planeSpeedFloor;
+            m_planeSpeedX += fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
+
+        if(m_planeSpeedX < 0)
+            m_planeSpeedX = 0;
+        m_planeSpeedFloor = m_planeSpeedX;
         m_fuelLiter -= m_motorPower / 200;
     }
 }
@@ -181,37 +193,40 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
     ic::vector3df lefttailRotation  = lefttail_node ->getRotation();
     ic::vector3df righttailRotation = righttail_node->getRotation();
 
-    computeTemperatureFromTheAltitude();
-    computeAirDensity();
-    computeLiftForce(childRotation.X);
-
     if(m_isStalling)
-        m_planeAltitude -= m_stallStep;
+    {
+        computeSumForce(childRotation.X);
+        m_planeAltitude += fromNToGameUnit(m_sumForceY) / m_planeWeight * m_dt;
+    }
     else
     {
         if(m_keyIsDown[KEY_DOWN] == true)
         {
-            if(m_motorPower > m_minMotorPower)
+            if(m_sumForceY < 0)
                 m_isStalling = true;
         }
-
         //Get the plane up or down
         if(m_keyIsDown[KEY_KEY_Z] == true)
         {
-            childRotation.X     -= m_altitudeAngleStep;
-            lefttailRotation.X  -= 0.1;
-            righttailRotation.X -= 0.1;
+            if(m_sumForceY > 0)
+            {
+                childRotation.X     -= m_altitudeAngleStep;
+                lefttailRotation.X  -= 0.1;
+                righttailRotation.X -= 0.1;
+            }
+            else
+                m_isStalling = true;
         }
         if(m_keyIsDown[KEY_KEY_S] == true)
         {
-            if(childRotation.X < 3.0)
-                m_isStalling = true;
-            else
+            if(m_sumForceY > 0)
             {
                 childRotation.X     += m_altitudeAngleStep;
                 lefttailRotation.X  += 0.1;
                 righttailRotation.X += 0.1;
             }
+            else
+                m_isStalling = true;
         }
 
         //Open the side panels of the plane to turn to the right or the left
@@ -242,29 +257,20 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
 
         node->setRotation(childRotation);
 
-        if(m_planeSpeed < m_motorPower / 10.0)
-            m_planeSpeed += 0.2/m_planeWeight * m_motorPower;
-        else if(m_planeSpeed > m_motorPower / 10.0)
-            m_planeSpeed -= 0.2/m_planeWeight * m_motorPower;
-        else
-            m_planeSpeed  = m_motorPower;
+        computeSumForce(childRotation.X);
 
-        if(childRotation.X < 0)
-            m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;
-        else if(childRotation.X == 0)
-            m_planeSpeedSlope = m_planeSpeed;
-        else if(childRotation.X > 0)
-            m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;
+        m_planeSpeedX += fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
+        m_planeSpeedY = fromNToGameUnit(m_sumForceY) / m_planeWeight * m_dt;
 
-        m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
-        m_planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
+        m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedX - sin(childRotation.X * core::DEGTORAD) * m_planeSpeedY;
+        m_planeAltitude  -= (sin(childRotation.X * core::DEGTORAD) * m_planeSpeedX - cos(childRotation.X * core::DEGTORAD) * m_planeSpeedY);
+
+        std::cout<<"                "<<fromGameUnitToKt(m_planeSpeedFloor)<<"     "<<fromGameUnitToM(m_planeAltitude)<<std::endl;
 
         m_rotationAltitude = childRotation.X;
 
         if(m_planeSpeedFloor < m_flatStallSpeed)
-        {
             m_isStalling = true;
-        }
         if(m_planeAltitude > 9.0 + 15)
         {
             m_inTakeOff = false;
@@ -272,7 +278,7 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
         }
 
         //Compute rotation
-        float planeSpeedMByS = fromGameUnitToKt(m_planeSpeed) * 1.852 * 0.277777777778;
+        float planeSpeedMByS = fromGameUnitToKt(m_planeSpeedFloor) * 1.852 * 0.277777777778;
         if(planeSpeedMByS > 0)
             m_rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * m_g / planeSpeedMByS) * core::RADTODEG / 20; // for real values /80
 
@@ -298,18 +304,17 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
     ic::vector3df righttailRotation = righttail_node->getRotation();
 
     //If there is stall speed
-    if((m_stallSpeed < m_planeSpeed && m_stallSpeed * 1.1 > m_planeSpeed
-            && (childRotation.X < -0.1 || childRotation.X > 0.1))
-            || m_planeSpeedFloor > 1.1 * m_flatStallSpeed)
+    if((m_stallSpeed < m_planeSpeedX && m_stallSpeed * 1.1 > m_planeSpeedX)
+            || (m_sumForceX > 0 && m_sumForceX < 100))
         m_isAlmostStalling = true;
     else
         m_isAlmostStalling = false;
-    if((m_stallSpeed > m_planeSpeed
-        && (childRotation.X < -0.1 || childRotation.X > 0.1))
-        || m_flatStallSpeed >= m_planeSpeedFloor)
+
+    if(m_stallSpeed > m_planeSpeedX
+        || m_sumForceX <= 0)
     {
         m_isStalling = true;
-        m_planeAltitude -= m_stallStep * 3;
+        m_planeAltitude += fromNToGameUnit(m_sumForceY) / m_planeWeight * m_dt;
     }
     else
         m_isStalling = false;
@@ -317,13 +322,15 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
     //Increase or decrease the plane speed
     if(m_keyIsDown[KEY_UP] == true && !m_isStalling)
     {
-        if(m_motorPower < m_maxMotorPower)
-            m_motorPower += m_motorStep;
+        if(m_ledForce < m_motorForceMax)
+            m_ledForce += m_motorStep;
     }
     if(m_keyIsDown[KEY_DOWN] == true && !m_isStalling)
     {
-        if(m_motorPower > m_minMotorPower)
-            m_motorPower -= m_motorStep;
+        if(m_ledForce > m_motorForceMin)
+            m_ledForce -= m_motorStep;
+        else
+            m_ledForce = m_motorForceMin;
     }
 
     //Get the plane up or down
@@ -383,28 +390,20 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
 
     node->setRotation(childRotation);
 
-    if(m_planeSpeed < m_motorPower / 5.0)
-        m_planeSpeed += 0.05/m_planeWeight * m_motorPower;
-    else if(m_planeSpeed > m_motorPower / 5.0)
-        m_planeSpeed -= 0.05/m_planeWeight * m_motorPower;
-    else
-        m_planeSpeed  = m_motorPower;
+    float currentSum = m_sumForceX;
+    computeSumForce(childRotation.X);
 
-    if(childRotation.X < 0)
-        m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;
-    else if(childRotation.X == 0)
-        m_planeSpeedSlope = m_planeSpeed;
-    else if(childRotation.X > 0)
-        m_planeSpeedSlope = (1 + childRotation.X / 90) * m_planeSpeed;
+    m_planeSpeedX += fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
+    m_planeSpeedY = fromNToGameUnit(m_sumForceY) / m_planeWeight * m_dt;
 
-    m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
+    m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedX - sin(childRotation.X * core::DEGTORAD) * m_planeSpeedY;
     if(!m_isStalling)
-        m_planeAltitude  -= sin(childRotation.X * core::DEGTORAD) * m_planeSpeedSlope;
+        m_planeAltitude  -= (sin(childRotation.X * core::DEGTORAD) * m_planeSpeedX - cos(childRotation.X * core::DEGTORAD) * m_planeSpeedY);
 
     m_rotationAltitude = childRotation.X;
 
     //Compute rotation
-    float planeSpeedMByS = fromGameUnitToKt(m_planeSpeed) * 1.852 * 0.277777777778;
+    float planeSpeedMByS = fromGameUnitToKt(m_planeSpeedX) * 1.852 * 0.277777777778;
     if(planeSpeedMByS > 0)
         m_rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * m_g / planeSpeedMByS) * core::RADTODEG / 20; // for real values /80
 
@@ -420,28 +419,72 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
     righttail_node  ->setRotation(righttailRotation);
 }
 
-void EventReceiver::planeInLanding(is::ISceneNode *node)
+void EventReceiver::planeInLanding(is::ISceneNode *node, is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node)
 {
-    ic::vector3df childRotation = node->getRotation();
+    ic::vector3df childRotation     = node          ->getRotation();
+    ic::vector3df lefttailRotation  = lefttail_node ->getRotation();
+    ic::vector3df righttailRotation = righttail_node->getRotation();
 
-    if(m_keyIsDown[KEY_UP] == true)
+    //Increase or decrease the plane speed
+    if(m_keyIsDown[KEY_UP] == true && !m_isStalling)
     {
+        if(m_ledForce < m_motorForceMax)
+            m_ledForce += m_motorStep;
     }
-    if(m_keyIsDown[KEY_DOWN] == true)
+    if(m_keyIsDown[KEY_DOWN] == true && !m_isStalling)
     {
+        if(m_ledForce > m_motorForceMin)
+            m_ledForce -= m_motorStep;
+        else
+            m_ledForce = m_motorForceMin;
     }
 
+    //Get the plane up or down
     if(m_keyIsDown[KEY_KEY_Z] == true)
+    {
+        childRotation.X     -= m_altitudeAngleStep;
+        lefttailRotation.X  -= 0.1;
+        righttailRotation.X -= 0.1;
+    }
     if(m_keyIsDown[KEY_KEY_S] == true)
     {
+        childRotation.X     += m_altitudeAngleStep;
+        lefttailRotation.X  += 0.1;
+        righttailRotation.X += 0.1;
     }
 
-    if(m_keyIsDown[KEY_KEY_D] == true)
+    //Open the side panels of the plane to turn to the right or the left
+    if(m_keyIsDown[KEY_KEY_D] == true && !m_isStalling)
     {
+        //If the plane is flat (not in the wrong inclinaison)
+        if(childRotation.Z <= 0)
+            childRotation.Z     -= m_rotationAngleStep;
+        else
+            childRotation.Z     -= 2 * m_rotationAngleStep;
     }
-    if(m_keyIsDown[KEY_KEY_Q] == true)
+    if(m_keyIsDown[KEY_KEY_Q] == true && !m_isStalling)
     {
+        if(childRotation.Z >= 0)
+            childRotation.Z     += m_rotationAngleStep;
+        else
+            childRotation.Z     += 2 * m_rotationAngleStep;
     }
+
+    node->setRotation(childRotation);
+
+    computeSumForce(childRotation.X);
+
+    m_planeSpeedX += fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
+    m_planeSpeedY = fromNToGameUnit(m_sumForceY) / m_planeWeight * m_dt;
+
+    m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedX - sin(childRotation.X * core::DEGTORAD) * m_planeSpeedY;
+    m_planeAltitude  -= (sin(childRotation.X * core::DEGTORAD) * m_planeSpeedX - cos(childRotation.X * core::DEGTORAD) * m_planeSpeedY);
+
+    m_rotationAltitude = childRotation.X;
+
+    node            ->setRotation(childRotation);
+    lefttail_node   ->setRotation(lefttailRotation);
+    righttail_node  ->setRotation(righttailRotation);
 }
 
 void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode)

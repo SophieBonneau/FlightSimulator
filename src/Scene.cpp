@@ -136,9 +136,9 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
     {
         animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
                                                      m_parentNode,  //Node
-                                                     ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
+                                                     ic::vector3df(2.8, 2.0, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
                                                      ic::vector3df(0, -1.0, 0),       // Gravity
-                                                     ic::vector3df(0.0,0.5,0));      // Gap with the center
+                                                     ic::vector3df(0.0,0.0,0));      // Gap with the center
     }
     else
     {
@@ -183,6 +183,21 @@ void Scene::render()
     {
         m_receiver->setIsCrashed(true);
         m_animCollision = m_animCollisionCity;
+    }
+    else if(m_animCollisionRunway2->collisionOccurred())
+    {
+        if(m_receiver->getInFlight())
+        {
+            core::vector3df rotation = m_screw->getNode()->getRotation();
+            std::cout<<"rotation.X "<<rotation.X<<std::endl;
+            if(rotation.X < 3.0)
+                m_receiver->setIsLanding(true);
+        }
+        else if (!m_receiver->getOnFloor())
+        {
+            m_receiver->setIsCrashed(true);
+            m_animCollision = m_animCollisionCity;
+        }
     }
     if(m_receiver->getIsCrashed() && m_animCollisionCity->collisionOccurred())
     {
@@ -247,16 +262,8 @@ void Scene::render()
     }
     else if(m_receiver->getInLanding())
     {
-        m_receiver->planeInLanding(m_parentRotationNode);
-    }
-
-    if(m_receiver->getIsAlmostStalling())
-    {
-        //std::cout<<"TD : the plane is about to stall"<<std::endl;
-    }
-    if(m_receiver->getIsStalling())
-    {
-        //std::cout<<"TD : the plane is stalling"<<std::endl;
+        std::cout<<"In landing"<<std::endl;
+        m_receiver->planeInLanding(m_parentRotationNode, m_leftTail->getNode(), m_rightTail->getNode());
     }
 
     m_parentNode->setRotation(rotation);
