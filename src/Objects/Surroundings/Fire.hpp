@@ -14,7 +14,7 @@ public:
     /************************************************************************************/
     /******************************** Constructors **************************************/
     /************************************************************************************/
-    /* Constructor Fire: Initialize all global attributes of the class and the particule emmiter characteristics
+    /* Constructor Fire: Initialize the global attributes and the particule emmiter characteristics
      * params:   irr::scene::ISceneManager*: the application scene manager
                  irr::video::ITexture *: the fire particules texture
     */

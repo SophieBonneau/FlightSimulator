@@ -15,7 +15,7 @@ public:
     /************************************************************************************/
     /******************************** Constructors **************************************/
     /************************************************************************************/
-    /* Constructor Body: Initialize all global attributes of the class and the specified parameters:
+    /* Constructor Body: Initialize the global attributes and the specified parameters:
      *                      scale, initial position of the mesh.
      * params:   irr::scene::ISceneManager*: the application scene manager
                  irr::scene::ISceneNode *: the general parent used for the global intern rotation of the plane

@@ -7,15 +7,15 @@
 #include "PlaneElement.hpp"
 #include "iostream"
 
-
+/* Class Tail: inherits from the PLaneElement class. Manage the tail of the plane has an irrlicht node.
+*/
 class Tail : public PlaneElement
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor Tail: Initialize all global attributes of the classe. It also update specified tail attributs:
-     *                      scale, initial position of the mesh.
+    /* Constructor Tail: Initialize the global attributes
      * params:   irr::scene::ISceneManager* smgr: the application scene manager
                  irr::scene::ISceneNode *parentRotationNode: the general parent used for the global intern rotation of the plane
                  irr::io::path meshPath: the path to the tail mesh

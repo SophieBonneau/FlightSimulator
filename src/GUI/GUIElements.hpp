@@ -20,7 +20,7 @@ public:
     /************************************************************************************/
     /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor GUIELements: Initialize all global attributes of the class
+    /* Constructor GUIELements: Initialize the global attributes
      * param:   IrrlichtDevice* device: the scene device
     */
     GUIElements(IrrlichtDevice* device);

@@ -6,14 +6,15 @@
 #include "irrlicht.h"
 #include "iostream"
 
-
+/* Class Water: Manage the water plane object characteristcs of wave, tile, hills and texture
+*/
 class Water
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor Water: Initialize all global attributes of the classe: scale, mesh, size of waves
+    /* Constructor Water: Initialize the global attributes: scale, mesh, size of waves
      * params:   irr::scene::ISceneManager*: the application scene manager
      *           irr::video::ITexture: the path to the water texture
     */

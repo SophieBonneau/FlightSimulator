@@ -12,9 +12,9 @@ class Landscape
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor Landscape: Initialize all global attributes of the classe: scale, mesh
+    /* Constructor Landscape: Initialize the global attributes: scale, mesh
      * params:   irr::scene::ISceneManager*: the application scene manager
      *           irr::io::path meshPath: the path to the map mesh
     */

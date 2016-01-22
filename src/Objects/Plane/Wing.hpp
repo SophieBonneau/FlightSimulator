@@ -7,15 +7,15 @@
 #include "PlaneElement.hpp"
 #include "iostream"
 
-
+/* Class Wing: inherits from the PLaneElement class. Manage the wing of the plane has an irrlicht node.
+*/
 class Wing : public PlaneElement
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor Wing: Initialize all global attributes of the classe. It also update specified wings attributs:
-     *                      scale, initial position of the mesh.
+    /* Constructor Wing: Initialize the global attributes
      * params:   irr::scene::ISceneManager* smgr: the application scene manager
                  irr::scene::ISceneNode *parentRotationNode: the general parent used for the global intern rotation of the plane
                  irr::io::path meshPath: the path to the wing mesh

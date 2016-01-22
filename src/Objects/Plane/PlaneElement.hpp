@@ -15,7 +15,7 @@ public:
     /************************************************************************************/
     /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor EventReceiver: Initialize all global attributes of the class
+    /* Constructor EventReceiver: Initialize the global attributes
      * params:   irr::scene::ISceneManager* smgr: the application scene manager
                  irr::scene::ISceneNode *parentRotationNode: the general parent used for the global intern rotation of the plane
                  irr::io::path meshPath: the path to the specified plane element mesh

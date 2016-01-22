@@ -2,7 +2,6 @@
 
 
 namespace ic = irr::core;
-namespace iv = irr::video;
 namespace is = irr::scene;
 
 Body::Body(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath):

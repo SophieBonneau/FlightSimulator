@@ -17,13 +17,16 @@
 #include "Objects/Plane/Tail.hpp"
 
 class GUIElements;
+/* Class Scene: manage the objects, the Irrlicht rendering objects and the event objects creation,
+ * the rendering of the scene and the collision management between the plane and surroundings
+*/
 class Scene
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor Scene: Initialize all global attributes of the classe: display values, plane attributes
+    /* Constructor Scene: Initialize the global attributes
     */
     Scene();
     ~Scene()
@@ -53,7 +56,7 @@ public:
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
-    /* void initializeIrrlicht: function to initilize Irrlicht object
+    /* void initializeIrrlicht: function to initialize Irrlicht object
     */
     void initializeIrrlicht();
 
@@ -61,23 +64,30 @@ public:
     */
     void initializeData();
 
-    /* void render:  Global function used to render the application : gui, plane and surrondings
+    /* void render:  Global function used to render the application : gui, plane and surroundings
     */
     void render();
 
 private:
-    /* void manageCollisionsWithSurroundings: Manage the collision between the plane and all the surondings
+    /* void manageCollisionsWithSurroundings: Manage the collision between the plane and surroundings, taking gravity into account or not
     */
     irr::scene::ISceneNodeAnimatorCollisionResponse* manageCollisionsWithSurroundings(Landscape *building, bool gravity);
 
-    /* void initializeObjects: Initialize all meshs used, except the water: the plane, the landscape
+    /* void initializeObjects: Initialize all meshs used
     */
     void initializeObjects();
 
-    /* void initializeGui: Initialize all object of the gui
+    /* void initializeGui: Initialize every gui objects
     */
     void initializeGui();
 
+    /* void updateGui: make the m_guiManager update the GUI objects according to the current simulation characteristics
+    */
+    void updateGui();
+
+    /************************************************************************************/
+    /******************************** Attributes ****************************************/
+    /************************************************************************************/
     // Render objects
     irr::IrrlichtDevice *m_device = nullptr;
     irr::scene::ISceneManager* m_smgr = nullptr;

@@ -55,7 +55,6 @@ void Scene::initializeObjects()
     m_parentRotationNode = m_smgr->addEmptySceneNode();
     m_parentRotationNode->setParent(m_parentNode);
 
-
     //Init the plane
     m_body = new Body(m_smgr, m_parentRotationNode, "data/plane/plane.obj");
     m_body->initialize();
@@ -152,7 +151,7 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
     return animCollision;
 }
 
-void Scene::render()
+void Scene::updateGui()
 {
     // Link simulation values to GUI
     m_guiManager->setAltitude(m_receiver->getAltitudeM());
@@ -166,6 +165,12 @@ void Scene::render()
 
     //Update GUI elements
     m_compasses = m_guiManager->update2DElements();
+}
+
+void Scene::render()
+{
+    // GUI update
+    updateGui();
 
     ic::vector3df firePosition = ic::vector3df(0.0,-0.1,3.);
     m_fire->getPs()->setPosition(m_parentNode->getPosition() + firePosition); //position of the fire particules

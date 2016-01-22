@@ -14,8 +14,10 @@ class EventReceiver : public irr::IEventReceiver
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
+    /* Constructor EventReceiver: Initialize the global attributes of the class
+    */
     EventReceiver();
 
     ~EventReceiver(){}
@@ -48,7 +50,7 @@ public:
     * return:  vertical speed in m/s
     */
     float getAltitudeSpeed(){   if(!m_isStalling)
-                                    return -fromGameUnitToKt(fromKtToKmH(fromKmToMS(sin(m_rotationAltitude * core::DEGTORAD) * m_planeSpeedX - cos(m_rotationAltitude * core::DEGTORAD) * m_planeSpeedY)));
+                                    return -fromGameUnitToKt(fromKtToKmH(fromKmToMS(sin(m_rotationAltitude * irr::core::DEGTORAD) * m_planeSpeedX - cos(m_rotationAltitude * irr::core::DEGTORAD) * m_planeSpeedY)));
                                 return -1.0f;}
 
     /* float getSlopePercent: getter for the plane slope percentage
@@ -176,7 +178,7 @@ public:
      *                       This phase occurs between 0 and 15 meters of altitude
      * params:  is::ISceneNode *node:   Instance of the global plane node
     */
-    void planeInLanding(irr::scene::ISceneNode *node, scene::IMeshSceneNode *lefttail_node, scene::IMeshSceneNode *righttail_node);
+    void planeInLanding(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node);
 
     /* void changeCameraPose:  Change the position of the camera
      * params:  is::ICameraSceneNode *cameraNode:   Instance of the camera node

@@ -3,7 +3,6 @@
 using namespace irr;
 namespace ic = irr::core;
 namespace is = irr::scene;
-namespace ig = irr::gui;
 
 EventReceiver::EventReceiver()
 {

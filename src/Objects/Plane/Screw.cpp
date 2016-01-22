@@ -1,9 +1,7 @@
 #include "Screw.hpp"
 
 namespace ic = irr::core;
-namespace iv = irr::video;
 namespace is = irr::scene;
-namespace io = irr::io;
 
 Screw::Screw(is::ISceneManager* smgr, is::ISceneNode *parentRotationNode, irr::io::path meshPath):
     PlaneElement(smgr, parentRotationNode, meshPath)
