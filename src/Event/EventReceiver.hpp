@@ -30,15 +30,17 @@ public:
     /* float getAltitude: getter for the altitude value
      * return:  planeAltitude: the altitude value
     */
-    float getSpeed(){       return m_planeSpeedFloor;   }
+    float getFloorSpeed(){       return fromMStoGameUnit(m_planeFloorSpeed);   }
 
-    float getSpeedKmH(){    return fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor));      }
+    float getAltitudeSpeed(){    return fromMStoGameUnit(m_planeAltitudeSpeed);   }
 
-    float getAltitudeM(){   return fromGameUnitToM(m_planeAltitude);    }
+    float getSpeedKmH(){    return fromMSToKmH(m_planeFloorSpeed);      }
 
-    float getAltitudeSpeed(){   if(!m_isStalling)
+    float getAltitudeM(){   return fromGameUnitToM(m_planeAltitudeSpeed);    }
+
+    /*float getAltitudeSpeed(){   if(!m_isStalling)
                                     return -fromGameUnitToKt(fromKtToKmH(fromKmToMS(sin(m_rotationAltitude * core::DEGTORAD) * m_planeSpeedX - cos(m_rotationAltitude * core::DEGTORAD) * m_planeSpeedY)));
-                                return -1.0f;}
+                                return -1.0f;}*/
 
     float getSlopePercent() {   return -m_rotationAltitude / 90;    }
 
@@ -123,7 +125,9 @@ public:
     float fromKtToKmH(float valueToConvert);
     float fromGameUnitToM(float valueToConvert);
     float fromKmToMS(float valueToConvert);
+    float fromMSToKmH(float valueToConvert);
     float fromNToGameUnit(float valueToConvert);
+    float fromMStoGameUnit(float valueToConvert);
 
     void computeTemperatureFromTheAltitude();
     void computeAtmosphericPressure();
@@ -187,16 +191,59 @@ private:
     //Table to get the state of the keys
     bool m_keyIsDown[irr::KEY_KEY_CODES_COUNT];
 
+    //Init air density (depend of the altitude)
+    // Normalized atmosphere
+    // Temperature
+    const float m_tempAt0Y      = 15.0f;                  //°C
+    const float m_tempAt3000Y   = -4.5f;                  //°C
+    const float m_tempAt0YInK   = m_tempAt0Y + 273.15f;   //K
+    const float m_tempAt3000YInK        = m_tempAt3000Y + 273.15f; //K
+    float       m_currentTemperature    = m_tempAt0YInK;  //K
+
+    // Pressure
+    const float m_pressureAt0 = 10132.5f;   //P
+    float       m_atmosphericPressure = m_pressureAt0;  //P
+
+    //Air density
+    const float m_reynoldsNumber = 8.31432f;        //J/molK
+    const float m_airMolarMasse  = 28.965f * 0.01f; //kg/mol
+    const float m_densityAt0     = 1.184f;           //kg/m3
+    float       m_currentDensity = m_densityAt0;    //kg/m3
+
+    //Parameters force
+    const float m_sizeWings = 16.16f;   //m^2
+    const float m_cx = 0.0075f; //No unit
+    const float m_cz = 0.5f;    //No Unit
+    const float m_dt = 0.1;     //s
+    const float m_planeWeightKg = 953.0f;   //Kg
+    const float m_g  = 9.81f;    //m.s-2
+    const float m_frictionCoeff = 1.0f; //No Unit
+
+    //Forces
+    float m_liftForce       = 0.0f;   //N
+    float m_weightForce     = 0.0f;   //N
+    float m_ledForce        = 0.0f;   //N
+    float m_tractiveForce   = 0.0f;   //N
+
+    //Sum forces
+    float m_sumForceX = 0.0f;   //N
+    float m_sumForceY = 0.0f;   //N
+    float m_sumForce  = 0.0f;   //N
+
+    //Speed
+    irr::core::vector3df m_planeSpeed = irr::core::vector3df(0.0f,0.0f, 0.0f);   //m/s
+
+    float m_planeFloorSpeed = 0.0f;
+    float m_planeAltitudeSpeed = 0.0f;
+
     //Init steps
+    const float m_wingsRotationStep = 0.1f;
     const float m_speedStep         = 0.005f;
     const float m_motorStep         = 10.0f;
     const float m_altitudeAngleStep = 0.05f;
     const float m_rotationAngleStep = 0.1f;
 
     //Init plane constructor parameters
-    const float m_planeWeightKg = 953.0f;     //Fuel included
-    const float m_g = 9.81f;  //m.s-2
-
     const float m_minPlaneSpeedKt  = 0.0f;    //Kt
     const float m_maxPlaneSpeedKt  = 158.0f;  //Kt
     const float m_flatStallSpeedKt = 44.0f;   //Kt
@@ -207,45 +254,14 @@ private:
     //const float m_coupleMotorMax = m_motorPowerMax / m_speedMotorMax;   //N.m
 
     const float m_motorForceMin = 0.0f; //N
-    const float m_motorForceMax = 3000.0f;   //N
+    const float m_motorForceMax = 600.0f;   //N
 
     const float m_minMotorPower = 0.0f;
     const float m_maxMotorPower = 2.0f;
 
-    const float m_minPlaneSpeed   = fromKtToGameUnit(m_minPlaneSpeedKt);    //Irrlicht unit
-    const float m_maxPlaneSpeed   = fromKtToGameUnit(m_maxPlaneSpeedKt);    //Irrlicht unit
-    const float m_flatStallSpeed  = fromKtToGameUnit(m_flatStallSpeedKt);   //Irrlicht unit
-
-    //Init air density (depend of the altitude)
-    // Normalized atmosphere
-    const float m_tempAt0Y = 15.0f;     //°C
-    const float m_tempAt3000Y = -4.5f;   //°C
-
-    const float m_tempAt0YInK = m_tempAt0Y + 273.15f;   //K
-    const float m_tempAt3000YInK = m_tempAt3000Y + 273.15f; //K
-    float m_currentTemperature = m_tempAt0YInK;     //K
-
-    const float m_raynoldsNumber = 83.1432f;   //J/kmolK
-    const float m_airMolarMasse = 28.965f;  //g/mol
-
-    const float m_densityAt0 = 1.184;   //kg/m3
-    float m_currentDensity = m_densityAt0;
-    float m_atmosphericPressure = 1013.25;  //hPascal
-
-    const float m_sizeWings = 16.16f;   //m^2
-
-    const float m_cx = 0.0075;  //No unit
-
-    const float m_dt = 0.1;    //s
-
-    float m_liftForce = 0.0f;   //N
-    float m_weightForce;        //N
-    float m_ledForce = 0.0f;    //N
-    float m_tractiveForce = 0.0f;   //N
-
-    float m_sumForceX = 0.0f;   //N
-    float m_sumForceY = 0.0f;   //N
-    float m_sumForce = 0.0f;   //N
+    const float m_minPlaneSpeed   = fromKtToKmH(fromKmToMS(m_minPlaneSpeedKt));    //m/s
+    const float m_maxPlaneSpeed   = fromKtToKmH(fromKmToMS(m_maxPlaneSpeedKt));    //m/s
+    const float m_flatStallSpeed  = fromKtToKmH(fromKmToMS(m_flatStallSpeedKt));   //m/s
 
     //Init plane limits values
     float m_loadFactor = 1.0f;    //No unit
@@ -257,7 +273,7 @@ private:
     float m_planeSpeedX;
     float m_planeSpeedY;
     //float m_planeSpeed;
-    float m_planeSpeedFloor;
+    float m_planeSpeedFloor;    //m/s
     float m_planeSpeedSlope;
     float m_planeAltitude;
     float m_rotationAngle;

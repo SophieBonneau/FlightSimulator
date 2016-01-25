@@ -216,12 +216,14 @@ void Scene::render()
         m_receiver->planeOnFloor(m_parentRotationNode);
 
         rotation.Y      = m_receiver->getRotation();
-        m_planeSpeed      = m_receiver->getSpeed();
-        m_planeAltitude   = m_receiver->getAltitude();
+        m_planeSpeed      = m_receiver->getFloorSpeed();
+        m_planeAltitude   = m_receiver->getAltitudeSpeed();
 
         position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
         position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
-        position.Y = m_planeAltitude;
+        if(position.Y < 5)
+            position.Y = 8.7;
+        position.Y += m_planeAltitude;
 
         if (m_planeSpeed > -0.1 && m_planeSpeed < 50)
             m_screw->setRotationStep(10);
@@ -236,12 +238,14 @@ void Scene::render()
 
         m_screw->updateRotation();
 
-        m_planeSpeed      = m_receiver->getSpeed();
-        m_planeAltitude   = m_receiver->getAltitude();
+        m_planeSpeed      = m_receiver->getFloorSpeed();
+        m_planeAltitude   = m_receiver->getAltitudeSpeed();
 
         position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
         position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
-        position.Y  = m_planeAltitude;
+        position.Y += m_planeAltitude;
+
+        std::cout<<"plaen altitude : "<<position.Y<<std::endl;
     }
     else if(m_receiver->getInFlight())
     {
@@ -253,12 +257,12 @@ void Scene::render()
         m_screw->updateRotation();
 
         rotation.Y      = m_receiver->getRotation();
-        m_planeSpeed      = m_receiver->getSpeed();
-        m_planeAltitude   = m_receiver->getAltitude();
+        m_planeSpeed      = m_receiver->getFloorSpeed();
+        m_planeAltitude   = m_receiver->getAltitudeSpeed();
 
         position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
         position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
-        position.Y  = m_planeAltitude;
+        position.Y += m_planeAltitude;
     }
     else if(m_receiver->getInLanding())
     {
