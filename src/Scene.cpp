@@ -184,8 +184,8 @@ void Scene::render()
         // Update plane rotation
         rotation.Y      = m_receiver->getRotation();
 
-        m_plane->setPlaneSpeed(m_receiver->getSpeed());
-        m_plane->setPlaneAltitude(m_receiver->getAltitude());
+        m_plane->setPlaneSpeed(m_receiver->getFloorSpeed());
+        m_plane->setPlaneAltitude(m_receiver->getAltitudeSpeed());
 
         if (m_plane->getPlaneSpeed() > -0.1 && m_plane->getPlaneSpeed() < 50)
             m_plane->getScrew()->setRotationStep(10);
@@ -200,8 +200,8 @@ void Scene::render()
 
         m_plane->getScrew()->updateRotation();
 
-        m_plane->setPlaneSpeed(m_receiver->getSpeed());
-        m_plane->setPlaneAltitude(m_receiver->getAltitude());
+        m_plane->setPlaneSpeed(m_receiver->getFloorSpeed());
+        m_plane->setPlaneAltitude(m_receiver->getAltitudeSpeed());
     }
     else if(m_receiver->getInFlight())
     {
@@ -215,8 +215,8 @@ void Scene::render()
         // Update plane rotation
         rotation.Y      = m_receiver->getRotation();
 
-        m_plane->setPlaneSpeed(m_receiver->getSpeed());
-        m_plane->setPlaneAltitude(m_receiver->getAltitude());
+        m_plane->setPlaneSpeed(m_receiver->getFloorSpeed());
+        m_plane->setPlaneAltitude(m_receiver->getAltitudeSpeed());
     }
     else if(m_receiver->getInLanding())
     {
