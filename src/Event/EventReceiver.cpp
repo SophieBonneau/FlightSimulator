@@ -170,7 +170,7 @@ void EventReceiver::planeOnFloor(is::ISceneNode *node)
         if(m_ledForce == 0)
             m_planeSpeedX += 100.0 * fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
         else
-            m_planeSpeedX += fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
+            m_planeSpeedX += 100 * fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
 
         if(m_planeSpeedX < 0)
             m_planeSpeedX = 0;

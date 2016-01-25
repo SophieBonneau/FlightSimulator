@@ -8,13 +8,10 @@
 
 #include "Event/EventReceiver.hpp"
 #include "GUI/GUIElements.hpp"
-#include "Objects/Plane/Screw.hpp"
 #include "Objects/Surroundings/Water.hpp"
 #include "Objects/Surroundings/Fire.hpp"
 #include "Objects/Surroundings/Landscape.hpp"
-#include "Objects/Plane/Body.hpp"
-#include "Objects/Plane/Wing.hpp"
-#include "Objects/Plane/Tail.hpp"
+#include "Objects/Plane/Plane.hpp"
 
 class GUIElements;
 /* Class Scene: manage the objects, the Irrlicht rendering objects and the event objects creation,
@@ -31,13 +28,6 @@ public:
     Scene();
     ~Scene()
     {
-        delete m_screw;
-        delete m_leftWing;
-        delete m_rightWing;
-        delete m_middleTail;
-        delete m_leftTail;
-        delete m_rightTail;
-        delete m_body;
         delete m_fire;
         delete m_city;
         delete m_water;
@@ -95,15 +85,7 @@ private:
     GUIElements* m_guiManager = nullptr;
 
     // Scene objects
-    irr::scene::ISceneNode *m_parentNode = nullptr;
-    irr::scene::ISceneNode *m_parentRotationNode = nullptr;
-    Screw* m_screw = nullptr;
-    Wing* m_leftWing = nullptr;
-    Wing* m_rightWing = nullptr;
-    Tail* m_middleTail = nullptr;
-    Tail* m_leftTail = nullptr;
-    Tail* m_rightTail = nullptr;
-    Body* m_body = nullptr;
+    Plane* m_plane = nullptr;
     Fire* m_fire = nullptr;
     Landscape* m_city = nullptr;
     Water* m_water = nullptr;
@@ -130,10 +112,6 @@ private:
     int m_vertical_speed;
     int m_gauge_offset;
     bool m_stall;
-
-    float m_planeSpeed;
-    float m_planeAltitude;
-    float m_rotAngle;
 
     irr::core::vector3df m_cameraPose;
 };
