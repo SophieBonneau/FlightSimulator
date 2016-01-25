@@ -7,15 +7,14 @@ namespace is = irr::scene;
 Plane::Plane(is::ISceneManager* smgr)
     :m_smgr(smgr)
 {
-    //Init the object plane
-    //2 parents: trajectory and rotation
+    //Init parents: trajectory and rotation
     m_parentNode = m_smgr->addEmptySceneNode();
     m_parentNode->setPosition(ic::vector3df(-662.0, 0.0, -124.0));
     m_parentNode->setRotation(ic::vector3df(0.0, 30.0, 0.0));
     m_parentRotationNode = m_smgr->addEmptySceneNode();
     m_parentRotationNode->setParent(m_parentNode);
 
-    //Init the plane
+    //Init the body
     m_body = new Body(m_smgr, m_parentRotationNode, "data/plane/plane.obj");
     m_body->initialize();
 
@@ -45,7 +44,6 @@ Plane::Plane(is::ISceneManager* smgr)
 
     m_planeSpeed    = 0.0f;
     m_planeAltitude = 0.0f;
-    m_rotAngle      = 0.0f;
 
 }
 

@@ -30,12 +30,10 @@ public:
     void setScale(const irr::core::vector3df& scale){   m_scale = scale; }
 
     /* irr::scene::IMeshSceneNode* getNode: get the scene node of the landscape for irrlicht purpose
-     * return:  const irr::scene::IMeshSceneNode*: the landscape node
     */
     irr::scene::IMeshSceneNode* getNode() const     {   return m_node; }
 
     /* irr::scene::IMesh* getMesh: get the mesh of the landscape for irrlicht purpose
-     * return:  const irr::scene::IMeshSceneNode*: the landscape mesh
     */
     irr::scene::IMesh* getMesh() const      {   return m_mesh; }
 

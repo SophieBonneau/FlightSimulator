@@ -26,28 +26,23 @@ public:
     /******************************** Getters & setters *********************************/
     /************************************************************************************/
     /* float getAltitude: getter for the altitude value
-    * return:  planeAltitude: the altitude value
     */
     float getAltitude(){    return m_planeAltitude;     }
 
     /* float getSpeed: getter for the speed value
-    * return:  planeSpeed: the floor speed value
     */
     float getSpeed(){       return m_planeSpeedFloor;   }
 
 
     /* float getSpeedKmH: getter for the speed value in km/h unit
-    * return:  m_planeSpeedFloor in km/h: the speed value in km/h
     */
     float getSpeedKmH(){    return fromKtToKmH(fromGameUnitToKt(m_planeSpeedFloor));      }
 
-    /* float getAltitudeM: getter for the altitude in m
-    * return:  m_planeAltitude in meter : the altitude value in m
+    /* float getAltitudeM: getter for the altitude in meters
     */
     float getAltitudeM(){   return fromGameUnitToM(m_planeAltitude);    }
 
     /* float getAltitudeSpeed: getter for the vertical speed
-    * return:  vertical speed in m/s
     */
     float getAltitudeSpeed(){   if(!m_isStalling)
                                     return -fromGameUnitToKt(fromKtToKmH(fromKmToMS(sin(m_rotationAltitude * irr::core::DEGTORAD) * m_planeSpeedX - cos(m_rotationAltitude * irr::core::DEGTORAD) * m_planeSpeedY)));
@@ -64,42 +59,34 @@ public:
     float getFuelLiter() {   return m_fuelLiter / 152.0f * 100;    }
 
     /* float getRotation: getter for the rotation value (plane go to the left or the right)
-     * return:  rotationAngle: the rotation value
     */
     float getRotation(){    return m_rotationAngle;     }
 
     /* bool getOnFloor: getter for the onFloor boolean value
-     * return:  onFloor: the value define if the plane is on the floor
     */
     bool getOnFloor(){      return m_onFloor;           }
 
     /* bool getInTakeOff: getter for the inTakeOff boolean value
-     * return:  inTakeOff: the value define if the plane is taking off
     */
     bool getInTakeOff(){    return m_inTakeOff;         }
 
     /* bool getInFlight: getter for the inFlight boolean value
-     * return:  inFlight: the value define if the plane is flying
     */
     bool getInFlight(){     return m_inFlight;          }
 
     /* bool getInLanding: getter for the getLanding boolean value
-     * return:  inLanding: the value define if the plane is landing
     */
     bool getInLanding(){    return m_inLanding;         }
 
     /* bool getIsAlmostStalling: getter for the isAlmostStalling boolean value
-     * return:  isAlmostStalling: the value define if the plane is about to stall
     */
     bool getIsAlmostStalling(){   return m_isAlmostStalling;        }
 
     /* bool getIsStalling: getter for the isStalling boolean value
-     * return:  isStalling: the value define if the plane is stalling
     */
     bool getIsStalling(){   return m_isStalling;        }
 
     /* bool getIsCrashed: getter for the isCrashed boolean value
-     * return:  isCrashed: the value define if the plane has crashed
     */
     bool getIsCrashed(){   return m_isCrashed;        }
 

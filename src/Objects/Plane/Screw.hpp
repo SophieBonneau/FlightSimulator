@@ -32,7 +32,6 @@ public:
     void setRotationStep(const double rotationStep){    m_rotationStep = rotationStep;  }
 
     /* float getSpeed: getter for the rotation step used for the speed rotation of the screw
-     * return:  float: the rotation step
     */
     float getRotationStep() const {    return m_rotationStep;  }
 

@@ -29,18 +29,15 @@ public:
 
     void setPosition(const irr::core::vector3df& position){m_position = position;}
 
-    /* float getPosition: getter for the emitter box position
-    * return:  irr::core::vector3df: the emitter box position
+    /* irr::core::vector3df& getPosition: getter for the emitter box position
     */
     irr::core::vector3df& getPosition() const;
 
-    /* float getPs: getter for the particule system node
-    * return:  irr::scene::IParticleSystemSceneNode*: the particule system node
+    /* irr::scene::IParticleSystemSceneNode* getPs: getter for the particule system node
     */
     irr::scene::IParticleSystemSceneNode* getPs(){return ps;}
 
-    /* float getEm: getter for the emitter box
-    * return:  irr::scene::IParticleEmitter*: the particule emitter
+    /* irr::scene::IParticleEmitter* getEm: getter for the emitter box
     */
     irr::scene::IParticleEmitter* getEm(){return em;}
 

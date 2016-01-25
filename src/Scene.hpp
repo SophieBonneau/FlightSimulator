@@ -39,7 +39,6 @@ public:
     /******************************** Getters & setters *********************************/
     /************************************************************************************/
     /* irr::IrrlichtDevice getDevice: get the device from irrlicht for the application
-     * return:  irr::IrrlichtDevice: the irrlicht device
     */
     irr::IrrlichtDevice * getDevice() const {return m_device; }
 
