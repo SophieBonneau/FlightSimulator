@@ -8,33 +8,26 @@
 
 #include "Event/EventReceiver.hpp"
 #include "GUI/GUIElements.hpp"
-#include "Objects/Plane/Screw.hpp"
 #include "Objects/Surroundings/Water.hpp"
 #include "Objects/Surroundings/Fire.hpp"
 #include "Objects/Surroundings/Landscape.hpp"
-#include "Objects/Plane/Body.hpp"
-#include "Objects/Plane/Wing.hpp"
-#include "Objects/Plane/Tail.hpp"
+#include "Objects/Plane/Plane.hpp"
 
 class GUIElements;
+/* Class Scene: manage the objects, the Irrlicht rendering objects and the event objects creation,
+ * the rendering of the scene and the collision management between the plane and surroundings
+*/
 class Scene
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor Scene: Initialize all global attributes of the classe: display values, plane attributes
+    /* Constructor Scene: Initialize the global attributes
     */
     Scene();
     ~Scene()
     {
-        delete m_screw;
-        delete m_leftWing;
-        delete m_rightWing;
-        delete m_middleTail;
-        delete m_leftTail;
-        delete m_rightTail;
-        delete m_body;
         delete m_fire;
         delete m_city;
         delete m_water;
@@ -53,7 +46,7 @@ public:
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
-    /* void initializeIrrlicht: function to initilize Irrlicht object
+    /* void initializeIrrlicht: function to initialize Irrlicht object
     */
     void initializeIrrlicht();
 
@@ -61,23 +54,30 @@ public:
     */
     void initializeData();
 
-    /* void render:  Global function used to render the application : gui, plane and surrondings
+    /* void render:  Global function used to render the application : gui, plane and surroundings
     */
     void render();
 
 private:
-    /* void manageCollisionsWithSurroundings: Manage the collision between the plane and all the surondings
+    /* void manageCollisionsWithSurroundings: Manage the collision between the plane and surroundings, taking gravity into account or not
     */
     irr::scene::ISceneNodeAnimatorCollisionResponse* manageCollisionsWithSurroundings(Landscape *building, bool gravity);
 
-    /* void initializeObjects: Initialize all meshs used, except the water: the plane, the landscape
+    /* void initializeObjects: Initialize all meshs used
     */
     void initializeObjects();
 
-    /* void initializeGui: Initialize all object of the gui
+    /* void initializeGui: Initialize every gui objects
     */
     void initializeGui();
 
+    /* void updateGui: make the m_guiManager update the GUI objects according to the current simulation characteristics
+    */
+    void updateGui();
+
+    /************************************************************************************/
+    /******************************** Attributes ****************************************/
+    /************************************************************************************/
     // Render objects
     irr::IrrlichtDevice *m_device = nullptr;
     irr::scene::ISceneManager* m_smgr = nullptr;
@@ -85,15 +85,7 @@ private:
     GUIElements* m_guiManager = nullptr;
 
     // Scene objects
-    irr::scene::ISceneNode *m_parentNode = nullptr;
-    irr::scene::ISceneNode *m_parentRotationNode = nullptr;
-    Screw* m_screw = nullptr;
-    Wing* m_leftWing = nullptr;
-    Wing* m_rightWing = nullptr;
-    Tail* m_middleTail = nullptr;
-    Tail* m_leftTail = nullptr;
-    Tail* m_rightTail = nullptr;
-    Body* m_body = nullptr;
+    Plane* m_plane = nullptr;
     Fire* m_fire = nullptr;
     Landscape* m_city = nullptr;
     Water* m_water = nullptr;
@@ -120,10 +112,6 @@ private:
     int m_vertical_speed;
     int m_gauge_offset;
     bool m_stall;
-
-    float m_planeSpeed;
-    float m_planeAltitude;
-    float m_rotAngle;
 
     irr::core::vector3df m_cameraPose;
 };

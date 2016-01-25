@@ -3,12 +3,10 @@
 using namespace irr;
 namespace ic = irr::core;
 namespace is = irr::scene;
-namespace ig = irr::gui;
 
-// Constructor
 EventReceiver::EventReceiver()
 {
-    //Init keyboard states
+    // Init keyboard states
     for(unsigned int i = 0; i<KEY_KEY_CODES_COUNT; ++i)
     {
         m_keyIsDown[i] = false;
@@ -33,7 +31,6 @@ EventReceiver::EventReceiver()
 
     //Init moving plane values
     m_planeWeight     = m_planeWeightKg;
-    //m_planeSpeed      = 0.0f;
     m_planeSpeedFloor = 0.0f;
     m_planeSpeedSlope = 0.0f;
     m_planeAltitude   = 8.7f;
@@ -154,7 +151,7 @@ void EventReceiver::planeOnFloor(is::ISceneNode *node)
             m_ledForce = m_motorForceMin;
     }
 
-    //Get the plane up or down
+    // Get the plane up or down
     if(m_keyIsDown[KEY_KEY_Z] == true && !m_isBrakes)
     {
         if(m_sumForceY > 0)
@@ -173,7 +170,7 @@ void EventReceiver::planeOnFloor(is::ISceneNode *node)
         }
     }
 
-    //Open the side panels of the plane to turn to the right or the left
+    // Open the side panels of the plane to turn to the right or the left
     if(m_planeSpeedX != 0)
     {
         if(m_keyIsDown[KEY_KEY_D] == true && !m_isBrakes)
@@ -189,6 +186,7 @@ void EventReceiver::planeOnFloor(is::ISceneNode *node)
         computeSumForce(childRotation.X);
 
         m_planeSpeedX += m_sumForceX / m_planeWeight * m_dt;
+
         if(m_planeSpeedX < 0)
             m_planeSpeedX = 0;
 
@@ -230,6 +228,7 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
             if(m_sumForceY < 0)
                 m_isStalling = true;
         }
+
         if(m_keyIsDown[KEY_KEY_Z] == true)
         {
             if(m_sumForceY > 0)
@@ -253,7 +252,7 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
                 m_isStalling = true;
         }
 
-        //Open the side panels of the plane to turn to the right or the left
+        // Open the side panels of the plane to turn to the right or the left
         if(m_keyIsDown[KEY_KEY_D] == true)
         {
             if(childRotation.Z <= 0)
@@ -340,7 +339,7 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         m_isStalling = false;
         */
 
-    //Increase or decrease the plane speed
+    //I ncrease or decrease the plane speed
     if(m_keyIsDown[KEY_UP] == true && !m_isStalling)
     {
         if(m_ledForce < m_motorForceMax)
@@ -354,7 +353,7 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
             m_ledForce = m_motorForceMin;
     }
 
-    //Get the plane up or down
+    // Get the plane up or down
     if(m_keyIsDown[KEY_KEY_Z] == true)
     {
         childRotation.X     -= m_altitudeAngleStep;
@@ -368,10 +367,10 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         righttailRotation.X += 0.1;
     }
 
-    //Open the side panels of the plane to turn to the right or the left
+    // Open the side panels of the plane to turn to the right or the left
     if(m_keyIsDown[KEY_KEY_D] == true && !m_isStalling)
     {
-        //If the plane is flat (not in the wrong inclinaison)
+        // If the plane is flat (not in the wrong inclinaison)
         if(childRotation.Z <= 0)
         {
             childRotation.Z     -= m_rotationAngleStep;
@@ -435,12 +434,12 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         */
     m_rotationAltitude = childRotation.X;
 
-    //Compute rotation
+    // Compute rotation
     float planeSpeedMByS = fromGameUnitToKt(m_planeSpeedX) * 1.852 * 0.277777777778;
     if(planeSpeedMByS > 0)
         m_rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * m_g / planeSpeedMByS) * core::RADTODEG / 20; // for real values /80
 
-    //Compute the stall speed
+    // Compute the stall speed
     m_loadFactor = (1/cos(-childRotation.Z * core::DEGTORAD));
     m_stallSpeed = sqrt(m_loadFactor) * m_flatStallSpeed;
 
@@ -458,7 +457,7 @@ void EventReceiver::planeInLanding(is::ISceneNode *node, is::IMeshSceneNode *lef
     ic::vector3df lefttailRotation  = lefttail_node ->getRotation();
     ic::vector3df righttailRotation = righttail_node->getRotation();
 
-    //Increase or decrease the plane speed
+    // Increase or decrease the plane speed
     if(m_keyIsDown[KEY_UP] == true && !m_isStalling)
     {
         if(m_ledForce < m_motorForceMax)
@@ -472,7 +471,7 @@ void EventReceiver::planeInLanding(is::ISceneNode *node, is::IMeshSceneNode *lef
             m_ledForce = m_motorForceMin;
     }
 
-    //Get the plane up or down
+    // Get the plane up or down
     if(m_keyIsDown[KEY_KEY_Z] == true)
     {
         childRotation.X     -= m_altitudeAngleStep;
@@ -486,10 +485,10 @@ void EventReceiver::planeInLanding(is::ISceneNode *node, is::IMeshSceneNode *lef
         righttailRotation.X += 0.1;
     }
 
-    //Open the side panels of the plane to turn to the right or the left
+    // Open the side panels of the plane to turn to the right or the left
     if(m_keyIsDown[KEY_KEY_D] == true && !m_isStalling)
     {
-        //If the plane is flat (not in the wrong inclinaison)
+        // If the plane is flat (not in the wrong inclinaison)
         if(childRotation.Z <= 0)
             childRotation.Z     -= m_rotationAngleStep;
         else

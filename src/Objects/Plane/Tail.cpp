@@ -1,7 +1,6 @@
 #include "Tail.hpp"
 
 namespace ic = irr::core;
-namespace iv = irr::video;
 namespace is = irr::scene;
 namespace io = irr::io;
 

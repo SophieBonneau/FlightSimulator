@@ -4,7 +4,7 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-//Constructor
+
 Fire::Fire(is::ISceneManager* smgr, iv::ITexture * textureFire)
     :m_smgr(smgr), m_textureFire(textureFire)
 {

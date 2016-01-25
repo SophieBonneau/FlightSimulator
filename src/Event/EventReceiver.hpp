@@ -8,13 +8,16 @@
 #include <iostream>
 #include <vector>
 
-
+/* Class EventReceiver: inherits from the irr::IEventReceiver class. Manage the keyboard events
+*/
 class EventReceiver : public irr::IEventReceiver
 {
 public:
     /************************************************************************************/
-    /******************************** Constructors **************************************/
+    /******************************** Constructor **************************************/
     /************************************************************************************/
+    /* Constructor EventReceiver: Initialize the global attributes of the class
+    */
     EventReceiver();
 
     ~EventReceiver(){}
@@ -22,28 +25,42 @@ public:
     /************************************************************************************/
     /******************************** Getters & setters *********************************/
     /************************************************************************************/
-    /* float getSpeed: getter for the speed value
-     * return:  planeSpeed: the speed value
+    /* float getAltitude: getter for the altitude value
+    * return:  planeAltitude: the altitude value
     */
     float getAltitude(){    return m_planeAltitude;     }
 
-    /* float getAltitude: getter for the altitude value
-     * return:  planeAltitude: the altitude value
+    /* float getSpeed: getter for the speed value
+    * return:  planeSpeed: the floor speed value
     */
     float getFloorSpeed(){       return fromMStoGameUnit(m_planeFloorSpeed);   }
 
-    float getAltitudeSpeed(){    return fromMStoGameUnit(m_planeAltitudeSpeed);   }
+    /* float getSpeedKmH: getter for the speed value in km/h unit
+    * return:  m_planeSpeedFloor in km/h: the speed value in km/h
+    */
+    float getSpeedKmH(){    return fromMSToKmH(m_planeSpeedFloor);      }
 
-    float getSpeedKmH(){    return fromMSToKmH(m_planeFloorSpeed);      }
-
+    /* float getAltitudeM: getter for the altitude in m
+    * return:  m_planeAltitude in meter : the altitude value in m
+    */
     float getAltitudeM(){   return fromGameUnitToM(m_planeAltitudeSpeed);    }
 
-    /*float getAltitudeSpeed(){   if(!m_isStalling)
-                                    return -fromGameUnitToKt(fromKtToKmH(fromKmToMS(sin(m_rotationAltitude * core::DEGTORAD) * m_planeSpeedX - cos(m_rotationAltitude * core::DEGTORAD) * m_planeSpeedY)));
-                                return -1.0f;}*/
+    /* float getAltitudeSpeed: getter for the vertical speed
+    * return:  vertical speed in m/s
+    */
+    float getAltitudeSpeed(){    return fromMStoGameUnit(m_planeAltitudeSpeed);   }
+    //float getAltitudeSpeed(){   if(!m_isStalling)
+    //                                return -fromGameUnitToKt(fromKtToKmH(fromKmToMS(sin(m_rotationAltitude * irr::core::DEGTORAD) * m_planeSpeedX - cos(m_rotationAltitude * irr::core::DEGTORAD) * m_planeSpeedY)));
+    //                            return -1.0f;}
 
+    /* float getSlopePercent: getter for the plane slope percentage
+    * return:  m_rotationAltitude between -1 and 1
+    */
     float getSlopePercent() {   return -m_rotationAltitude / 90;    }
 
+    /* float getFuelLiter: getter for fuel level
+    * return:  m_fuelLiter between 0 and 100
+    */
     float getFuelLiter() {   return m_fuelLiter / 152.0f * 100;    }
 
     /* float getRotation: getter for the rotation value (plane go to the left or the right)
@@ -110,13 +127,13 @@ public:
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
-    /* float fromKtToGameUnit: convert from Kt unit to irrlicht unit (kt = 1.852 km/h)
+    /* float fromKtToGameUnit: converts from Kt unit to irrlicht unit (kt = 1.852 km/h)
      * params:  float valueToConvert:      the value in Kt unit
      * return:  float:  the value converted
     */
     float fromKtToGameUnit(float valueToConvert);
 
-    /* float fromGameUnitToKt: convert from irrlicht unit to Kt unit (kt = 1.852 km/h)
+    /* float fromGameUnitToKt: converts from irrlicht unit to Kt unit (kt = 1.852 km/h)
      * params:  float valueToConvert:      the value in irrlicht unit
      * return:  float:  the value converted
     */
@@ -136,24 +153,22 @@ public:
     void computeTractiveForce();
     void computeSumForce(float rotAngle);
 
-    /* void planeOnFloor:  Calculate the position of the plane and change it direction during the "on floor" phase.
-     *                      Do all the computation for the first phase of the take off
+    /* void planeOnFloor:  Computes the position of the plane and change it direction during the "on floor" phase.
+     *                      This phase occurs between 0 and 15 meters of altitude
      * params:  is::ISceneNode *node:   Instance of the global plane node
-     *                                  (permit only to change the plane direction)
     */
     void planeOnFloor(irr::scene::ISceneNode *node);
 
-    /* void planeInTakeOff:  Calculate the position of the plane and change it direction during the critical pahse of the take off.
+    /* void planeInTakeOff:  Computes the position of the plane and change its direction during the critical phase of take off.
      *                       All changed datas between 0 and 15 meters
      * params:  is::ISceneNode *node:   Instance of the global plane node
      *                                  (permit only to change the plane direction)
     */
     void planeInTakeOff(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *leftwing_node, irr::scene::IMeshSceneNode *rightwing_node, irr::scene::IMeshSceneNode *tail_node, irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node);
 
-    /* void planeInFlight:  Calculate the position of the plane and change it direction.
-     *                  All changed data s will be called by the main when nedded
+    /* void planeInFlight:  Computes the position of the plane and change its direction.
+     *                  Updated data will be called by the main when needed
      * params:  is::ISceneNode *node:   Instance of the global plane node
-     *                                  (permit only to change the plane direction)
     */
     void planeInFlight(irr::scene::ISceneNode *node,
                        irr::scene::IMeshSceneNode *leftwing_node, irr::scene::IMeshSceneNode *rightwing_node,
@@ -161,12 +176,11 @@ public:
                        irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node);
 
 
-    /* void planeInLanding:  Calculate the position of the plane and change it direction during the critical pahse of the landing.
-     *                       All changed datas between 0 and 15 meters
+    /* void planeInLanding:  Computes the position of the plane and change its direction during the critical phase of landing.
+     *                       This phase occurs between 0 and 15 meters of altitude
      * params:  is::ISceneNode *node:   Instance of the global plane node
-     *                                  (permit only to change the plane direction)
     */
-    void planeInLanding(irr::scene::ISceneNode *node, scene::IMeshSceneNode *lefttail_node, scene::IMeshSceneNode *righttail_node);
+    void planeInLanding(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node);
 
     /* void changeCameraPose:  Change the position of the camera
      * params:  is::ICameraSceneNode *cameraNode:   Instance of the camera node
@@ -177,8 +191,8 @@ public:
    /************************************************************************************/
    /******************************** Events ********************************************/
    /************************************************************************************/
-    /* bool OnEvent:  Once the event is caught, manage the thing to do. It permit to have multiple keys down at the same time.
-     *                It also permit to quit the application with the ESCAPE key.
+    /* bool OnEvent:  Once the event is caught, manage the actions to trigger. It can manage multiple keys down at the same time.
+     *                We can quit the application with the ESCAPE key.
      * params:  const SEvent &event:    Reference to the event which had been previously caught
     */
     bool OnEvent(const irr::SEvent &event);
