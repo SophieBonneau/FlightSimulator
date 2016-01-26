@@ -5,7 +5,7 @@
 
 #include "irrlicht.h"
 
-/* Class CameraControl:
+/* Class CameraControl: manages the position of the camera, according to the events launched by the EventReceiver class
 */
 class CameraControl
 {
@@ -13,7 +13,7 @@ public:
     /************************************************************************************/
     /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor CameraControl: Initialize the global attributes
+    /* Constructor CameraControl: Initialize the global attribute : the camera position
     */
     CameraControl(bool* keyIsDown);
 

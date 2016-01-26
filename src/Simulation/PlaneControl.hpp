@@ -5,7 +5,7 @@
 
 #include "irrlicht.h"
 
-/* Class PlaneControl:
+/* Class PlaneControl: manages the control of the plane, according to the events launched by the EventReceiver class
 */
 class PlaneControl
 {
@@ -13,7 +13,7 @@ public:
     /************************************************************************************/
     /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor PlaneControl: Initialize the global attributes
+    /* Constructor PlaneControl: Initialize the global attributes of forces, plane state and motion caracteristics
     */
     PlaneControl(bool* keyIsDown);
 
@@ -247,7 +247,7 @@ private:
     float m_stallSpeed = -100.0f; //Irrlicht unit
     float m_stallStep = 0.1f;
 
-    //Moving plane values
+    //Motion caracteristics
     float m_planeWeight;
     float m_planeSpeedX;
     float m_planeSpeedY;
