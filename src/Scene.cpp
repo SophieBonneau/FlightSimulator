@@ -20,6 +20,10 @@ void Scene::initializeIrrlicht()
     // Event manager
     m_receiver = new EventReceiver();
 
+    // Plane control manager
+    m_planeControl = new PlaneControl();
+    m_planeControl->setKeyIsDown(m_receiver->getKeyIsDown());
+
     // Window and rendering system creation
     m_device = createDevice(iv::EDT_OPENGL,
                                           ic::dimension2d<u32>(640, 480),
@@ -117,13 +121,13 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
 void Scene::updateGui()
 {
     // Link simulation values to GUI
-    m_guiManager->setAltitude(m_receiver->getAltitudeM());
-    m_guiManager->setAlmostStall(m_receiver->getIsAlmostStalling());
-    m_guiManager->setStall(m_receiver->getIsStalling());
-    m_guiManager->setGaugeHPercentage(m_receiver->getFuelLiter());
-    m_guiManager->setGaugeVSlope(m_receiver->getSlopePercent());
-    m_guiManager->setSpeed(m_receiver->getSpeedKmH());
-    m_guiManager->setVerticalSpeed(m_receiver->getAltitudeSpeed());
+    m_guiManager->setAltitude(m_planeControl->getAltitudeM());
+    m_guiManager->setAlmostStall(m_planeControl->getIsAlmostStalling());
+    m_guiManager->setStall(m_planeControl->getIsStalling());
+    m_guiManager->setGaugeHPercentage(m_planeControl->getFuelLiter());
+    m_guiManager->setGaugeVSlope(m_planeControl->getSlopePercent());
+    m_guiManager->setSpeed(m_planeControl->getSpeedKmH());
+    m_guiManager->setVerticalSpeed(m_planeControl->getAltitudeSpeed());
     m_guiManager->setOrientation(m_plane->getParentNode()->getRotation().Y);
 
     //Update GUI elements
@@ -142,50 +146,51 @@ void Scene::render()
 
     if(m_animCollisionAirport->collisionOccurred())
     {
-        m_receiver->setIsCrashed(true);
+        m_planeControl->setIsCrashed(true);
         m_animCollision = m_animCollisionAirport;
     }
     else if(m_animCollisionCity->collisionOccurred())
     {
-        m_receiver->setIsCrashed(true);
+        m_planeControl->setIsCrashed(true);
         m_animCollision = m_animCollisionCity;
     }
     else if(m_animCollisionRunway2->collisionOccurred())
     {
-        if(m_receiver->getInFlight())
+        if(m_planeControl->getInFlight())
         {
             core::vector3df rotation = m_plane->getScrew()->getNode()->getRotation();
             std::cout<<"rotation.X "<<rotation.X<<std::endl;
             if(rotation.X < 3.0)
-                m_receiver->setIsLanding(true);
+                m_planeControl->setIsLanding(true);
         }
-        else if (!m_receiver->getOnFloor())
+        else if (!m_planeControl->getOnFloor())
         {
-            m_receiver->setIsCrashed(true);
+            m_planeControl->setIsCrashed(true);
             m_animCollision = m_animCollisionCity;
         }
     }
-    if(m_receiver->getIsCrashed() && m_animCollisionCity->collisionOccurred())
+    if(m_planeControl->getIsCrashed() && m_animCollisionCity->collisionOccurred())
     {
         firePosition.X = m_animCollision->getCollisionPoint().X;
         firePosition.Y = m_animCollision->getCollisionPoint().Y;
         firePosition.Z = m_animCollision->getCollisionPoint().Z;
         m_fire->getPs()->setEmitter(m_fire->getEm()); // this grabs the emitter of fire particules
     }
-    else if(m_receiver->getIsCrashed())
+    else if(m_planeControl->getIsCrashed())
     {
         firePosition = m_plane->getParentNode()->getPosition();
         m_fire->getPs()->setEmitter(m_fire->getEm());
     }
-    else if(m_receiver->getOnFloor())
+    else if(m_planeControl->getOnFloor())
     {
-        m_receiver->planeOnFloor(m_plane->getParentRotationNode());
+        std::cout<<"Scene, on passe par onFloor state :)"<<std::endl;
+        m_planeControl->planeOnFloor(m_plane->getParentRotationNode());
 
         // Update plane rotation
-        rotation.Y      = m_receiver->getRotation();
+        rotation.Y      = m_planeControl->getRotation();
 
-        m_plane->setPlaneSpeed(m_receiver->getFloorSpeed());
-        m_plane->setPlaneAltitude(m_receiver->getAltitudeSpeed());
+        m_plane->setPlaneSpeed(m_planeControl->getFloorSpeed());
+        m_plane->setPlaneAltitude(m_planeControl->getAltitudeSpeed());
 
         if (m_plane->getPlaneSpeed() > -0.1 && m_plane->getPlaneSpeed() < 50)
             m_plane->getScrew()->setRotationStep(10);
@@ -193,19 +198,19 @@ void Scene::render()
             m_plane->getScrew()->setRotationStep(30);
         m_plane->getScrew()->updateRotation();
     }
-    else if(m_receiver->getInTakeOff())
+    else if(m_planeControl->getInTakeOff())
     {
-        m_receiver->planeInTakeOff(m_plane->getParentRotationNode(), m_plane->getLeftWing()->getNode(), m_plane->getRightWing()->getNode(),
+        m_planeControl->planeInTakeOff(m_plane->getParentRotationNode(), m_plane->getLeftWing()->getNode(), m_plane->getRightWing()->getNode(),
                                    m_plane->getMiddleTail()->getNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode());
 
         m_plane->getScrew()->updateRotation();
 
-        m_plane->setPlaneSpeed(m_receiver->getFloorSpeed());
-        m_plane->setPlaneAltitude(m_receiver->getAltitudeSpeed());
+        m_plane->setPlaneSpeed(m_planeControl->getFloorSpeed());
+        m_plane->setPlaneAltitude(m_planeControl->getAltitudeSpeed());
     }
-    else if(m_receiver->getInFlight())
+    else if(m_planeControl->getInFlight())
     {
-        m_receiver->planeInFlight(m_plane->getParentRotationNode(), m_plane->getLeftWing()->getNode(), m_plane->getRightWing()->getNode(),
+        m_planeControl->planeInFlight(m_plane->getParentRotationNode(), m_plane->getLeftWing()->getNode(), m_plane->getRightWing()->getNode(),
                                   m_plane->getMiddleTail()->getNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode());
 
         // Update screw rotation
@@ -213,15 +218,15 @@ void Scene::render()
         m_plane->getScrew()->updateRotation();
 
         // Update plane rotation
-        rotation.Y      = m_receiver->getRotation();
+        rotation.Y      = m_planeControl->getRotation();
 
-        m_plane->setPlaneSpeed(m_receiver->getFloorSpeed());
-        m_plane->setPlaneAltitude(m_receiver->getAltitudeSpeed());
+        m_plane->setPlaneSpeed(m_planeControl->getFloorSpeed());
+        m_plane->setPlaneAltitude(m_planeControl->getAltitudeSpeed());
     }
-    else if(m_receiver->getInLanding())
+    else if(m_planeControl->getInLanding())
     {
         std::cout<<"In landing"<<std::endl;
-        m_receiver->planeInLanding(m_plane->getParentRotationNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode());
+        m_planeControl->planeInLanding(m_plane->getParentRotationNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode());
     }
 
     // Update the plane position

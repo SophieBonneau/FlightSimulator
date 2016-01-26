@@ -44,7 +44,6 @@ Plane::Plane(is::ISceneManager* smgr)
 
     m_planeSpeed    = 0.0f;
     m_planeAltitude = 0.0f;
-
 }
 
 

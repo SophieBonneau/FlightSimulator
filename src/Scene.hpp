@@ -12,6 +12,7 @@
 #include "Objects/Surroundings/Fire.hpp"
 #include "Objects/Surroundings/Landscape.hpp"
 #include "Objects/Plane/Plane.hpp"
+#include "Simulation/PlaneControl.hpp"
 
 class GUIElements;
 /* Class Scene: manage the objects, the Irrlicht rendering objects and the event objects creation,
@@ -104,6 +105,9 @@ private:
 
     // Event objects
     EventReceiver *m_receiver = nullptr;
+
+    // Simulation objects
+    PlaneControl* m_planeControl = nullptr;
 
     // display values
     int m_wind_speed;
