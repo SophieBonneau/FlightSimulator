@@ -113,7 +113,6 @@ void EventReceiver::computeTractiveForce()
     computeAirDensity();
     float speed = m_planeSpeed.getLength();
     m_tractiveForce = 0.5 * m_currentDensity * m_sizeWings * m_cx * speed * speed;
-    std::cout<<"plane speed : "<<speed<<std::endl;
 }
 
 void EventReceiver::computeSumForce(float rotAngle)
@@ -163,11 +162,12 @@ void EventReceiver::planeOnFloor(is::ISceneNode *node)
     }
     if(m_keyIsDown[KEY_KEY_S] == true && !m_isBrakes)
     {
-        if(m_sumForceY < 0)
+        if(m_sumForceY < 0 && childRotation.X > 0)
         {
             m_onFloor   = false;
             m_isCrashed = true;
         }
+        childRotation.X += 5 *m_altitudeAngleStep;
     }
 
     // Open the side panels of the plane to turn to the right or the left
@@ -217,9 +217,8 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
 
     if(m_isStalling)
     {
-        std::cout<<"is stalling !!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
         computeSumForce(childRotation.X);
-        m_planeAltitudeSpeed = m_sumForceY / m_planeWeight * m_dt;
+        m_planeAltitudeSpeed = - 5 * m_sumForceY / m_planeWeight * m_dt;
     }
     else
     {
@@ -295,11 +294,6 @@ void EventReceiver::planeInTakeOff(is::ISceneNode *node,
 
         if(m_planeSpeed.getLength() < m_flatStallSpeed)
             m_isStalling = true;
-        if(m_planeAltitude > 9.0 + 15)
-        {
-            m_inTakeOff = false;
-            m_inFlight  = true;
-        }
 
         node            ->setRotation(childRotation);
         leftwing_node   ->setRotation(leftwingRotation);
@@ -339,7 +333,22 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         m_isStalling = false;
         */
 
-    //I ncrease or decrease the plane speed
+    if((m_stallSpeed < m_planeSpeedX && m_stallSpeed * 1.1 > m_planeSpeedX)
+            || (m_sumForceX > 0 && m_sumForceX < 100))
+        m_isAlmostStalling = true;
+    else
+        m_isAlmostStalling = false;
+
+    if(m_stallSpeed > m_planeSpeedX
+        || m_sumForceX <= 0)
+    {
+        m_isStalling = true;
+        m_planeAltitudeSpeed = -5 * m_sumForceY / m_planeWeight * m_dt;
+    }
+    else
+        m_isStalling = false;
+
+    //Increase or decrease the plane speed
     if(m_keyIsDown[KEY_UP] == true && !m_isStalling)
     {
         if(m_ledForce < m_motorForceMax)
@@ -374,18 +383,18 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         if(childRotation.Z <= 0)
         {
             childRotation.Z     -= m_rotationAngleStep;
-            leftwingRotation.X  -= 0.1;
-            rightwingRotation.X += 0.1;
-            tailRotation.Y      -= 0.1;
-            tailRotation.Z      += 0.05;
+            leftwingRotation.X  -= m_wingsRotationStep;
+            rightwingRotation.X += m_wingsRotationStep;
+            tailRotation.Y      -= m_wingsRotationStep;
+            tailRotation.Z      += m_wingsRotationStep / 2.0;
         }
         else
         {
             childRotation.Z     -= 2 * m_rotationAngleStep;
-            leftwingRotation.X  -= 2 * 0.1;
-            rightwingRotation.X += 2 * 0.1;
-            tailRotation.Y      -= 2 * 0.1;
-            tailRotation.Z      += 2 * 0.05;
+            leftwingRotation.X  -= 2 * m_wingsRotationStep;
+            rightwingRotation.X += 2 * m_wingsRotationStep;
+            tailRotation.Y      -= 2 * m_wingsRotationStep;
+            tailRotation.Z      += m_wingsRotationStep;
         }
     }
     if(m_keyIsDown[KEY_KEY_Q] == true && !m_isStalling)
@@ -393,51 +402,39 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
         if(childRotation.Z >= 0)
         {
             childRotation.Z     += m_rotationAngleStep;
-            leftwingRotation.X  += 0.1;
-            rightwingRotation.X -= 0.1;
-            tailRotation.Y      += 0.1;
-            tailRotation.Z      -= 0.05;
+            leftwingRotation.X  += m_wingsRotationStep;
+            rightwingRotation.X -= m_wingsRotationStep;
+            tailRotation.Y      += m_wingsRotationStep;
+            tailRotation.Z      -= m_wingsRotationStep / 2.0;
         }
         else
         {
             childRotation.Z     += 2 * m_rotationAngleStep;
-            leftwingRotation.X  += 2 * 0.1;
-            rightwingRotation.X -= 2* 0.1;
-            tailRotation.Y      += 2 * 0.1;
-            tailRotation.Z      -= 2 * 0.05;
+            leftwingRotation.X  += 2 * m_wingsRotationStep;
+            rightwingRotation.X -= 2 * m_wingsRotationStep;
+            tailRotation.Y      += 2 * m_wingsRotationStep;
+            tailRotation.Z      -= m_wingsRotationStep;
         }
     }
 
     node->setRotation(childRotation);
 
-    float currentSum = m_sumForceX;
     computeSumForce(childRotation.X);
 
     m_planeSpeedX += m_sumForceX / m_planeWeightKg * m_dt;
-    m_planeSpeedY += m_sumForceY / m_planeWeightKg * m_dt;
-
-    std::cout<<"vitesse : "<<m_planeSpeedX<<"   "<<m_planeSpeedY<<std::endl;
+    m_planeSpeedY += 0.001 * m_sumForceY / m_planeWeightKg * m_dt;
 
     m_planeSpeed = core::vector3df(m_planeSpeedX, m_planeSpeedY, 0.0f);
 
-    m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedX - sin(childRotation.X * core::DEGTORAD) * m_planeSpeedY;
+    m_planeFloorSpeed = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedX - sin(childRotation.X * core::DEGTORAD) * m_planeSpeedY;
     if(!m_isStalling)
-        m_planeAltitude  -= (sin(childRotation.X * core::DEGTORAD) * m_planeSpeedX - cos(childRotation.X * core::DEGTORAD) * m_planeSpeedY);
+        m_planeAltitudeSpeed  = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedY - sin(childRotation.X * core::DEGTORAD) * m_planeSpeedX;
 
-    /*m_planeSpeedX += fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
-    m_planeSpeedY = fromNToGameUnit(m_sumForceY) / m_planeWeight * m_dt;
-
-    m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedX - sin(childRotation.X * core::DEGTORAD) * m_planeSpeedY;
-    if(!m_isStalling)
-        m_planeAltitude  -= (sin(childRotation.X * core::DEGTORAD) * m_planeSpeedX - cos(childRotation.X * core::DEGTORAD) * m_planeSpeedY);
-
-        */
     m_rotationAltitude = childRotation.X;
 
     // Compute rotation
-    float planeSpeedMByS = fromGameUnitToKt(m_planeSpeedX) * 1.852 * 0.277777777778;
-    if(planeSpeedMByS > 0)
-        m_rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * m_g / planeSpeedMByS) * core::RADTODEG / 20; // for real values /80
+    if(m_planeSpeedX > 0)
+        m_rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * m_g / m_planeSpeedX) * core::RADTODEG / 20; // for real values /80
 
     // Compute the stall speed
     m_loadFactor = (1/cos(-childRotation.Z * core::DEGTORAD));
