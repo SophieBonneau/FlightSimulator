@@ -22,58 +22,48 @@ public:
     /************************************************************************************/
     /******************************** Getters & setters *********************************/
     /************************************************************************************/
-    /* float getAltitude: getter for the altitude value
+    /* float getRotation: getter for the rotation value (plane go to the left or the right)
     */
-    float getAltitude(){    return m_planeAltitude;     }
+    float getRotation()     {   return m_rotationAngle;                         }
 
     /* float getSpeed: getter for the speed value
     */
-    float getFloorSpeed(){       return fromMStoGameUnit(m_planeFloorSpeed);   }
-
-    /* float getSpeedKmH: getter for the speed value in km/h unit
-    */
-    float getSpeedKmH(){    return fromMSToKmH(m_planeSpeedFloor);      }
-
-    /* float getAltitudeM: getter for the altitude in meters
-    */
-    float getAltitudeM(){   return fromGameUnitToM(m_planeAltitudeSpeed);    }
+    float getFloorSpeed()   {   return fromMStoGameUnit(m_planeFloorSpeed);     }
 
     /* float getAltitudeSpeed: getter for the vertical speed
     */
-    float getAltitudeSpeed(){    return fromMStoGameUnit(m_planeAltitudeSpeed);   }
-    //float getAltitudeSpeed(){   if(!m_isStalling)
-    //                                return -fromGameUnitToKt(fromKtToKmH(fromKmToMS(sin(m_rotationAltitude * irr::core::DEGTORAD) * m_planeSpeedX - cos(m_rotationAltitude * irr::core::DEGTORAD) * m_planeSpeedY)));
-    //                            return -1.0f;}
+    float getAltitudeSpeed(){   return fromMStoGameUnit(m_planeAltitudeSpeed);  }
+
+    /* float getSpeedKmH: getter for the speed value in km/h unit
+    */
+    float getSpeedKmH()     {   return fromMSToKmH(m_planeFloorSpeed);          }
 
     /* float getSlopePercent: getter for the plane slope percentage
     * return:  m_rotationAltitude between -1 and 1
     */
-    float getSlopePercent() {   return -m_rotationAltitude / 90;    }
+    float getSlopePercent() {   return -m_rotationAltitude / 90;                }
 
     /* float getFuelLiter: getter for fuel level
     * return:  m_fuelLiter between 0 and 100
     */
-    float getFuelLiter() {   return m_fuelLiter / 152.0f * 100;    }
+    float getFuelLiter()    {   return m_fuelLiter / 152.0f * 100;              }
 
-    /* float getRotation: getter for the rotation value (plane go to the left or the right)
-    */
-    float getRotation(){    return m_rotationAngle;     }
 
     /* bool getOnFloor: getter for the onFloor boolean value
     */
-    bool getOnFloor(){      return m_onFloor;           }
+    bool getOnFloor()   {   return m_onFloor;       }
 
     /* bool getInTakeOff: getter for the inTakeOff boolean value
     */
-    bool getInTakeOff(){    return m_inTakeOff;         }
+    bool getInTakeOff() {   return m_inTakeOff;     }
 
     /* bool getInFlight: getter for the inFlight boolean value
     */
-    bool getInFlight(){     return m_inFlight;          }
+    bool getInFlight()  {   return m_inFlight;      }
 
     /* bool getInLanding: getter for the getLanding boolean value
     */
-    bool getInLanding(){    return m_inLanding;         }
+    bool getInLanding() {   return m_inLanding;     }
 
     /* bool getIsAlmostStalling: getter for the isAlmostStalling boolean value
     */
@@ -81,32 +71,25 @@ public:
 
     /* bool getIsStalling: getter for the isStalling boolean value
     */
-    bool getIsStalling(){   return m_isStalling;        }
+    bool getIsStalling(){   return m_isStalling;    }
 
     /* bool getIsCrashed: getter for the isCrashed boolean value
     */
-    bool getIsCrashed(){   return m_isCrashed;        }
+    bool getIsCrashed() {   return m_isCrashed;     }
 
-
-
-    /* void setPlaneWeight: function used to initialize the planeWeight
-     * params:  const float planeWeight:      the plane weight
-    */
-    void setPlaneWeight(const float planeWeight){     m_planeWeight = planeWeight;    }
-
-    void setIsLanding(const bool isLanding){   m_inLanding = isLanding;      }
+    void setIsLanding(const bool isLanding)     {   m_inLanding = isLanding;        }
 
     /* void setIsCrashed: function used to initialize the state of the boolean value isCrash
      * params:  const float isCrashed:      the plane crashed = true
     */
-    void setIsCrashed(const float isCrashed){ m_isCrashed   = isCrashed;
-                                              m_isStalling  = false;
-                                              m_onFloor     = false;
-                                              m_inTakeOff   = false;
-                                              m_inLanding   = false;
-                                              m_inFlight    = false;}
+    void setIsCrashed(const float isCrashed)    {   m_isCrashed   = isCrashed;
+                                                    m_isStalling  = false;
+                                                    m_onFloor     = false;
+                                                    m_inTakeOff   = false;
+                                                    m_inLanding   = false;
+                                                    m_inFlight    = false;          }
 
-    void setKeyIsDown(bool* keyIsDown){ m_keyIsDown = keyIsDown;}
+    void setKeyIsDown(bool* keyIsDown)          {   m_keyIsDown = keyIsDown;        }
 
 
 
@@ -117,20 +100,13 @@ public:
      * params:  float valueToConvert:      the value in Kt unit
      * return:  float:  the value converted
     */
-    float fromKtToGameUnit(float valueToConvert);
-
-    /* float fromGameUnitToKt: converts from irrlicht unit to Kt unit (kt = 1.852 km/h)
-     * params:  float valueToConvert:      the value in irrlicht unit
-     * return:  float:  the value converted
-    */
-    float fromGameUnitToKt(float valueToConvert);
-
     float fromKtToKmH(float valueToConvert);
-    float fromGameUnitToM(float valueToConvert);
-    float fromKmToMS(float valueToConvert);
+    float fromKmHToMS(float valueToConvert);
     float fromMSToKmH(float valueToConvert);
-    float fromNToGameUnit(float valueToConvert);
     float fromMStoGameUnit(float valueToConvert);
+
+    float fromGameUnitToM(float valueToConvert);
+    float fromNToGameUnit(float valueToConvert);
 
     void computeTemperatureFromTheAltitude();
     void computeAtmosphericPressure();
@@ -199,6 +175,10 @@ private:
     const float m_g  = 9.81f;    //m.s-2
     const float m_frictionCoeff = 1.0f; //No Unit
 
+    //Force motor extrema
+    const float m_motorForceMin = 0.0f;     //N
+    const float m_motorForceMax = 600.0f;   //N
+
     //Forces
     float m_liftForce       = 0.0f;   //N
     float m_weightForce     = 0.0f;   //N
@@ -210,61 +190,41 @@ private:
     float m_sumForceY = 0.0f;   //N
     float m_sumForce  = 0.0f;   //N
 
-    //Speed
-    irr::core::vector3df m_planeSpeed = irr::core::vector3df(0.0f,0.0f, 0.0f);   //m/s
-
-    float m_planeFloorSpeed = 0.0f;
-    float m_planeAltitudeSpeed = 0.0f;
-
     //Init steps
     const float m_wingsRotationStep = 0.1f;
-    const float m_speedStep         = 0.005f;
     const float m_motorStep         = 10.0f;
     const float m_altitudeAngleStep = 0.05f;
     const float m_rotationAngleStep = 0.1f;
 
     //Init plane constructor parameters
-    const float m_minPlaneSpeedKt  = 0.0f;    //Kt
-    const float m_maxPlaneSpeedKt  = 158.0f;  //Kt
     const float m_flatStallSpeedKt = 44.0f;   //Kt
+    const float m_flatStallSpeed  = fromKtToKmH(fromKmHToMS(m_flatStallSpeedKt));   //m/s
 
-    //Init motor const
-    //const float m_speedMotorMax = 2700.0;  //tours/min
-    //const float m_motorPowerMax = 180.0 * 735.398; //180ch in W at 2700tr/min
-    //const float m_coupleMotorMax = m_motorPowerMax / m_speedMotorMax;   //N.m
-
-    const float m_motorForceMin = 0.0f; //N
-    const float m_motorForceMax = 600.0f;   //N
-
-    const float m_minMotorPower = 0.0f;
-    const float m_maxMotorPower = 2.0f;
-
-    const float m_minPlaneSpeed   = fromKtToKmH(fromKmToMS(m_minPlaneSpeedKt));    //m/s
-    const float m_maxPlaneSpeed   = fromKtToKmH(fromKmToMS(m_maxPlaneSpeedKt));    //m/s
-    const float m_flatStallSpeed  = fromKtToKmH(fromKmToMS(m_flatStallSpeedKt));   //m/s
-
-    //Init plane limits values
-    float m_loadFactor = 1.0f;    //No unit
-    float m_stallSpeed = -100.0f; //Irrlicht unit
-    float m_stallStep = 0.1f;
-
-    //Moving plane values
-    float m_planeWeight;
+    //Speed
     float m_planeSpeedX;
     float m_planeSpeedY;
-    //float m_planeSpeed;
-    float m_planeSpeedFloor;    //m/s
-    float m_planeSpeedSlope;
-    float m_planeAltitude;
-    float m_rotationAngle;
+    
+    irr::core::vector3df m_planeSpeed = irr::core::vector3df(0.0f,0.0f, 0.0f);   //m/s
+
+    float m_planeFloorSpeed = 0.0f;
+    float m_planeAltitudeSpeed = 0.0f;
+
+    //Altitude
+    float m_planeAltitude;      //GameUnit
     float m_rotationAltitude;
 
+    //Rotation
+    float m_rotationAngle;
+
+    //Stallfactors
+    float m_loadFactor = 1.0f;    //No unit
+    float m_stallSpeed = -100.0f; //m/s
+
+    //Fuel parameters
     float m_motorPower;
-    float m_motorForce = 0.0f;
     float m_fuelLiter;
 
-    const float m_weight = m_planeWeight * m_g;
-
+    //Boolean controllers
     bool m_isBrakes;
     bool m_isAlmostStalling;
     bool m_isStalling;
@@ -278,7 +238,6 @@ private:
 
     //Table to get the state of the keys
     bool* m_keyIsDown;
-
 };
 
 #endif

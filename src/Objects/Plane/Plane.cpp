@@ -57,8 +57,6 @@ void Plane::computeNewPosition(ic::vector3df rotation)
         position.Y += 8.7;
     position.Y += m_planeAltitude;
 
-    std::cout<<"plane altitude  is loosing pleaseeeeeeeeeeeeeeee : "<<position.Y<<std::endl;
-
     m_parentNode->setRotation(rotation);
     m_parentNode->setPosition(position);
 }
