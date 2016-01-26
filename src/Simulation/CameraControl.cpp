@@ -7,7 +7,8 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-CameraControl::CameraControl()
+CameraControl::CameraControl(bool* keyIsDown)
+    :m_keyIsDown(keyIsDown)
 {
     //Init camera
     m_cameraPose = ic::vector3df(0.0,0.0,0.0);

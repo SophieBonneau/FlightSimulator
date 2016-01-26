@@ -6,7 +6,8 @@ using namespace irr;
 namespace ic = irr::core;
 namespace is = irr::scene;
 
-PlaneControl::PlaneControl()
+PlaneControl::PlaneControl(bool* keyIsDown)
+    :m_keyIsDown(keyIsDown)
 {
     //Init forces
     m_weightForce = m_planeWeightKg * m_g;
@@ -21,25 +22,7 @@ PlaneControl::PlaneControl()
     m_isAlmostStalling = false;
     m_isStalling = false;
     m_isCrashed  = false;
-
-    //Init moving plane values
-    m_planeAltitude   = 8.7f;
-    m_rotationAngle   = 0.0f;
-    m_rotationAltitude = 0.0f;
-
-    m_motorPower = 0.0f;
-    m_fuelLiter = 152.0f;
 }
-
-/*float PlaneControl::fromKtToGameUnit(float valueToConvert)
-{
-    return valueToConvert / 400.0f;
-}*/
-
-/*float PlaneControl::fromGameUnitToKt(float valueToConvert)
-{
-    return valueToConvert * 400.0f;
-}*/
 
 float PlaneControl::fromKtToKmH(float valueToConvert)
 {
@@ -103,7 +86,6 @@ void PlaneControl::computeTractiveForce()
     computeAirDensity();
     float speed = m_planeSpeed.getLength();
     m_tractiveForce = 0.5 * m_currentDensity * m_sizeWings * m_cx * speed * speed;
-    std::cout<<"plane speed : "<<speed<<std::endl;
 }
 
 void PlaneControl::computeSumForce(float rotAngle)
@@ -202,10 +184,10 @@ void PlaneControl::planeOnFloor(is::ISceneNode *node)
     }
 }
 
-void PlaneControl::planeInTakeOff(is::ISceneNode *node,
-                                   is::IMeshSceneNode *leftwing_node, is::IMeshSceneNode *rightwing_node,
-                                   is::IMeshSceneNode *tail_node,
-                                   is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node)
+void PlaneControl::planeInTakeOff(is::ISceneNode *node, is::IMeshSceneNode *leftwing_node,
+                                  is::IMeshSceneNode *rightwing_node, is::IMeshSceneNode *tail_node,
+                                  is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node,
+                                  float altitude)
 {
     ic::vector3df childRotation     = node          ->getRotation();
     ic::vector3df leftwingRotation  = leftwing_node ->getRotation();
@@ -213,6 +195,8 @@ void PlaneControl::planeInTakeOff(is::ISceneNode *node,
     ic::vector3df tailRotation      = tail_node     ->getRotation();
     ic::vector3df lefttailRotation  = lefttail_node ->getRotation();
     ic::vector3df righttailRotation = righttail_node->getRotation();
+
+    m_planeAltitude = altitude;
 
     if(m_isStalling)
     {
@@ -308,10 +292,10 @@ void PlaneControl::planeInTakeOff(is::ISceneNode *node,
     }
 }
 
-void PlaneControl::planeInFlight(is::ISceneNode *node,
-                   is::IMeshSceneNode *leftwing_node, is::IMeshSceneNode *rightwing_node,
-                   is::IMeshSceneNode *tail_node,
-                   is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node)
+void PlaneControl::planeInFlight(is::ISceneNode *node, is::IMeshSceneNode *leftwing_node,
+                                 is::IMeshSceneNode *rightwing_node, is::IMeshSceneNode *tail_node,
+                                 is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node,
+                                 float altitude)
 {
     ic::vector3df childRotation     = node          ->getRotation();
     ic::vector3df leftwingRotation  = leftwing_node ->getRotation();
@@ -319,6 +303,8 @@ void PlaneControl::planeInFlight(is::ISceneNode *node,
     ic::vector3df tailRotation      = tail_node     ->getRotation();
     ic::vector3df lefttailRotation  = lefttail_node ->getRotation();
     ic::vector3df righttailRotation = righttail_node->getRotation();
+
+    m_planeAltitude = altitude;
 
     if((m_stallSpeed < m_planeSpeedX && m_stallSpeed * 1.1 > m_planeSpeedX)
             || (m_sumForceX > 0 && m_sumForceX < 100))

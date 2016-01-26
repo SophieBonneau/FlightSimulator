@@ -5,7 +5,7 @@
 
 #include "irrlicht.h"
 
-/* Class PlaneControl:
+/* Class PlaneControl: manages the control of the plane, according to the events launched by the EventReceiver class
 */
 class PlaneControl
 {
@@ -13,9 +13,9 @@ public:
     /************************************************************************************/
     /******************************** Constructor **************************************/
     /************************************************************************************/
-    /* Constructor PlaneControl: Initialize the global attributes
+    /* Constructor PlaneControl: Initialize the global attributes of forces, plane state and motion caracteristics
     */
-    PlaneControl();
+    PlaneControl(bool* keyIsDown);
 
     ~PlaneControl(){}
 
@@ -30,13 +30,17 @@ public:
     */
     float getFloorSpeed()   {   return fromMStoGameUnit(m_planeFloorSpeed);     }
 
+    /* float getSpeedKmH: getter for the speed value in km/h unit
+    */
+    float getSpeedKmH()     {   return fromMSToKmH(m_planeFloorSpeed);          }
+
     /* float getAltitudeSpeed: getter for the vertical speed
     */
     float getAltitudeSpeed(){   return fromMStoGameUnit(m_planeAltitudeSpeed);  }
 
-    /* float getSpeedKmH: getter for the speed value in km/h unit
-    */
-    float getSpeedKmH()     {   return fromMSToKmH(m_planeFloorSpeed);          }
+    float getAltitudeM()    {   return fromGameUnitToM(m_planeAltitude);        }
+
+    float getAltitudeSpeedMS()  {   return m_planeAltitudeSpeed;                }
 
     /* float getSlopePercent: getter for the plane slope percentage
     * return:  m_rotationAltitude between -1 and 1
@@ -89,10 +93,6 @@ public:
                                                     m_inLanding   = false;
                                                     m_inFlight    = false;          }
 
-    void setKeyIsDown(bool* keyIsDown)          {   m_keyIsDown = keyIsDown;        }
-
-
-
     /************************************************************************************/
     /******************************** Functions *****************************************/
     /************************************************************************************/
@@ -126,23 +126,27 @@ public:
      * params:  is::ISceneNode *node:   Instance of the global plane node
      *                                  (permit only to change the plane direction)
     */
-    void planeInTakeOff(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *leftwing_node, irr::scene::IMeshSceneNode *rightwing_node, irr::scene::IMeshSceneNode *tail_node, irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node);
+    void planeInTakeOff(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *leftwing_node,
+                        irr::scene::IMeshSceneNode *rightwing_node, irr::scene::IMeshSceneNode *tail_node,
+                        irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node,
+                        float altitude);
 
     /* void planeInFlight:  Computes the position of the plane and change its direction.
      *                  Updated data will be called by the main when needed
      * params:  is::ISceneNode *node:   Instance of the global plane node
     */
-    void planeInFlight(irr::scene::ISceneNode *node,
-                       irr::scene::IMeshSceneNode *leftwing_node, irr::scene::IMeshSceneNode *rightwing_node,
-                       irr::scene::IMeshSceneNode *tail_node,
-                       irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node);
+    void planeInFlight(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *leftwing_node,
+                       irr::scene::IMeshSceneNode *rightwing_node, irr::scene::IMeshSceneNode *tail_node,
+                       irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node,
+                       float altitude);
 
 
     /* void planeInLanding:  Computes the position of the plane and change its direction during the critical phase of landing.
      *                       This phase occurs between 0 and 15 meters of altitude
      * params:  is::ISceneNode *node:   Instance of the global plane node
     */
-    void planeInLanding(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *lefttail_node, irr::scene::IMeshSceneNode *righttail_node);
+    void planeInLanding(irr::scene::ISceneNode *node, irr::scene::IMeshSceneNode *lefttail_node,
+                        irr::scene::IMeshSceneNode *righttail_node);
 
 
 private:
@@ -201,28 +205,29 @@ private:
     const float m_flatStallSpeed  = fromKtToKmH(fromKmHToMS(m_flatStallSpeedKt));   //m/s
 
     //Speed
-    float m_planeSpeedX;
-    float m_planeSpeedY;
+    float m_planeSpeedX = 0.0f;
+    float m_planeSpeedY = 0.0f;
     
     irr::core::vector3df m_planeSpeed = irr::core::vector3df(0.0f,0.0f, 0.0f);   //m/s
 
-    float m_planeFloorSpeed = 0.0f;
+    float m_planeFloorSpeed    = 0.0f;
     float m_planeAltitudeSpeed = 0.0f;
 
     //Altitude
-    float m_planeAltitude;      //GameUnit
+    float m_planeInitAltitude = 0.0f;
+    float m_planeAltitude     = 0.0f;      //GameUnit
     float m_rotationAltitude;
 
     //Rotation
-    float m_rotationAngle;
+    float m_rotationAngle = 0.0f;
 
     //Stallfactors
     float m_loadFactor = 1.0f;    //No unit
     float m_stallSpeed = -100.0f; //m/s
 
     //Fuel parameters
-    float m_motorPower;
-    float m_fuelLiter;
+    float m_motorPower = 0.0f;
+    float m_fuelLiter  = 152.0f;
 
     //Boolean controllers
     bool m_isBrakes;

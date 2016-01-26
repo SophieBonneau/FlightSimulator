@@ -12,25 +12,27 @@ Scene::Scene()
     m_gauge_offset    = 0;
     m_stall           = true;
 
-    m_cameraPose = ic::vector3df(0.0,5.0,-34.0);
+    m_cameraPose      = ic::vector3df(0.0,5.0,-34.0);
 }
 
 void Scene::initializeIrrlicht()
 {
     // Event manager
-    m_receiver = new EventReceiver();
+    m_receiver      = new EventReceiver();
 
     // Plane control manager
-    m_planeControl = new PlaneControl();
-    m_planeControl->setKeyIsDown(m_receiver->getKeyIsDown());
+    m_planeControl  = new PlaneControl(m_receiver->getKeyIsDown());
+
+    // Camera control mamanger
+    m_cameraControl = new CameraControl(m_receiver->getKeyIsDown());
 
     // Window and rendering system creation
-    m_device = createDevice(iv::EDT_OPENGL,
-                                          ic::dimension2d<u32>(640, 480),
-                                          16, false, false, false, m_receiver);
+    m_device        = createDevice(iv::EDT_OPENGL,
+                                      ic::dimension2d<u32>(640, 480),
+                                      16, false, false, false, m_receiver);
     m_driver = m_device->getVideoDriver();
-    m_smgr  = m_device->getSceneManager();
-    m_gui = m_device->getGUIEnvironment();
+    m_smgr   = m_device->getSceneManager();
+    m_gui    = m_device->getGUIEnvironment();
 
     m_device->getFileSystem()->addFileArchive("data.zip");
 }
@@ -38,13 +40,13 @@ void Scene::initializeIrrlicht()
 void Scene::initializeObjects()
 {
     //City
-    Landscape* city = new Landscape(m_smgr, "data/city/city_cercles.obj");
+    Landscape* city     = new Landscape(m_smgr, "data/city/city_cercles.obj");
     city->initialize();
-    Landscape* airport = new Landscape(m_smgr, "data/airport/buildings.obj");
+    Landscape* airport  = new Landscape(m_smgr, "data/airport/buildings.obj");
     airport->initialize();
-    Landscape* runway = new Landscape(m_smgr, "data/airport/runway.obj");
+    Landscape* runway   = new Landscape(m_smgr, "data/airport/runway.obj");
     runway-> initialize();
-    Landscape* runway2 = new Landscape(m_smgr, "data/airport/runway2.obj");
+    Landscape* runway2  = new Landscape(m_smgr, "data/airport/runway2.obj");
     runway2-> initialize();
 
     //Init the object plane
@@ -55,7 +57,7 @@ void Scene::initializeObjects()
     m_water->initialize();
 
     //Fire
-    m_fire = new Fire(m_smgr, m_driver->getTexture("data/fire/fire.jpg"));
+    m_fire  = new Fire(m_smgr, m_driver->getTexture("data/fire/fire.jpg"));
     m_fire->initialize();
 
     //Sky
@@ -100,18 +102,18 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
     if(gravity)
     {
         animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
-                                                     m_plane->getParentNode(),  //Node
-                                                     ic::vector3df(2.8, 2.0, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
-                                                     ic::vector3df(0, -1.0, 0),       // Gravity
-                                                     ic::vector3df(0.0,0.0,0));      // Gap with the center
+                                                                 m_plane->getParentNode(),  //Node
+                                                                 ic::vector3df(2.8, 2.0, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
+                                                                 ic::vector3df(0, -1.0, 0),       // Gravity
+                                                                 ic::vector3df(0.0,0.0,0));      // Gap with the center
     }
     else
     {
         animCollision = m_smgr->createCollisionResponseAnimator(selectorSurrounding,
-                                                     m_plane->getParentNode(),  //Node
-                                                     ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
-                                                     ic::vector3df(0, 0, 0),       // Gravity
-                                                     ic::vector3df(0.0,0.0,0));      // Gap with the center
+                                                                 m_plane->getParentNode(),  //Node
+                                                                 ic::vector3df(2.8, 0.5, 0.4), // Ellipse dimensions current values ic::vector3df(2.8, 0.5, 0.4)
+                                                                 ic::vector3df(0, 0, 0),       // Gravity
+                                                                 ic::vector3df(0.0,0.0,0));      // Gap with the center
     }
     m_plane->getParentNode()->addAnimator(animCollision);
 
@@ -121,14 +123,14 @@ is::ISceneNodeAnimatorCollisionResponse* Scene::manageCollisionsWithSurroundings
 void Scene::updateGui()
 {
     // Link simulation values to GUI
-    m_guiManager->setAltitude(m_planeControl->getAltitudeM());
-    m_guiManager->setAlmostStall(m_planeControl->getIsAlmostStalling());
-    m_guiManager->setStall(m_planeControl->getIsStalling());
-    m_guiManager->setGaugeHPercentage(m_planeControl->getFuelLiter());
-    m_guiManager->setGaugeVSlope(m_planeControl->getSlopePercent());
-    m_guiManager->setSpeed(m_planeControl->getSpeedKmH());
-    m_guiManager->setVerticalSpeed(m_planeControl->getAltitudeSpeed());
-    m_guiManager->setOrientation(m_plane->getParentNode()->getRotation().Y);
+    m_guiManager->setAltitude(          m_planeControl->getAltitudeM());
+    m_guiManager->setAlmostStall(       m_planeControl->getIsAlmostStalling());
+    m_guiManager->setStall(             m_planeControl->getIsStalling());
+    m_guiManager->setGaugeHPercentage(  m_planeControl->getFuelLiter());
+    m_guiManager->setGaugeVSlope(       m_planeControl->getSlopePercent());
+    m_guiManager->setSpeed(             m_planeControl->getSpeedKmH());
+    m_guiManager->setVerticalSpeed(     m_planeControl->getAltitudeSpeedMS());
+    m_guiManager->setOrientation(       m_plane       ->getParentNode()->getRotation().Y);
 
     //Update GUI elements
     m_compasses = m_guiManager->update2DElements();
@@ -159,7 +161,6 @@ void Scene::render()
         if(m_planeControl->getInFlight())
         {
             core::vector3df rotation = m_plane->getScrew()->getNode()->getRotation();
-            std::cout<<"rotation.X "<<rotation.X<<std::endl;
             if(rotation.X < 3.0)
                 m_planeControl->setIsLanding(true);
         }
@@ -183,7 +184,6 @@ void Scene::render()
     }
     else if(m_planeControl->getOnFloor())
     {
-        std::cout<<"Scene, on passe par onFloor state :)"<<std::endl;
         m_planeControl->planeOnFloor(m_plane->getParentRotationNode());
 
         // Update plane rotation
@@ -201,7 +201,8 @@ void Scene::render()
     else if(m_planeControl->getInTakeOff())
     {
         m_planeControl->planeInTakeOff(m_plane->getParentRotationNode(), m_plane->getLeftWing()->getNode(), m_plane->getRightWing()->getNode(),
-                                   m_plane->getMiddleTail()->getNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode());
+                                       m_plane->getMiddleTail()->getNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode(),
+                                       m_plane->getParentNode()->getPosition().Y);
 
         m_plane->getScrew()->updateRotation();
 
@@ -211,7 +212,8 @@ void Scene::render()
     else if(m_planeControl->getInFlight())
     {
         m_planeControl->planeInFlight(m_plane->getParentRotationNode(), m_plane->getLeftWing()->getNode(), m_plane->getRightWing()->getNode(),
-                                  m_plane->getMiddleTail()->getNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode());
+                                      m_plane->getMiddleTail()->getNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode(),
+                                      m_plane->getParentNode()->getPosition().Y);
 
         // Update screw rotation
         m_plane->getScrew()->setRotationStep(30);
@@ -225,7 +227,6 @@ void Scene::render()
     }
     else if(m_planeControl->getInLanding())
     {
-        std::cout<<"In landing"<<std::endl;
         m_planeControl->planeInLanding(m_plane->getParentRotationNode(), m_plane->getLeftTail()->getNode(), m_plane->getRightTail()->getNode());
     }
 
@@ -233,7 +234,7 @@ void Scene::render()
     m_plane->computeNewPosition(rotation);
 
     //Camera pose
-    m_receiver->changeCameraPose(m_camera);
+    m_cameraControl->changeCameraPose(m_camera);
     if(m_camera->getPosition().Z < -10.0)
     {
         m_plane->getBody()->getNode()->setVisible(true);

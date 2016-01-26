@@ -13,27 +13,6 @@ EventReceiver::EventReceiver()
     }
 }
 
-void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode)
-{
-    ic::vector3df cameraPosition = cameraNode->getPosition();
-
-    if(m_keyIsDown[KEY_KEY_K] == true)
-    {
-        cameraPosition = ic::vector3df(0.0,5.0,-34.0);
-        cameraNode->setPosition(cameraPosition);
-    }
-    else if(m_keyIsDown[KEY_KEY_L] == true)
-    {
-        cameraPosition = ic::vector3df(0.0,0.0,-0.1);
-        cameraNode->setPosition(cameraPosition);
-    }
-    else if(m_keyIsDown[KEY_KEY_M] == true)
-    {
-        cameraPosition = ic::vector3df(0.0,18.0,-24.0);
-        cameraNode->setPosition(cameraPosition);
-    }
-}
-
 bool EventReceiver::OnEvent(const SEvent &event)
 {
     if (event.EventType == EET_KEY_INPUT_EVENT)
