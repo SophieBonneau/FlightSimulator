@@ -12,9 +12,6 @@ EventReceiver::EventReceiver()
         m_keyIsDown[i] = false;
     }
 
-    //Init forces
-    m_weightForce = m_planeWeightKg * m_g;
-
     //Init camera
     m_cameraPose = ic::vector3df(0.0,0.0,0.0);
 
@@ -448,73 +445,6 @@ void EventReceiver::planeInFlight(is::ISceneNode *node,
     righttail_node  ->setRotation(righttailRotation);
 }
 
-void EventReceiver::planeInLanding(is::ISceneNode *node, is::IMeshSceneNode *lefttail_node, is::IMeshSceneNode *righttail_node)
-{
-    ic::vector3df childRotation     = node          ->getRotation();
-    ic::vector3df lefttailRotation  = lefttail_node ->getRotation();
-    ic::vector3df righttailRotation = righttail_node->getRotation();
-
-    // Increase or decrease the plane speed
-    if(m_keyIsDown[KEY_UP] == true && !m_isStalling)
-    {
-        if(m_ledForce < m_motorForceMax)
-            m_ledForce += m_motorStep;
-    }
-    if(m_keyIsDown[KEY_DOWN] == true && !m_isStalling)
-    {
-        if(m_ledForce > m_motorForceMin)
-            m_ledForce -= m_motorStep;
-        else
-            m_ledForce = m_motorForceMin;
-    }
-
-    // Get the plane up or down
-    if(m_keyIsDown[KEY_KEY_Z] == true)
-    {
-        childRotation.X     -= m_altitudeAngleStep;
-        lefttailRotation.X  -= 0.1;
-        righttailRotation.X -= 0.1;
-    }
-    if(m_keyIsDown[KEY_KEY_S] == true)
-    {
-        childRotation.X     += m_altitudeAngleStep;
-        lefttailRotation.X  += 0.1;
-        righttailRotation.X += 0.1;
-    }
-
-    // Open the side panels of the plane to turn to the right or the left
-    if(m_keyIsDown[KEY_KEY_D] == true && !m_isStalling)
-    {
-        // If the plane is flat (not in the wrong inclinaison)
-        if(childRotation.Z <= 0)
-            childRotation.Z     -= m_rotationAngleStep;
-        else
-            childRotation.Z     -= 2 * m_rotationAngleStep;
-    }
-    if(m_keyIsDown[KEY_KEY_Q] == true && !m_isStalling)
-    {
-        if(childRotation.Z >= 0)
-            childRotation.Z     += m_rotationAngleStep;
-        else
-            childRotation.Z     += 2 * m_rotationAngleStep;
-    }
-
-    node->setRotation(childRotation);
-
-    computeSumForce(childRotation.X);
-
-    m_planeSpeedX += fromNToGameUnit(m_sumForceX) / m_planeWeight * m_dt;
-    m_planeSpeedY = fromNToGameUnit(m_sumForceY) / m_planeWeight * m_dt;
-
-    m_planeSpeedFloor = cos(childRotation.X * core::DEGTORAD) * m_planeSpeedX - sin(childRotation.X * core::DEGTORAD) * m_planeSpeedY;
-    m_planeAltitude  -= (sin(childRotation.X * core::DEGTORAD) * m_planeSpeedX - cos(childRotation.X * core::DEGTORAD) * m_planeSpeedY);
-
-    m_rotationAltitude = childRotation.X;
-
-    node            ->setRotation(childRotation);
-    lefttail_node   ->setRotation(lefttailRotation);
-    righttail_node  ->setRotation(righttailRotation);
-}
 
 void EventReceiver::changeCameraPose(is::ICameraSceneNode *cameraNode)
 {
@@ -595,7 +525,7 @@ bool EventReceiver::OnEvent(const SEvent &event)
         }
         if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_P && !m_keyIsDown[KEY_KEY_P]) // Unlock or lock brakes
         {
-            m_isBrakes = !m_isBrakes;
+            m_keyIsDown[KEY_KEY_P] = true;
         }
         if(event.KeyInput.PressedDown && event.KeyInput.Key == KEY_KEY_K && !m_keyIsDown[KEY_KEY_K]) // Behind camera
         {
