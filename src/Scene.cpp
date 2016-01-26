@@ -21,8 +21,10 @@ void Scene::initializeIrrlicht()
     m_receiver = new EventReceiver();
 
     // Plane control manager
-    m_planeControl = new PlaneControl();
-    m_planeControl->setKeyIsDown(m_receiver->getKeyIsDown());
+    m_planeControl = new PlaneControl(m_receiver->getKeyIsDown());
+
+    // Camera control mamanger
+    m_cameraControl = new CameraControl(m_receiver->getKeyIsDown());
 
     // Window and rendering system creation
     m_device = createDevice(iv::EDT_OPENGL,
@@ -233,7 +235,7 @@ void Scene::render()
     m_plane->computeNewPosition(rotation);
 
     //Camera pose
-    m_receiver->changeCameraPose(m_camera);
+    m_cameraControl->changeCameraPose(m_camera);
     if(m_camera->getPosition().Z < -10.0)
     {
         m_plane->getBody()->getNode()->setVisible(true);

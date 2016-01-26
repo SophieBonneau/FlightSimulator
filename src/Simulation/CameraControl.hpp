@@ -15,7 +15,7 @@ public:
     /************************************************************************************/
     /* Constructor CameraControl: Initialize the global attributes
     */
-    CameraControl();
+    CameraControl(bool* keyIsDown);
 
     ~CameraControl(){}
 

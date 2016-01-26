@@ -15,7 +15,7 @@ public:
     /************************************************************************************/
     /* Constructor PlaneControl: Initialize the global attributes
     */
-    PlaneControl();
+    PlaneControl(bool* keyIsDown);
 
     ~PlaneControl(){}
 
@@ -106,7 +106,6 @@ public:
                                               m_inLanding   = false;
                                               m_inFlight    = false;}
 
-    void setKeyIsDown(bool* keyIsDown){ m_keyIsDown = keyIsDown;}
 
 
 

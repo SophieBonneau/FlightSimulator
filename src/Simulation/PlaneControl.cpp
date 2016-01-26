@@ -7,7 +7,8 @@ namespace ic = irr::core;
 namespace iv = irr::video;
 namespace is = irr::scene;
 
-PlaneControl::PlaneControl()
+PlaneControl::PlaneControl(bool* keyIsDown)
+    :m_keyIsDown(keyIsDown)
 {
     //Init forces
     m_weightForce = m_planeWeightKg * m_g;
