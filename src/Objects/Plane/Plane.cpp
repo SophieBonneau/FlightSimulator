@@ -53,6 +53,8 @@ void Plane::computeNewPosition(ic::vector3df rotation)
 
     position.X += m_planeSpeed * sin(rotation.Y * M_PI / 180.0);
     position.Z += m_planeSpeed * cos(rotation.Y * M_PI / 180.0);
+    if(position.Y == 0)
+        position.Y = 8.7;
     position.Y += m_planeAltitude;
 
     m_parentNode->setRotation(rotation);

@@ -181,7 +181,7 @@ private:
 
     //Force motor extrema
     const float m_motorForceMin = 0.0f;     //N
-    const float m_motorForceMax = 600.0f;   //N
+    const float m_motorForceMax = 1000.0f;   //N
 
     //Forces
     float m_liftForce       = 0.0f;   //N
@@ -239,7 +239,6 @@ private:
     bool m_inTakeOff;
     bool m_inFlight;
     bool m_inLanding;
-
 
     //Table to get the state of the keys
     bool* m_keyIsDown;

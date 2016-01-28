@@ -93,10 +93,10 @@ void PlaneControl::computeSumForce(float rotAngle)
     computeLiftForce(rotAngle);
     computeTractiveForce();
 
-    std::cout<<"Lift force : "<<m_liftForce<<std::endl;
+    /*std::cout<<"Lift force : "<<m_liftForce<<std::endl;
     std::cout<<"Weight force : "<<m_weightForce<<std::endl;
     std::cout<<"Led force : "<<m_ledForce<<std::endl;
-    std::cout<<"Tractive force : "<<m_tractiveForce<<std::endl;
+    std::cout<<"Tractive force : "<<m_tractiveForce<<std::endl;*/
 
     //Add force de frottement
     if(m_onFloor)
@@ -201,7 +201,7 @@ void PlaneControl::planeInTakeOff(is::ISceneNode *node, is::IMeshSceneNode *left
     if(m_isStalling)
     {
         computeSumForce(childRotation.X);
-        m_planeAltitudeSpeed = m_sumForceY / m_planeWeightKg * m_dt;
+        m_planeAltitudeSpeed = 5 * m_sumForceY / m_planeWeightKg * m_dt;
     }
     else
     {
@@ -277,7 +277,7 @@ void PlaneControl::planeInTakeOff(is::ISceneNode *node, is::IMeshSceneNode *left
 
         if(m_planeSpeed.getLength() < m_flatStallSpeed)
             m_isStalling = true;
-        if(m_planeAltitude > 9.0 + 15)
+        if(m_planeAltitude > 9.0 + 15/4)
         {
             m_inTakeOff = false;
             m_inFlight  = true;
