@@ -98,9 +98,9 @@ void PlaneControl::computeSumForce(float rotAngle)
     std::cout<<"Led force : "<<m_ledForce<<std::endl;
     std::cout<<"Tractive force : "<<m_tractiveForce<<std::endl;*/
 
-    //Add force de frottement
+    //Add friction force
     if(m_onFloor)
-        m_tractiveForce = m_tractiveForce;
+        m_tractiveForce += 1000.0;
 
     m_sumForceX = m_ledForce - m_tractiveForce + sin(rotAngle * ic::DEGTORAD) * m_weightForce;
     m_sumForceY = m_liftForce - cos(rotAngle * ic::DEGTORAD) * m_weightForce;
@@ -307,7 +307,7 @@ void PlaneControl::planeInFlight(is::ISceneNode *node, is::IMeshSceneNode *leftw
     m_planeAltitude = altitude;
 
     if((m_stallSpeed < m_planeSpeedX && m_stallSpeed * 1.1 > m_planeSpeedX)
-            || (m_sumForceX > 0 && m_sumForceX < 100))
+            /*|| (m_sumForceX > 0 && m_sumForceX < 100)*/)
         m_isAlmostStalling = true;
     else
         m_isAlmostStalling = false;
@@ -410,7 +410,7 @@ void PlaneControl::planeInFlight(is::ISceneNode *node, is::IMeshSceneNode *leftw
         m_rotationAngle -= (tan(childRotation.Z * core::DEGTORAD) * m_g / m_planeSpeedX) * core::RADTODEG / 20; // for real values /80
 
     // Compute the stall speed
-    m_loadFactor = (1/cos(-childRotation.Z * core::DEGTORAD));
+    m_loadFactor = cos(-childRotation.X * core::DEGTORAD)/cos(-childRotation.Z * core::DEGTORAD);
     m_stallSpeed = sqrt(m_loadFactor) * m_flatStallSpeed;
 
     node            ->setRotation(childRotation);
